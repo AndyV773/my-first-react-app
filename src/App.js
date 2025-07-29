@@ -74,7 +74,7 @@ function App() {
 
 export default function WrappedApp() {
   return (
-    <Router>
+    <Router basename="/my-first-react-app">
       <App />
     </Router>
   );

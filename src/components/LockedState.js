@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { isCorrectDateInput, getTodayDate } from '../utils/uiHelpers';
+import { isCorrectDateInput } from '../utils/uiHelpers';  // , getTodayDate
 
 
 function LockScreen({ onUnlock, showMsg }) {
     const [input, setInput] = useState('');
     const [error, setError] = useState('');
 
-    const date = getTodayDate();
+    // const date = getTodayDate();
 
     function handleSubmit(e) {
         e.preventDefault();
