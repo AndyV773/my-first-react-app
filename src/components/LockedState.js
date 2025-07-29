@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { isCorrectDateInput } from '../utils/uiHelpers';  // , getTodayDate
+import { isCorrectDateInput, getTodayDate } from '../utils/uiHelpers';  // , getTodayDate
+// import { data } from 'react-router-dom';
 
 
 function LockScreen({ onUnlock, showMsg }) {
     const [input, setInput] = useState('');
     const [error, setError] = useState('');
 
-    // const date = getTodayDate();
+    const date = getTodayDate();
 
     function handleSubmit(e) {
         e.preventDefault();
@@ -27,7 +28,7 @@ function LockScreen({ onUnlock, showMsg }) {
             <form onSubmit={handleSubmit}>
                 <input
                 value={input}
-                onChange={(e) => setInput(e.target.value)}  // e.target.value
+                onChange={(e) => setInput(date)}  // e.target.value
                 placeholder="DD/MM/YYYY"
                 required
                 autoFocus

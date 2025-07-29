@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { HashRouter as Router, Routes, Route, Link } from "react-router-dom";
 import LockScreen from "./components/LockedState";
+import ObfuscationTools from "./components/ObfuscationTools";
 import File8ShufflerEnc from "./components/File8ShufflerEnc";
 import File8ShufflerDec from "./components/File8ShufflerDec";
 import "./App.css";
@@ -8,7 +9,7 @@ import { motion } from "framer-motion";
 import ToolBox from './components/ToolBox';
 import { tools } from './data/tools.js';
 import { containerVariants, itemVariants } from './animations/variants.js';
-import { Msg, ColorController } from './utils/uiHelpers';
+import { Msg, ColorController, ScrollToTop } from './utils/uiHelpers';
 
 
 function App() {
@@ -20,7 +21,8 @@ function App() {
   }
 
   return (
-    <div>
+    <div className="app-wrapper">
+      <ScrollToTop />
       <ColorController />
       <Msg message={msg.text} error={msg.error} onClear={() => setMsg({ text: '', error: false })} />
       <h1>Encryption & Data Transformation Toolkit</h1>
@@ -52,6 +54,7 @@ function App() {
               </>
             )}
           />
+        <Route path="/obfuscation-tools" element={<ObfuscationTools showMsg={showMsg} />} />
         <Route path="/file-8-shuffler" element={<File8ShufflerEnc showMsg={showMsg} />} />
         <Route path="/file-8-shuffler-dec" element={<File8ShufflerDec showMsg={showMsg} />} />
         {/* Add more routes for other tools if needed */}
@@ -74,7 +77,7 @@ function App() {
 
 export default function WrappedApp() {
   return (
-    <Router basename="/my-first-react-app">
+    <Router>
       <App />
     </Router>
   );

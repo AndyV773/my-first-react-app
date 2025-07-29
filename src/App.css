@@ -20,21 +20,33 @@
   --trans-bg-color: rgba(44, 125, 160, 0.9);
 }
 
+
 body {
     margin: 0;
     font-family: "Roboto", sans-serif;
-    min-height: 100vh;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    min-height: 100vh;
 }
 
 #root {
-    flex-grow: 1;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.app-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
     width: 100%;
 }
 
 main {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
     margin: auto;
 }
 
@@ -58,10 +70,12 @@ nav {
 }
 
 nav a {
+    border: 2px solid #ccc;     
+    border-bottom: 5px solid #ccc; 
     color: #222;
     background-color: buttonface;
-    padding: 1rem;
-    border-radius: 4px;
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
     text-decoration: none;
     font-size: 0.95rem;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
@@ -69,12 +83,14 @@ nav a {
 }
 
 button {
-    border: none;
-    padding: 1rem;
+    border: 2px solid #ccc;     
+    border-bottom: 5px solid #ccc; 
+    padding: 0.8rem 1rem;
     margin-top: 10px;
     margin-bottom: 10px;
-    border-radius: 4px;
+    border-radius: 6px;
     width: 100%;
+    background-color: buttonface;
     cursor: pointer;
     font-size: 0.95rem;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
@@ -83,6 +99,10 @@ button {
 
 .hidden {
     display: none;
+}
+
+.p2 {
+    padding: 2rem;
 }
 
 /* -------------------------------------- lock screen */
@@ -134,7 +154,7 @@ input[type="checkbox"] {
 .grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 24px;
+    gap: 2rem;
     width: 100%;
     max-width: 1200px;
     margin: auto;
@@ -143,13 +163,13 @@ input[type="checkbox"] {
 .tool-box {
     background: rgba(255, 255, 255, 0.1);
     border-radius: 12px;
-    padding: 24px;
+    padding: 1rem;
     cursor: pointer;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 100%;
+    height: 100%;       
 
     /* Fade-in setup */
     opacity: 0;
@@ -201,7 +221,6 @@ input[type="checkbox"] {
     font-size: 0.9rem;
     color: #ccc;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
-    max-width: 1000px;
 }
 
 .footer a {
@@ -218,7 +237,7 @@ input[type="checkbox"] {
     color: #666;
 }
 
-/* -------------------------------------- Error and success message styles */
+/* -------------------------------------- message styles */
 #msg {
     position: fixed;
     top: 2em;
@@ -240,12 +259,60 @@ input[type="checkbox"] {
     border: 1px solid #4caf50;
 }
 
+.code-block {
+    position: relative;
+}
+
+.copy-icon {
+    position: absolute;
+    background-color: #ecf0f1;
+    top: 0.5rem;
+    right: 0.5rem;
+    cursor: pointer;
+    color: var(--secondary-text);
+    font-size: 1rem;
+    z-index: 8888;
+    transition: color 0.7s ease;
+}
+
+.copy-msg {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: #ecf0f1;
+    font-size: 1rem;
+    pointer-events: none;
+    z-index: 8888;
+}
+
+/* -------------------------------------- obfuscation page styles */
+#obfuscation button {
+    min-width: 20%;
+}
+
+.obfuscation-btn {
+    display: flex;
+    gap: 1rem;
+}
+
+pre {
+    background: #ecf0f1;
+    padding: 10px;
+    border-radius: 4px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-size: 0.95rem;
+    margin: 0;
+    min-height: 2.5em;
+}
+
+
 /* -------------------------------------- encode/decode page styles */
 .container {
     max-width: 1000px;
     margin: auto;
     background: var(--tertiary-bg);
-    padding: 1rem 0;
+    padding: 1rem;
     border-radius: 12px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
@@ -262,16 +329,18 @@ input[type="checkbox"] {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
-button.encode {
+button.encode { 
+    border: 2px solid #2980b9;     
+    border-bottom: 5px solid #2980b9; 
     background: #3498db;
     color: white;
-    border: none;
 }
 
 button.decode {
+    border: 2px solid #16a085;     
+    border-bottom: 5px solid #16a085; 
     background: #1abc9c;
     color: white;
-    border: none;
 }
 
 /* -------------------------------------- animations */
@@ -299,11 +368,15 @@ button.decode {
 
 @media (min-width: 700px) {
     body {
-        padding: 2em;
+        padding: 2rem;
+    }
+
+    .container {
+        padding: 2rem;
     }
 
     section {
-        padding: 2em;
+        padding: 2rem;
     }
 
     #qr-data canvas, #qr-key canvas {
@@ -318,6 +391,10 @@ button.decode {
 
     #unlock:hover {
         background-color: var(--tertiary-text);
+    }
+
+    .copy-icon:hover {
+        color: var(--tertiary-text);
     }
 
     .footer-primary a:hover {

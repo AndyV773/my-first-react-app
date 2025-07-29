@@ -46,7 +46,17 @@ function seededShuffle(array, key, reverse = false) {
     return result;
 }
 
-// Key shuffle function
+/**
+ * Performs a deterministic shuffle of input data using a key-derived seed.
+ * A Mulberry32 PRNG is seeded with the key + salt combination to generate a reproducible permutation.
+ * 
+ * Note: This is not cryptographic encryption but reversible obfuscation.
+ * 
+ * @param {Uint8Array} array - The byte array to shuffle.
+ * @param {string} key - The key used to seed the PRNG.
+ * @param {boolean} reverse - If true, unshuffles the data.
+ * @returns {Uint8Array} The shuffled (or unshuffled) result.
+ */
 export function keyShuffle(fileInput, key) {
     if (!fileInput) {
         return { error: "Upload a file." };

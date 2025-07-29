@@ -12,8 +12,8 @@ export const tools = [
         "Authenticated encryption with AES Galois/Counter Mode providing confidentiality and integrity.",
     },
     {
-      id: "locked-file-lock-text",
-      title: "Locked File Lock Text",
+      id: "obfuscation-tools",
+      title: "Obfuscation Tools",
       description:
         "Securely lock and unlock files or text snippets with advanced encryption and access control.",
     },
@@ -21,7 +21,7 @@ export const tools = [
       id: "file-8-shuffler",
       title: "File .8 Shuffler",
       description:
-        "Shuffle files and encrypt with AES-CBC. Download as .8 file.",
+        "Use a deterministic shuffle for files and encrypt with AES-CBC. Download as .8 file.",
     },
     {
       id: "pin-shuffle",
