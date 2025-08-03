@@ -9,13 +9,32 @@ export function uploadFile(file, options = {}) {
     onFileInfo,       // function({ name, type, size }): void
     onText,           // function(utf8String): void
     onDetectedExt,
+    onValidateExt,
   } = options;
 
   const reader = new FileReader();
 
   reader.onload = function (e) {
     (async () => {
-      const bytes = new Uint8Array(e.target.result);
+      let bytes = new Uint8Array(e.target.result);
+      const ext = await detectFileExtension(bytes);
+
+      if (onDetectedExt) onDetectedExt(ext);
+
+      if (onValidateExt && !onValidateExt(ext)) {
+        // don't call further handlers
+        return;
+      }
+
+      // If .ec file detected, remove first 2 magic number bytes (0xEC, 0x01)
+      if (ext === 'ec') {
+        if (bytes[0] === 0xEC && bytes[1] === 0x01) {
+          bytes = bytes.slice(2);
+        } else {
+          // Magic number missing - reject file
+          return {error: "Invalid .ec file: missing magic number" };
+        }
+      }
 
       // Call optional hooks
       if (onDataLoaded) onDataLoaded(bytes);
@@ -35,17 +54,13 @@ export function uploadFile(file, options = {}) {
       }
 
       if (onFileInfo) {
-      onFileInfo({
-          name: file.name,
-          type: file.type || "unknown",
-          size: formatBytes(file.size),
-      });
+        onFileInfo({
+            name: file.name,
+            type: file.type || (ext === 'ec' ? 'application/x-ec' : 'unknown'),
+            size: formatBytes(file.size),
+        });
       }
 
-      if (onDetectedExt) {
-          const ext = await detectFileExtension(bytes);
-          onDetectedExt(ext);
-      }
     })();
   };
 
@@ -62,6 +77,11 @@ function formatBytes(bytes) {
 
 // Detects file type if no result returns txt
 export async function detectFileExtension(bytes) {
+  // Check for .ec magic number 0xEC01 (first two bytes)
+  if (bytes.length >= 2 && bytes[0] === 0xEC && bytes[1] === 0x01) {
+    return "ec";
+  }
+
   const hex = [...bytes.slice(0, 8)]
     .map((b) => b.toString(16).padStart(2, "0"))
     .join("")
@@ -117,23 +137,42 @@ function randomNumber(max = 9999) {
 
 const fileId = randomNumber();
 
-console.log(fileId)
 
-// saves as .8 file
-export function saveFileAs8(fileInput) {
-    const blob = new Blob([fileInput], { type: "application/octet-stream" });
+// saves as .ec file
+export function saveFileAsEc(input, name) {
+    if (!name) name = "";
+    // Magic number (2 bytes): 0xEC01
+    const MAGIC_BYTES = new Uint8Array([0xEC, 0x01]);
+
+    // Prepend magic bytes to the data
+    const combined = new Uint8Array(MAGIC_BYTES.length + input.length);
+    combined.set(MAGIC_BYTES);
+    combined.set(input, MAGIC_BYTES.length);
+
+    const blob = new Blob([combined], { type: "application/octet-stream" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = `${fileId}.8`;
+    a.download = `${name}${fileId}.ec`;
     a.click();
 }
 
 // save file as ext
-export async function saveFileAsExt(fileInput, ext, name) {
+export async function saveFileAsExt(input, ext, name) {
     if (!name) name = "";
-    const blob = new Blob([fileInput], { type: "application/octet-stream" });
+    const blob = new Blob([input], { type: "application/octet-stream" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
     a.download = `${name}${fileId}.${ext}`;
     a.click();
+}
+
+
+export function downloadQrCode(canvas, name) {
+    if (!name) name = "";
+    if (!(canvas instanceof HTMLCanvasElement)) return { error: "Invalid canvas element." };
+
+    const link = document.createElement('a');
+    link.href = canvas.toDataURL('image/png');
+    link.download = `${name}${fileId}.png`;
+    link.click();    
 }

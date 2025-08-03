@@ -1,5 +1,11 @@
 export const tools = [
     {
+      id: "about",
+      title: "About",
+      description:
+        "",
+    },
+    {
       id: "aes-cbc",
       title: "AES-CBC",
       description:
@@ -15,29 +21,29 @@ export const tools = [
       id: "obfuscation-tools",
       title: "Obfuscation Tools",
       description:
-        "Securely lock and unlock files or text snippets with advanced encryption and access control.",
+        "Obfuscation Tools help transform and encode text to make it harder to read or interpret.",
     },
     {
-      id: "file-8-shuffler",
-      title: "File .8 Shuffler",
+      id: "mulberry-shuffle-enc",
+      title: "Mulberry Shuffle",
       description:
-        "Use a deterministic shuffle for files and encrypt with AES-CBC. Download as .8 file.",
+        "A deterministic Mulberry shuffle for files and encrypt with AES-CBC. Download as .ec file.",
     },
     {
-      id: "pin-shuffle",
-      title: "Pin Shuffle",
+      id: "quant-shuffle-enc",
+      title: "Quantum Shuffle",
       description:
-        "Randomize and securely shuffle PINs or short sequences to enhance security.",
+        "High load randomize file or text shuffle with added AES-GCM encryption. Download as QR .txt or .ec file.",
     },
     {
-      id: "multi-hashing",
-      title: "Multi Hashing",
+      id: "file-integrity",
+      title: "File Integrity",
       description:
         "Apply multiple hashing algorithms to data for layered security and integrity checks.",
     },
     {
       id: "argon2",
-      title: "Argon2",
+      title: "SHA-256 & Argon2",
       description:
         "Implement Argon2 password hashing for memory-hard and secure password storage.",
     },
@@ -48,15 +54,15 @@ export const tools = [
         "Securely shuffle and encrypt data sequences for enhanced privacy and protection.",
     },
     {
-      id: "qr-generator",
-      title: "QR Code Generator",
-      description:
-        "Create QR codes easily for URLs, text, or other data for quick sharing.",
-    },
-    {
       id: "encrypted-qr",
       title: "Encrypted QR",
       description:
-        "Generate QR codes with encrypted data for secure and private information sharing.",
+      "Generate QR codes with encrypted data for secure and private information sharing.",
+    },
+    {
+      id: "qr-generator",
+      title: "QR Code Generator",
+      description:
+        "Create QR codes easily for URLs, text, or other data.",
     },
 ];

@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { Link } from 'react-router-dom';
 import { uploadFile, saveFileAsExt } from "../utils/fileUtils";
-import { extractViewData } from "../utils/uiHelpers";
-import { keyUnshuffle, aesCbcDecrypt } from "../utils/cryptoUtils";
+import { extractViewData, ThemeToggle } from "../utils/uiHelpers";
+import { mulberryUnshuffle, aesCbcDecrypt } from "../utils/cryptoUtils";
 
 
-const File8ShufflerDec = ({ showMsg }) => {
+const MulberryShuffleDec = ({ showMsg, theme, onToggleTheme }) => {
   const [fileInput, setFileInput] = useState(null);
   const [fileInfo, setFileInfo] = useState(null);
   const [base64Preview, setBase64] = useState("");
@@ -16,18 +16,30 @@ const File8ShufflerDec = ({ showMsg }) => {
 
   const handleUpload = (e) => {
     const file = e.target.files[0];
-    // Reject anything that isn't .8
-    if (!file.name.toLowerCase().endsWith(".8")) {
-      showMsg("Invalid file type. Please upload a .8 file.", true);
-      e.target.value = "";
-      return;
-    }
+    // Reset all states on every new upload attempt or failure
+    setUtf8("");
+    setBase64("");
+    setFileInfo(null);
+    setFileInput(null);
+    setDetectedExt(null);
+    e.target.value = "";  // Clear file input to allow re-upload of same file if needed
+
+    if (!file) return;
+
     if (file) {
       uploadFile(file, {
+        onDetectedExt: setDetectedExt,
+        onValidateExt: (ext) => {
+          if (ext !== "ec") {
+            showMsg("Invalid file type. Please upload a .ec file.", true);
+            e.target.value = "";
+            return false; 
+          }
+          return true; 
+        },
         onText: setUtf8,
         onBase64: setBase64,
         onFileInfo: setFileInfo,
-        onDetectedExt: setDetectedExt,
         onDataLoaded: setFileInput,
       });
     }
@@ -36,7 +48,7 @@ const File8ShufflerDec = ({ showMsg }) => {
   const handleShuffle = async () => {
     const key = document.getElementById("shuffle-key").value;
 
-    const output = keyUnshuffle(fileInput, key);
+    const output = mulberryUnshuffle(fileInput, key);
 
     if (output.error) {
       showMsg(output.error, true);
@@ -82,16 +94,19 @@ const File8ShufflerDec = ({ showMsg }) => {
     <>
       <main className="container">
         <nav>
-          <Link to="/">Home</Link>
-          <Link to="/file-8-shuffler">Encode</Link>
+          <div className="flex g1">
+            <Link to="/">Home</Link>
+            <Link to="/mulberry-shuffle-enc">Encode</Link>
+          </div>
+          <ThemeToggle theme={theme} onToggle={onToggleTheme} />
         </nav>
 
-        <h2>File 8 Shuffler Dec</h2>
+        <h2>Mulberry Shuffle</h2>
 
         {/* Decode Section */}
         <section>
           <h2>Decode</h2>
-          <label>Load a .8 file:</label>
+          <label>Load a .ec file:</label>
           <input type="file" onChange={handleUpload} />
           {fileInfo && (
             <p className="file-info">
@@ -163,4 +178,4 @@ const File8ShufflerDec = ({ showMsg }) => {
   );
 };
 
-export default File8ShufflerDec;
+export default MulberryShuffleDec;

@@ -4,32 +4,67 @@ import { sha256 } from "js-sha256";
 import { detectFileExtension } from "./fileUtils";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClone } from '@fortawesome/free-regular-svg-icons';
+import { faCircleHalfStroke } from '@fortawesome/free-solid-svg-icons';
+import QRCode from 'qrcode';
 
 
 // changes colors of body and text based on path
-export function ColorController() {
+export function ColorController({ theme }) {
   const location = useLocation();
   
   useEffect(() => {
     const footer = document.querySelector('footer');
+    const isHome = location.pathname === '/';
 
-    if (location.pathname === "/") {
+    // Reset body classes and styles
+    document.body.classList.remove('p2', 'theme-day', 'theme-night');
+    document.body.style.background = '';
+    document.body.style.color = '';
+
+    // Reset theme classes
+    ['main', 'h2', 'section'].forEach(selector => {
+      document.querySelectorAll(selector).forEach(el => {
+        el.classList.remove('theme-day', 'theme-night');
+      });
+    });
+
+    if (isHome) {
       document.body.style.background = "var(--primary-bg)";
       document.body.style.color = "var(--primary-text)";
       document.body.classList.add("p2");
       footer.classList.add('footer-primary');
       footer.classList.remove('footer-secondary');
     } else {
-      document.body.style.background = "var(--secondary-bg)";
-      document.body.style.color = "var(--secondary-text)";
       document.body.classList.remove('p2');
+      document.body.className = `theme-${theme}`;
       footer.classList.add('footer-secondary');
       footer.classList.remove('footer-primary');
-    }
-  }, [location.pathname]);
-  
 
-  return null; // no UI to render
+      // Apply theme classes 
+      ['main', 'h2', 'section'].forEach(selector => {
+        document.querySelectorAll(selector).forEach(el => {
+          el.classList.add(`theme-${theme}`);
+        });
+      });
+    }
+  }, [location.pathname, theme]);
+  
+}
+
+export function ThemeToggle({ theme, onToggle }) {
+  return (
+    <label className="theme-switch" title="Toggle theme">
+      <input
+        type="checkbox"
+        checked={theme === 'night'}
+        onChange={onToggle}
+        aria-label="Toggle theme"
+      />
+      <span className="slider">
+        <FontAwesomeIcon icon={faCircleHalfStroke} className="icon" />
+      </span>
+    </label>
+  );
 }
 
 // scrolls to the top when changing path
@@ -46,23 +81,65 @@ export function ScrollToTop() {
 
 // show error or success message
 export function Msg({ message, error, onClear }) {
+  const [fadeOut, setFadeOut] = useState(false);
+
   useEffect(() => {
     if (message) {
-      const timer = setTimeout(() => {
-        onClear();
-      }, 3000);
-      return () => clearTimeout(timer);
+  
+      setFadeOut(false);
+
+      const fadeTimer = setTimeout(() => setFadeOut(true), 1000);
+      const clearTimer = setTimeout(() => onClear(), 3000);
+      
+      return () => {
+        clearTimeout(fadeTimer);
+        clearTimeout(clearTimer);
+      };
     }
   }, [message, onClear]);
 
   if (!message) return null;
 
   return (
-    <div id="msg" className={error ? 'error-msg' : 'success-msg'}>
+    <div 
+      id="msg" 
+      className={`${error ? 'error-msg' : 'success-msg'} 
+      ${fadeOut ? 'fade-out' : ''}`}
+    >
       {message}
     </div>
   );
 }
+
+/**
+ * @param {boolean} show - whether to show the loader at all
+ * @param {'encode'|'decode'} mode - affects styling (e.g., color/verb)
+ * @param {string} emoji - emoji to display
+ * @param {number} bytes - bytes size compared to threshold = 50000
+ */
+export function Loader({ show = false, mode = "", emoji = "", bytes = 0}) {
+  const threshold = 50000;
+
+  if (!show || bytes <= threshold) return null;
+
+  const verb = mode === "encode" ? "Encoding" : "Decoding";
+  const defaultMsg = `${verb}... Please wait`;
+
+  return (
+    <div className="loader-overlay" aria-live="polite">
+      <div className="loader-wrapper">
+        <div className={`loader ${mode}`} />
+        <div className="loader-icon">
+          {emoji}
+        </div>
+      </div>
+      <div className="loader-text">
+        {defaultMsg}
+      </div>
+    </div>
+  );
+}
+
 
 // Returns today's date in DD/MM/YYYY format
 export function getTodayDate() {
@@ -101,11 +178,14 @@ export async function extractViewData(bytes) {
 
 export const PreCopyOutputBlock = ({ outputId }) => {
   const [copied, setCopied] = useState(false);
+  const [fadeOut, setFadeOut] = useState(false);
 
   const copyToClipboard = () => {
     const text = document.getElementById(outputId)?.innerText || '';
     navigator.clipboard.writeText(text).then(() => {
       setCopied(true);
+      setFadeOut(false);
+      setTimeout(() => setFadeOut(true), 1000);
       setTimeout(() => setCopied(false), 1500);
     });
   };
@@ -115,8 +195,8 @@ export const PreCopyOutputBlock = ({ outputId }) => {
       <pre id={outputId}></pre>
       {copied ? (
         <>
-          <span className="copy-msg">Copied!</span>
-          <Msg message="Copied to clipboard!" isError={false} />
+          <span className={`copy-msg ${fadeOut ? 'fade-out' : ''}`}>Copied!</span>
+          <Msg message="Copied to clipboard!" error={false} />
         </>
       ) : (
         <FontAwesomeIcon
@@ -135,3 +215,77 @@ const utils = {
 };
 
 export default utils;
+
+
+/**
+ * Generate a QR code into a given container.
+ * @param {Object} opts
+ * @param {string} opts.input - The string to encode.
+ * @param {HTMLElement} opts.container - DOM element to receive the canvas.
+ * @param {string} [opts.fgColor='#000000'] - Dark color.
+ * @param {string} [opts.bgColor='#ffffff'] - Light color.
+ * @param {'L'|'M'|'Q'|'H'} [opts.errorCorrectionLevel='M'] - QR error correction level.
+ * @param {number} [opts.margin=2] - Quiet zone around QR.
+ */
+export function generateQrCode({ input, container, fgColor = '#000000', bgColor = '#ffffff', errorCorrectionLevel, margin = 1}) {
+  if (!container) return Promise.reject(new Error("QR code container is required."));
+
+  container.innerHTML = '';
+
+  const opts = {
+    margin,
+    errorCorrectionLevel,
+    scale: 8,
+    color: {
+      dark: fgColor,
+      light: bgColor,
+    },
+  };
+
+  return new Promise((resolve, reject) => {
+    QRCode.toCanvas(input, opts, (err, canvas) => {
+      if (err) {
+        return reject(new Error("QR generation failed: " + err.message));
+      }
+      container.appendChild(canvas);
+      resolve(canvas);
+    });
+  });
+}
+
+/**
+ * Hook: keeps a byte count of the value of a DOM input/textarea via ref.
+ * @param {string<HTMLElement>} input
+ * @param {(n:number)=>void} setCount
+ */
+export function useByteCounter(input, setCount) {
+  useEffect(() => {
+    const encoder = new TextEncoder();
+    setCount(encoder.encode(input).length);
+  }, [input, setCount]);
+}
+
+/**
+ * Given the byte length of the input, returns the error correction info string and metadata.
+ * @param {number} byteLength
+ * @returns {{ level: string|null, label: string, maxBytes: number|null }}
+ */
+export function getQrCorrectionInfo(byteLength) {
+  if (byteLength === 0) {
+    return "No data";
+  }
+  if (byteLength > 2950) {
+    return "Data too large for QR, max 2900 B";
+  }
+  if (byteLength <= 1200) {
+    return "High (H) - max 1200 B";
+  }
+  if (byteLength <= 1600) {
+    return "Quartile (Q) - max 1600 B";
+  }
+  if (byteLength <= 2300) {
+    return "Medium (M) - max 2300 B";
+  }
+  // <= 2900
+  return "Low (L) - max 2900 B";
+}

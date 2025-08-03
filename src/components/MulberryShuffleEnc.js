@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { Link } from 'react-router-dom';
-import { uploadFile, saveFileAs8 } from "../utils/fileUtils";
-import { extractViewData } from "../utils/uiHelpers";
-import { keyShuffle, aesCbcEncrypt } from "../utils/cryptoUtils";
+import { uploadFile, saveFileAsEc } from "../utils/fileUtils";
+import { extractViewData, ThemeToggle } from "../utils/uiHelpers";
+import { mulberryShuffle, aesCbcEncrypt } from "../utils/cryptoUtils";
 
 
-const File8ShufflerEnc = ({ showMsg }) => {
+const MulberryShuffleEnc = ({ showMsg, theme, onToggleTheme }) => {
   const [fileInput, setFileInput] = useState(null);
   const [fileInfo, setFileInfo] = useState(null);
   const [base64Preview, setBase64] = useState("");
@@ -17,6 +17,16 @@ const File8ShufflerEnc = ({ showMsg }) => {
   
   const handleUpload = (e) => {
     const file = e.target.files[0];
+    // Reset all states on every new upload attempt or failure
+    setUtf8("");
+    setBase64("");
+    setFileInfo(null);
+    setFileInput(null);
+    setDetectedExt(null);
+    e.target.value = "";  // Clear file input to allow re-upload of same file if needed
+
+    if (!file) return;
+    
     if (file) {
       uploadFile(file, {
         onText: setUtf8,
@@ -31,7 +41,7 @@ const File8ShufflerEnc = ({ showMsg }) => {
   const handleShuffle = async () => {
     const key = document.getElementById("shuffle-key").value;
 
-    const output = keyShuffle(fileInput, key);
+    const output = mulberryShuffle(fileInput, key);
 
     if (output.error) {
       showMsg(output.error, true);
@@ -70,7 +80,7 @@ const File8ShufflerEnc = ({ showMsg }) => {
   const handleSaveFile = () => {
     if (!fileInput) return showMsg("Nothing to save.", true);
 
-    saveFileAs8(fileInput);
+    saveFileAsEc(fileInput);
   }
 
 
@@ -78,11 +88,14 @@ const File8ShufflerEnc = ({ showMsg }) => {
     <> 
      <main className="container">
         <nav>
-          <Link to="/">Home</Link>
-          <Link to="/file-8-shuffler-dec">Decode</Link>
+          <div className="flex g1">
+            <Link to="/">Home</Link>
+            <Link to="/mulberry-shuffle-dec">Decode</Link>
+          </div>
+          <ThemeToggle theme={theme} onToggle={onToggleTheme} />
         </nav>
 
-        <h2>File 8 Shuffler Enc</h2>
+        <h2>Mulberry Shuffle</h2>
 
         {/* Encode Section */}
         <section>
@@ -149,11 +162,11 @@ const File8ShufflerEnc = ({ showMsg }) => {
             Detected file type: {detectedExt ? `.${detectedExt}` : "(none)"}
           </p>
 
-          <button onClick={handleSaveFile}>Save as .8</button>
+          <button onClick={handleSaveFile}>Save as .ec</button>
         </section>
       </main>
     </>
   );
 };
 
-export default File8ShufflerEnc;
+export default MulberryShuffleEnc;

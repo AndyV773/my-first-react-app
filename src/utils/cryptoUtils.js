@@ -1,4 +1,5 @@
 import CryptoJS from "crypto-js";
+import pako from "pako";
 
 // Salt utilities
 function generateSaltBytes(length = 16) {
@@ -12,9 +13,6 @@ function bytesToHex(array) {
         .map(b => b.toString(16).padStart(2, '0'))
         .join('');
 }
-
-console.log(generateSaltBytes())
-console.log(bytesToHex(generateSaltBytes()))
 
 // PRNG based on seed string
 function mulberry32(seed) {
@@ -57,7 +55,7 @@ function seededShuffle(array, key, reverse = false) {
  * @param {boolean} reverse - If true, unshuffles the data.
  * @returns {Uint8Array} The shuffled (or unshuffled) result.
  */
-export function keyShuffle(fileInput, key) {
+export function mulberryShuffle(fileInput, key) {
     if (!fileInput) {
         return { error: "Upload a file." };
     }
@@ -79,7 +77,7 @@ export function keyShuffle(fileInput, key) {
     return { result: combined };
 }
 
-export function keyUnshuffle(fileInput, key) {
+export function mulberryUnshuffle(fileInput, key) {
   if (!fileInput) {
     return { error: "Upload a file." };
   }
@@ -192,3 +190,71 @@ export function aesCbcDecrypt(encryptedBytes, password) {
     return { error: "Decryption failed: " + err.message };
   }
 }
+
+export function randomizer(allChar) {
+  const rand = Math.random() * Math.random(); // bias toward lower numbers
+  return allChar
+    ? Math.floor(rand * (0x10ffff + 1))
+    : Math.floor(rand * 800) + 1;
+}
+
+export function uint8ToBase64(uint8) {
+  let binary = "";
+  for (let i = 0; i < uint8.length; i++) {
+    binary += String.fromCharCode(uint8[i]);
+  }
+  return btoa(binary);
+}
+
+// pako compression helper
+export function compress(input) {
+  return pako.deflate(input);
+}
+
+// AES-GCM encrypt data with password, returns base64 string
+export async function aesGcmEncrypt(data, password) {
+  const enc = new TextEncoder();
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const keyMaterial = await crypto.subtle.importKey(
+    "raw",
+    enc.encode(password),
+    { name: "PBKDF2" },
+    false,
+    ["deriveKey"]
+  );
+  const key = await crypto.subtle.deriveKey(
+    {
+      name: "PBKDF2",
+      salt,
+      iterations: 100000,
+      hash: "SHA-256",
+    },
+    keyMaterial,
+    { name: "AES-GCM", length: 256 },
+    false,
+    ["encrypt"]
+  );
+
+  const dataBuffer = typeof data === "string" ? enc.encode(data) : data;
+  const encrypted = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, dataBuffer);
+
+  // Combine salt + iv + encrypted
+  const combined = new Uint8Array(salt.length + iv.length + encrypted.byteLength);
+  combined.set(salt, 0);
+  combined.set(iv, salt.length);
+  combined.set(new Uint8Array(encrypted), salt.length + iv.length);
+
+  // Convert to base64
+  const toBase64 = (bytes) => {
+    let binary = '';
+    for (let i = 0; i < bytes.length; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
+  };
+
+  return toBase64(combined);
+}
+
+
