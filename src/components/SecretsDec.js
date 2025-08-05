@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from 'react-router-dom';
-import secrets from "secrets.js-grempe";
-import { ThemeToggle } from "../utils/uiHelpers";
-
+import { PreCopyOutputBlock, ThemeToggle } from "../utils/uiHelpers";
 
 const SecretsDec = ({ showMsg, theme, onToggleTheme }) => {
   const [shareCount, setShareCount] = useState(2);
@@ -11,7 +9,10 @@ const SecretsDec = ({ showMsg, theme, onToggleTheme }) => {
 
   useEffect(() => {
     const newInputs = Array(shareCount).fill("").map((_, i) => inputs[i] || "");
-    setInputs(newInputs);
+
+    const isSame = newInputs.every((val, i) => val === inputs[i]);
+    if (!isSame) setInputs(newInputs);
+
   }, [shareCount, inputs]);
 
   const updateInput = (value, index) => {
@@ -22,11 +23,12 @@ const SecretsDec = ({ showMsg, theme, onToggleTheme }) => {
 
   const combineShares = () => {
     const validShares = inputs.map(s => s.trim()).filter(Boolean);
-    if (validShares.length < 2) return alert("Enter at least 2 shares.");
+    if (validShares.length < 2) return showMsg("Enter at least 2 shares.", true);
 
     try {
-      const hex = secrets.combine(validShares);
-      const original = secrets.hex2str(hex);
+      const sec = window.secrets; // Use global secrets from CDN
+      const hex = sec.combine(validShares);
+      const original = sec.hex2str(hex);
       setReconstructed(original);
     } catch (e) {
       showMsg("Error combining shares. Make sure they are valid.", true);
@@ -44,10 +46,11 @@ const SecretsDec = ({ showMsg, theme, onToggleTheme }) => {
           </div>
           <ThemeToggle theme={theme} onToggle={onToggleTheme} />
         </nav>
-        <h2>Decode Secret</h2>
-        <section>
-          <label>How many shares?</label>
-          <select value={shareCount} onChange={(e) => setShareCount(parseInt(e.target.value))}>
+        <h2>Secret Sharing</h2>
+        <section id="decode-shares">
+          <h2>Decode</h2>
+          <label htmlFor="add-shares">Add shares:</label>
+          <select id="add-shares" value={shareCount} onChange={(e) => setShareCount(parseInt(e.target.value))}>
             {Array.from({ length: 19 }, (_, i) => i + 2).map((n) => (
               <option key={n} value={n}>{n}</option>
             ))}
@@ -60,22 +63,23 @@ const SecretsDec = ({ showMsg, theme, onToggleTheme }) => {
                 type="text"
                 value={value}
                 onChange={(e) => updateInput(e.target.value, idx)}
-                placeholder="Paste share string"
+                placeholder="Paste share here..."
               />
             </div>
           ))}
 
-          <button onClick={combineShares}>Combine Shares</button>
+          <button onClick={combineShares} className="decode">Combine Shares</button>
 
           {reconstructed && (
-            <p>
-              ✅ Reconstructed Secret: <code>{reconstructed}</code>
-            </p>
+            <div className="sss-pre">
+              Reconstructed Secret:
+              <PreCopyOutputBlock outputId={"secret"} text={reconstructed} />
+            </div>
           )}
         </section>
       </main>
     </>
   );
-}
+};
 
 export default SecretsDec;

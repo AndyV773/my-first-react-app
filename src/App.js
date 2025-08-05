@@ -6,8 +6,10 @@ import MulberryShuffleEnc from "./components/MulberryShuffleEnc.js";
 import MulberryShuffleDec from "./components/MulberryShuffleDec.js";
 import QuantShuffleEnc from "./components/QuantShuffleEnc.js";
 import QuantShuffleDec from "./components/QuantShuffleDec.js";
-import SecretsEnc from "./components/SecretsEnc.js";
-import SecretsDec from "./components/SecretsDec.js";
+import SecretsEnc from "./components/secretsEnc.js";
+import SecretsDec from "./components/secretsDec.js";
+import FileIntegrity from "./components/FileIntegrity.js";
+import PasswordGen from "./components/PasswordGen.js";
 import QrGenerator from "./components/QrGenerator.js";
 import "./App.css";
 import { motion } from "framer-motion";
@@ -48,7 +50,7 @@ function App() {
         emoji={loaderState.emoji}
         bytes={loaderState.bytes}
       />
-      <h1>Encryption & Data Transformation Tool Kit</h1>
+      <h1>Encryption & Data Transformation ToolKit</h1>
 
       <Routes>
         <Route
@@ -82,8 +84,10 @@ function App() {
         <Route path="/mulberry-shuffle-dec" element={<MulberryShuffleDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
         <Route path="/quant-shuffle-enc" element={<QuantShuffleEnc showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} showLoader={showLoader} />} />
         <Route path="/quant-shuffle-dec" element={<QuantShuffleDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} showLoader={showLoader} />} />
-        <Route path="/sss-enc" element={<SecretsEnc showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} showLoader={showLoader} />} />
-        <Route path="/sss-dec" element={<SecretsDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} showLoader={showLoader} />} />
+        <Route path="/sss-enc" element={<SecretsEnc showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
+        <Route path="/sss-dec" element={<SecretsDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
+        <Route path="/file-integrity" element={<FileIntegrity showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
+        <Route path="/password-gen" element={<PasswordGen showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
         <Route path="/qr-generator" element={<QrGenerator showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
         {/* Add more routes for other tools if needed */}
       </Routes>

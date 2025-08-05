@@ -176,13 +176,17 @@ export async function extractViewData(bytes) {
   return { base64, utf8, ext };
 }
 
-export const PreCopyOutputBlock = ({ outputId }) => {
+export const PreCopyOutputBlock = ({ outputId, text }) => {
   const [copied, setCopied] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
 
+  let output;
+
+  if (!text) text = output;
+
   const copyToClipboard = () => {
-    const text = document.getElementById(outputId)?.innerText || '';
-    navigator.clipboard.writeText(text).then(() => {
+    output = document.getElementById(outputId)?.innerText || '';
+    navigator.clipboard.writeText(output).then(() => {
       setCopied(true);
       setFadeOut(false);
       setTimeout(() => setFadeOut(true), 1000);
@@ -192,7 +196,7 @@ export const PreCopyOutputBlock = ({ outputId }) => {
 
   return (
     <div className="code-block">
-      <pre id={outputId}></pre>
+      <pre id={outputId}>{text}</pre>
       {copied ? (
         <>
           <span className={`copy-msg ${fadeOut ? 'fade-out' : ''}`}>Copied!</span>

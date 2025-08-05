@@ -3,7 +3,7 @@ export const tools = [
       id: "about",
       title: "About",
       description:
-        "",
+        "The encryption toolkit created for demonstration and educational purposes (although fully functional). Find out more.",
     },
     {
       id: "aes-cbc",
@@ -27,37 +27,37 @@ export const tools = [
       id: "mulberry-shuffle-enc",
       title: "Mulberry Shuffle",
       description:
-        "A deterministic Mulberry shuffle for files and encrypt with AES-CBC. Download as .ec file.",
+        "A deterministic Mulberry shuffle for files or text and encrypt with AES-CBC. Download .ec file.",
     },
     {
       id: "quant-shuffle-enc",
       title: "Quantum Shuffle",
       description:
-        "High load randomize file or text shuffle with added AES-GCM encryption. Download as QR .txt or .ec file.",
+        "High load randomize file or text shuffle with added AES-GCM encryption. Download as QR or .ec file.",
     },
     {
       id: "file-integrity",
       title: "File Integrity",
       description:
-        "Apply multiple hashing algorithms to data for layered security and integrity checks.",
+        "Apply common hashing algorithms to data for security and integrity checks.",
     },
     {
       id: "argon2",
       title: "SHA-256 & Argon2",
       description:
-        "Implement Argon2 password hashing for memory-hard and secure password storage.",
+        "Implement multiple SHA-256 or Argon2 password hashing for memory-hard and secure password storage.",
     },
     {
       id: "sss-enc",
-      title: "Secrect Shares Split",
+      title: "Secrect Sharing",
       description:
-        "Securely shuffle and encrypt data sequences for enhanced privacy and protection.",
+        "Enter a secret or private key, split it into shares, and set thresholds with this interesting concept.",
     },
     {
-      id: "password-generator",
+      id: "password-gen",
       title: "Password Generator",
       description:
-        "Securely shuffle and encrypt data sequences for enhanced privacy and protection.",
+        "Securely generate strong and randomised passwords.",
     },
     {
       id: "encrypted-qr",
