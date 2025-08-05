@@ -8,7 +8,7 @@ function generateSaltBytes(length = 16) {
     return array;
 }
 
-function bytesToHex(array) {
+export function bytesToHex(array) {
     return Array.from(array)
         .map(b => b.toString(16).padStart(2, '0'))
         .join('');
@@ -200,15 +200,42 @@ export function randomizer(allChar) {
 
 export function uint8ToBase64(uint8) {
   let binary = "";
-  for (let i = 0; i < uint8.length; i++) {
-    binary += String.fromCharCode(uint8[i]);
+  const chunkSize = 0x8000; // Avoid call stack overflow
+  for (let i = 0; i < uint8.length; i += chunkSize) {
+    binary += String.fromCharCode(...uint8.subarray(i, i + chunkSize));
   }
   return btoa(binary);
+}
+
+export function base64ToUint8(base64) {
+  const binary = atob(base64);
+  const len = binary.length;
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return bytes;
+}
+
+
+// text encoder helper
+export function textEncoder(str) {
+  return new TextEncoder().encode(str);
+}
+
+// text decoder helper
+export function textDecoder(str) {
+  return new TextDecoder().decode(str);
 }
 
 // pako compression helper
 export function compress(input) {
   return pako.deflate(input);
+}
+
+// pako decompression help
+export function decompress(input) {
+  return pako.inflate(input);
 }
 
 // AES-GCM encrypt data with password, returns base64 string
@@ -246,15 +273,36 @@ export async function aesGcmEncrypt(data, password) {
   combined.set(new Uint8Array(encrypted), salt.length + iv.length);
 
   // Convert to base64
-  const toBase64 = (bytes) => {
-    let binary = '';
-    for (let i = 0; i < bytes.length; i++) {
-      binary += String.fromCharCode(bytes[i]);
-    }
-    return btoa(binary);
-  };
+  // const toBase64 = (bytes) => {
+  //   let binary = '';
+  //   for (let i = 0; i < bytes.length; i++) {
+  //     binary += String.fromCharCode(bytes[i]);
+  //   }
+  //   return btoa(binary);
+  // };
 
-  return toBase64(combined);
+  // return toBase64(combined);
+  return combined;
 }
 
+
+// AES gcm Decryption
+export async function aesGcmDecrypt(base64, password) {
+  // const data = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
+  const data = base64;
+  const salt = data.slice(0, 16);
+  const iv = data.slice(16, 28);
+  const ciphertext = data.slice(28);
+  const enc = new TextEncoder();
+  const keyMaterial = await crypto.subtle.importKey("raw", enc.encode(password), { name: "PBKDF2" }, false, ["deriveKey"]);
+  const key = await crypto.subtle.deriveKey(
+    { name: "PBKDF2", salt, iterations: 100000, hash: "SHA-256" },
+    keyMaterial,
+    { name: "AES-GCM", length: 256 },
+    false,
+    ["decrypt"]
+  );
+  const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ciphertext);
+  return new Uint8Array(decrypted); // raw bytes
+}
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { uploadFile, saveFileAsEc, downloadQrCode } from '../utils/fileUtils';
-import { aesGcmEncrypt, compress } from '../utils/cryptoUtils';
+import { aesGcmEncrypt, compress, uint8ToBase64, textEncoder } from '../utils/cryptoUtils';
 import { useByteCounter, ThemeToggle, generateQrCode, getQrCorrectionInfo } from '../utils/uiHelpers';
 
 
@@ -10,41 +10,47 @@ const QuantShuffleEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
   const [fileInput, setFileInput] = useState(false); 
   const [fileInfo, setFileInfo] = useState(null);
   const [utf8Preview, setUtf8] = useState(''); // content decoded from file
+  const [dataInputVal, setDataInputVal] = useState('');
   const [dataInput, setDataInput] = useState('');
 
   // Encryption state
   const [skipAES, setSkipAES] = useState(false);
+  const [storeBase64, setStoreBase64] = useState(false);
+
+  const [dataEnc, setDataEnc] = useState('');
+  const [keyEnc, setKeyEnc] = useState('');
+
+  const [dataOutput, setDataOutput] = useState('');
+  const [keyOutput, setKeyOutput] = useState('');
 
   // Byte counts
   const [inputBytes, setInputBytes] = useState(0);
-  useByteCounter(dataInput, setInputBytes);
 
   const [shuffleVal, setShuffleVal] = useState('');
   const [shuffleBytes, setShuffledBytes] = useState(0);
-  useByteCounter(shuffleVal, setShuffledBytes);
 
   const [keyVal, setKeyVal] = useState('');
   const [keyBytes, setKeyBytes] = useState(0);
-  useByteCounter(keyVal, setKeyBytes);
 
   const [dataEncVal, setDataEncVal] = useState('');
   const [dataEncBytes, setDataEncBytes] = useState(0);
-  useByteCounter(dataEncVal, setDataEncBytes);
 
   const [keyEncVal, setKeyEncVal] = useState('');
   const [keyEncBytes, setKeyEncBytes] = useState(0);
-  useByteCounter(keyEncVal, setKeyEncBytes);
 
-  const [dataOutput, setDataOutput] = useState('');
+  const [dataOutputVal, setDataOutputVal] = useState('');
   const [dataOutputBytes, setDataOutputBytes] = useState(0);
-  useByteCounter(dataOutput, setDataOutputBytes);
 
-  const [keyOutput, setKeyOutput] = useState('');
+  const [keyOutputVal, setKeyOutputVal] = useState('');
   const [keyOutputBytes, setKeyOutputBytes] = useState(0);
-  useByteCounter(keyOutput, setKeyOutputBytes);
-
-  const [showDownloadData, setShowDownloadData] = useState(false);
-  const [showDownloadKey, setShowDownloadKey] = useState(false);
+  
+  useByteCounter(dataInputVal, setInputBytes);
+  useByteCounter(shuffleVal, setShuffledBytes);
+  useByteCounter(keyVal, setKeyBytes);
+  useByteCounter(dataEncVal, setDataEncBytes);
+  useByteCounter(keyEncVal, setKeyEncBytes);
+  useByteCounter(dataOutputVal, setDataOutputBytes);
+  useByteCounter(keyOutputVal, setKeyOutputBytes);
   
   // Refs
   const workerRef = useRef(null);
@@ -55,34 +61,14 @@ const QuantShuffleEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
   const dataContainerRef = useRef(null);
   const keyContainerRef = useRef(null);
 
-  const dataCorrection = getQrCorrectionInfo(dataOutputBytes);
-  const keyCorrection = getQrCorrectionInfo(keyOutputBytes);
+  // ui helpers
+  const { level: dataLevel, label: dataCorrection } = getQrCorrectionInfo(dataOutputBytes);
+  const { level: keyLevel, label: keyCorrection } = getQrCorrectionInfo(keyOutputBytes);
+  const [showDownloadData, setShowDownloadData] = useState(false);
+  const [showDownloadKey, setShowDownloadKey] = useState(false);
   
-  useEffect(() => {
-    skipAESRef.current = skipAES;
-  }, [skipAES]);
 
-  // Sync file content into dataInput once when file loads
-  useEffect(() => {
-    if (fileInput) {
-        setDataInput(utf8Preview);
-    } else {
-        setDataInput("");
-    }
-  }, [fileInput, utf8Preview]);
-
-  // Derive final output depending on skipAES
-  useEffect(() => {
-    if (skipAES) {
-        setDataOutput(shuffleVal);
-        setKeyOutput(keyVal);
-    } else {
-        setDataOutput(dataEncVal);
-        setKeyOutput(keyEncVal);
-    }
-  }, [skipAES, shuffleVal, keyVal, dataEncVal, keyEncVal]);
-
-  // Handle file upload
+   // Handle file upload
   const handleUpload = (e) => {
     const file = e.target.files[0];
     // reset
@@ -102,6 +88,52 @@ const QuantShuffleEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
   };
 
 
+  // Sync file content into dataInput once when file loads
+  useEffect(() => {
+    if (fileInput) {
+        setDataInputVal(utf8Preview);
+    } else {
+        setDataInputVal("");
+    }
+  }, [fileInput, utf8Preview]);
+
+
+  useEffect(() => {
+    skipAESRef.current = skipAES;
+  }, [skipAES]);
+
+
+  // Derive final output depending on skipAES or storeBase64
+  useEffect(() => {
+    if (skipAES) {
+      if (storeBase64) {
+        setDataOutputVal(uint8ToBase64(textEncoder(shuffleVal)));
+        setDataOutput(uint8ToBase64(textEncoder(shuffleVal)));
+        setKeyOutputVal(uint8ToBase64(textEncoder(keyVal)));
+        setKeyOutput(uint8ToBase64(textEncoder(keyVal)));
+      } else {
+        setDataOutputVal(shuffleVal);
+        setDataOutput(shuffleVal);
+        setKeyOutputVal(keyVal);
+        setKeyOutput(keyVal);
+      }
+    } else {
+      if (storeBase64) {
+        setDataOutputVal(uint8ToBase64(dataEnc));
+        setDataOutput(uint8ToBase64(dataEnc));
+        setKeyOutputVal(uint8ToBase64(keyEnc));
+        setKeyOutput(uint8ToBase64(keyEnc));
+      } else {
+        setDataOutputVal(dataEncVal);
+        setDataOutput(dataEnc);
+        setKeyOutputVal(keyEncVal);
+        setKeyOutput(keyEnc);
+      }
+    }
+  }, [skipAES, storeBase64, shuffleVal, keyVal, dataEncVal, keyEncVal, dataEnc, keyEnc]);
+
+
+
   useEffect(() => {
     workerRef.current = new Worker(
         new URL('../workers/cryptoWorker.worker.js', import.meta.url),
@@ -110,7 +142,7 @@ const QuantShuffleEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
 
     const onMessage = (e) => {
         const { type, result, error } = e.data;
-        if (type === "done") {
+        if (type === "done-shuffle") {
             const { shuffled, key } = result;
         
             // Set state and UI
@@ -124,9 +156,7 @@ const QuantShuffleEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
             }
             
             showMsg('Shuffle Complete!', false);
-            setTimeout(() => {
-                showLoader({ show: false });
-            }, 2000);
+            setTimeout(() => showLoader({ show: false }), 2000);
         } else if (type === 'error') {
             showMsg('Shuffle failed: ' + error, true);
             showLoader({ show: false });
@@ -161,6 +191,7 @@ const QuantShuffleEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
     });
   }, [dataInput, fileInput, showMsg, showLoader, inputBytes]);
 
+
   // Encryption handler
   const handleEncryption = useCallback( async (label) => {
       if (skipAES) {
@@ -192,11 +223,14 @@ const QuantShuffleEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
       try {
         const compressed = compress(input);
         const encrypted = await aesGcmEncrypt(compressed, password);
+        const utf8 = new TextDecoder();
 
         if (label === 'data') {
-          setDataEncVal(encrypted);
+          setDataEncVal(utf8.decode(encrypted));
+          setDataEnc(encrypted);
         } else {
-          setKeyEncVal(encrypted);
+          setKeyEncVal(utf8.decode(encrypted));
+          setKeyEnc(encrypted);
         }
         showMsg(`${label} Encryption Complete!`, false);
       } catch (err) {
@@ -207,33 +241,15 @@ const QuantShuffleEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
   );
 
   
-  const handleGenerate = useCallback(async (type, input, bytes) => {
+  const handleGenerate = useCallback(async (type, input) => {
         let container;
-        if (type === "data") {
-            if (!dataContainerRef.current) {
-                return;
-            } else {
-                container = dataContainerRef.current;
-            }
-        } else if (type === "key") {
-            if (!keyContainerRef.current) {
-                return;
-            } else {
-                container = keyContainerRef.current;
-            }
-        }
-  
-        let level;
-        if (bytes <= 1200) {
-          level = "H";
-        } else if (bytes <= 1600) {
-          level = "Q";
-        } else if (bytes <= 2300) {
-          level = "M";
-        } else if (bytes <= 2900) {
-          level = "L";
-        } else {
-          return showMsg("Exceeds maximum capacity for QR code.", true);
+        let level
+        if (type === "data") {    
+            container = dataContainerRef.current;
+            level = dataLevel;
+        } else if (type === "key") {   
+            container = keyContainerRef.current;
+            level = keyLevel;
         }
         
         try {
@@ -247,7 +263,8 @@ const QuantShuffleEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
         } catch (err) {
           showMsg("QR generation failed: " + (err?.message || "unknown error"), true);
         }
-    }, [showMsg]);
+    }, [dataLevel, keyLevel, showMsg]);
+
 
     const handleQrDownload = (type) => {
         let container;
@@ -263,6 +280,7 @@ const QuantShuffleEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
             showMsg("QR code not found.", true);
         }
     };
+
 
     const handleSaveFile = (type) => {
         if (type === "data") {
@@ -305,11 +323,12 @@ const QuantShuffleEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
         <div>
           <textarea
             rows="5"
-            value={dataInput}
+            value={dataInputVal}
             onChange={(e) => {
                 setFileInput(false);
                 setFileInfo(null);
                 setUtf8('');
+                setDataInputVal(e.target.value);
                 setDataInput(e.target.value);
             }}
             placeholder="Enter text..."
@@ -394,13 +413,21 @@ const QuantShuffleEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
 
       <section id="qr">
         <h2>Download</h2>
+        <label>
+          Store as base64
+          <input
+            type="checkbox"
+            checked={storeBase64}
+            onChange={(e) => setStoreBase64(e.target.checked)}
+          />
+        </label>
         <div className="qr-container">
           <div>
             <div className="padding">
               <h3>Data</h3>
               <textarea
                 rows="5"
-                value={dataOutput}
+                value={dataOutputVal}
                 placeholder="Data output"
                 readOnly
               />
@@ -432,7 +459,7 @@ const QuantShuffleEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
               <h3>Key</h3>
               <textarea
                 rows="5"
-                value={keyOutput}
+                value={keyOutputVal}
                 placeholder="Key output"
                 readOnly
               />

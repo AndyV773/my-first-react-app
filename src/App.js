@@ -1,18 +1,20 @@
 import React, { useState, useCallback } from "react";
 import { HashRouter as Router, Routes, Route, Link } from "react-router-dom";
-import LockScreen from "./components/LockedState";
-import ObfuscationTools from "./components/ObfuscationTools";
+import LockScreen from "./components/LockedState.js";
+import ObfuscationTools from "./components/ObfuscationTools.js";
 import MulberryShuffleEnc from "./components/MulberryShuffleEnc.js";
 import MulberryShuffleDec from "./components/MulberryShuffleDec.js";
 import QuantShuffleEnc from "./components/QuantShuffleEnc.js";
 import QuantShuffleDec from "./components/QuantShuffleDec.js";
-import QrGenerator from "./components/QrGenerator";
+import SecretsEnc from "./components/SecretsEnc.js";
+import SecretsDec from "./components/SecretsDec.js";
+import QrGenerator from "./components/QrGenerator.js";
 import "./App.css";
 import { motion } from "framer-motion";
-import ToolBox from './components/ToolBox';
+import ToolBox from './components/ToolBox.js';
 import { tools } from './data/tools.js';
 import { containerVariants, itemVariants } from './animations/variants.js';
-import { Msg, ColorController, ScrollToTop, Loader } from './utils/uiHelpers';
+import { Msg, ColorController, ScrollToTop, Loader } from './utils/uiHelpers.js';
 
 
 function App() {
@@ -79,7 +81,9 @@ function App() {
         <Route path="/mulberry-shuffle-enc" element={<MulberryShuffleEnc showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
         <Route path="/mulberry-shuffle-dec" element={<MulberryShuffleDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
         <Route path="/quant-shuffle-enc" element={<QuantShuffleEnc showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} showLoader={showLoader} />} />
-        <Route path="/quant-shuffle-dec" element={<QuantShuffleDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
+        <Route path="/quant-shuffle-dec" element={<QuantShuffleDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} showLoader={showLoader} />} />
+        <Route path="/sss-enc" element={<SecretsEnc showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} showLoader={showLoader} />} />
+        <Route path="/sss-dec" element={<SecretsDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} showLoader={showLoader} />} />
         <Route path="/qr-generator" element={<QrGenerator showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
         {/* Add more routes for other tools if needed */}
       </Routes>

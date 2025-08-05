@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from 'react-router-dom';
-import { uploadFile, saveFileAsExt } from "../utils/fileUtils";
+import { uploadEncFile, saveFileAsExt } from "../utils/fileUtils";
 import { extractViewData, ThemeToggle } from "../utils/uiHelpers";
 import { mulberryUnshuffle, aesCbcDecrypt } from "../utils/cryptoUtils";
 
@@ -14,36 +14,36 @@ const MulberryShuffleDec = ({ showMsg, theme, onToggleTheme }) => {
   const [useAES, setUseAES] = useState(false);
   const [aesKey, setAesKey] = useState("");
 
-  const handleUpload = (e) => {
-    const file = e.target.files[0];
-    // Reset all states on every new upload attempt or failure
-    setUtf8("");
-    setBase64("");
-    setFileInfo(null);
-    setFileInput(null);
-    setDetectedExt(null);
-    e.target.value = "";  // Clear file input to allow re-upload of same file if needed
+  const handleUpload = async (e) => {
+      const file = e.target.files?.[0];
+      // Reset all states on every new upload attempt or failure
+      setUtf8("");
+      setBase64("");
+      setFileInfo(null);
+      setFileInput(null);
+      setDetectedExt(null);
+      e.target.value = "";  // Clear file input to allow re-upload of same file if needed
 
-    if (!file) return;
+      if (!file) return;
 
-    if (file) {
-      uploadFile(file, {
-        onDetectedExt: setDetectedExt,
-        onValidateExt: (ext) => {
-          if (ext !== "ec") {
-            showMsg("Invalid file type. Please upload a .ec file.", true);
-            e.target.value = "";
-            return false; 
-          }
-          return true; 
-        },
-        onText: setUtf8,
-        onBase64: setBase64,
-        onFileInfo: setFileInfo,
-        onDataLoaded: setFileInput,
+      const result = await uploadEncFile(file, {
+          onText: setUtf8,
+          onBase64: setBase64,
+          onFileInfo: setFileInfo,
+          onDataLoaded: setFileInput,
       });
-    }
+
+      if (result?.error) {
+          showMsg(`Upload failed: ${result.error}`, true);
+          setUtf8("");
+          setBase64("");
+          setFileInfo(null);
+          setFileInput(null);
+          setDetectedExt(null);
+          return;
+      }
   };
+  
   
   const handleShuffle = async () => {
     const key = document.getElementById("shuffle-key").value;
@@ -168,10 +168,10 @@ const MulberryShuffleDec = ({ showMsg, theme, onToggleTheme }) => {
             readOnly
           ></textarea>
           <p id="detected-in-ext">
-            Detected file type: {detectedExt ? `.${detectedExt}` : "(none)"}
+            Detected file type: {detectedExt ? `${detectedExt}` : "(none)"}
           </p>
           
-          <button onClick={handleSaveFile}>Save</button>
+          <button onClick={handleSaveFile}>Save as {detectedExt}</button>
         </section>
       </main>
     </>

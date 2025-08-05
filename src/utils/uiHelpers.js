@@ -271,21 +271,10 @@ export function useByteCounter(input, setCount) {
  * @returns {{ level: string|null, label: string, maxBytes: number|null }}
  */
 export function getQrCorrectionInfo(byteLength) {
-  if (byteLength === 0) {
-    return "No data";
-  }
-  if (byteLength > 2950) {
-    return "Data too large for QR, max 2900 B";
-  }
-  if (byteLength <= 1200) {
-    return "High (H) - max 1200 B";
-  }
-  if (byteLength <= 1600) {
-    return "Quartile (Q) - max 1600 B";
-  }
-  if (byteLength <= 2300) {
-    return "Medium (M) - max 2300 B";
-  }
-  // <= 2900
-  return "Low (L) - max 2900 B";
+  if (byteLength === 0) return { level: null, label: "No data" };
+  if (byteLength <= 1200) return { level: "H", label: "High (H) - max 1200 B" };
+  if (byteLength <= 1600) return { level: "Q", label: "Quartile (Q) - max 1600 B" };
+  if (byteLength <= 2300) return { level: "M", label: "Medium (M) - max 2300 B" };
+  if (byteLength <= 2900) return { level: "L", label: "Low (L) - max 2900 B" };
+  return { level: null, label: "Data too large for QR, max 2900 B" };
 }

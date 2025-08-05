@@ -48,8 +48,14 @@ export const tools = [
         "Implement Argon2 password hashing for memory-hard and secure password storage.",
     },
     {
-      id: "shufflecrypt",
-      title: "ShuffleCrypt",
+      id: "sss-enc",
+      title: "Secrect Shares Split",
+      description:
+        "Securely shuffle and encrypt data sequences for enhanced privacy and protection.",
+    },
+    {
+      id: "password-generator",
+      title: "Password Generator",
       description:
         "Securely shuffle and encrypt data sequences for enhanced privacy and protection.",
     },

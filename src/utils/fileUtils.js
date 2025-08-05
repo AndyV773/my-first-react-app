@@ -1,48 +1,33 @@
+import { uint8ToBase64 } from './cryptoUtils';
 import JSZip from "jszip";
+import jsQR from 'jsqr';
 
 
-// handles file upload
+/**
+ * @param {File} file
+ * @param {Object} options
+ * @param {function(Uint8Array): void} [options.onDataLoaded]
+ * @param {function(string): void} [options.onBase64]
+ * @param {function({name, type, size}): void} [options.onFileInfo]
+ * @param {function(string): void} [options.onText]
+ */
 export function uploadFile(file, options = {}) {
   const {
     onDataLoaded,     // function(Uint8Array): void
     onBase64,         // function(base64Str): void
     onFileInfo,       // function({ name, type, size }): void
     onText,           // function(utf8String): void
-    onDetectedExt,
-    onValidateExt,
   } = options;
 
   const reader = new FileReader();
 
-  reader.onload = function (e) {
-    (async () => {
+  reader.onload = async (e) => {
+    try {
       let bytes = new Uint8Array(e.target.result);
-      const ext = await detectFileExtension(bytes);
-
-      if (onDetectedExt) onDetectedExt(ext);
-
-      if (onValidateExt && !onValidateExt(ext)) {
-        // don't call further handlers
-        return;
-      }
-
-      // If .ec file detected, remove first 2 magic number bytes (0xEC, 0x01)
-      if (ext === 'ec') {
-        if (bytes[0] === 0xEC && bytes[1] === 0x01) {
-          bytes = bytes.slice(2);
-        } else {
-          // Magic number missing - reject file
-          return {error: "Invalid .ec file: missing magic number" };
-        }
-      }
 
       // Call optional hooks
       if (onDataLoaded) onDataLoaded(bytes);
-
-      if (onBase64) {
-        const base64 = btoa(String.fromCharCode(...bytes));
-        onBase64(base64);
-      }
+      if (onBase64) onBase64(uint8ToBase64(bytes));
 
       if (onText) {
         try {
@@ -56,16 +41,124 @@ export function uploadFile(file, options = {}) {
       if (onFileInfo) {
         onFileInfo({
             name: file.name,
-            type: file.type || (ext === 'ec' ? 'application/x-ec' : 'unknown'),
+            type: file.type || 'unknown',
             size: formatBytes(file.size),
         });
       }
+    } catch (err) {
+      return { error: "Failed to process file." + err.message };
+    }
+  };
 
-    })();
+  reader.onerror = () => {
+    return { error: "Failed to read file." };
   };
 
   reader.readAsArrayBuffer(file);
 }
+
+/**
+ * @param {File} file
+ * @param {Object} options
+ * @param {function(Uint8Array): void} [options.onDataLoaded]
+ * @param {function(string): void} [options.onBase64]
+ * @param {function({name, type, size, ext?: string}): void} [options.onFileInfo]
+ * @param {function(string): void} [options.onText]
+ * @param {function(Error): void} [options.onError]
+ */
+export async function uploadEncFile(file, options = {}) {
+  const { onDataLoaded, onBase64, onFileInfo, onText } = options;
+
+  const isImage = file.type.startsWith("image/");
+  const reader = new FileReader();
+
+  // Helper to read ArrayBuffer or DataURL
+  const fileData = await new Promise((resolve, reject) => {
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error("Failed to read file"));
+    if (isImage) {
+      reader.readAsDataURL(file);
+    } else {
+      reader.readAsArrayBuffer(file);
+    }
+  });
+
+  try {
+    let bytes;
+
+    if (isImage) {
+      // QR decode: await the async image load/processing
+      const dataUrl = fileData;
+      bytes = await new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => {
+          try {
+            const canvas = document.createElement("canvas");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const info = jsQR(imageData.data, canvas.width, canvas.height);
+            if (!info?.data) {
+              reject(new Error("Invalid or missing QR code"));
+              return;
+            }
+            resolve(info.data);
+          } catch (err) {
+            reject(new Error("Failed to process QR image: " + err.message));
+          }
+        };
+        img.onerror = () => reject(new Error("Failed to load image"));
+        img.src = dataUrl;
+      });
+
+      if (onText) onText(bytes);
+      if (onFileInfo) {
+        onFileInfo({
+          name: file.name,
+          type: file.type,
+          size: formatBytes(file.size),
+        });
+      }
+      return { success: true };
+    } else {
+      // Non-image (.ec) branch
+      bytes = new Uint8Array(fileData);
+
+      if (bytes.length < 2 || bytes[0] !== 0xEC || bytes[1] !== 0x01) {
+        throw new Error("Invalid .ec file");
+      }
+
+      const data = bytes.slice(2); // strip magic
+
+      if (onDataLoaded) onDataLoaded(data);
+      if (onBase64) onBase64(uint8ToBase64(data));
+      if (onText) {
+        let text;
+        try {
+          text = new TextDecoder().decode(data);
+        } catch {
+          text = "[Unreadable binary data]";
+        }
+        onText(text);
+      }
+      if (onFileInfo) {
+        onFileInfo({
+          name: file.name,
+          type: file.type || "application/x-ec",
+          size: formatBytes(file.size),
+        });
+      }
+      return { success: true };
+    }
+  } catch (err) {
+    return { error: "Failed to process file: " + (err?.message || "unknown") };
+  }
+}
+
+
 
 // returns file size
 function formatBytes(bytes) {
@@ -144,17 +237,13 @@ export function saveFileAsEc(input, name) {
     // Magic number (2 bytes): 0xEC01
     const MAGIC_BYTES = new Uint8Array([0xEC, 0x01]);
 
-    // Prepend magic bytes to the data
-    const combined = new Uint8Array(MAGIC_BYTES.length + input.length);
-    combined.set(MAGIC_BYTES);
-    combined.set(input, MAGIC_BYTES.length);
-
-    const blob = new Blob([combined], { type: "application/octet-stream" });
+    const blob = new Blob([MAGIC_BYTES, input], { type: "application/octet-stream" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
     a.download = `${name}${fileId}.ec`;
     a.click();
 }
+
 
 // save file as ext
 export async function saveFileAsExt(input, ext, name) {

@@ -1,16 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from 'react-router-dom';
 import { uploadFile, saveFileAsEc } from "../utils/fileUtils";
 import { extractViewData, ThemeToggle } from "../utils/uiHelpers";
-import { mulberryShuffle, aesCbcEncrypt } from "../utils/cryptoUtils";
+import { mulberryShuffle, aesCbcEncrypt, uint8ToBase64, textEncoder } from "../utils/cryptoUtils";
 
 
 const MulberryShuffleEnc = ({ showMsg, theme, onToggleTheme }) => {
   const [fileInput, setFileInput] = useState(null);
   const [fileInfo, setFileInfo] = useState(null);
+  // const [dataInputVal, setDataInputVal] = useState('');
+  const [dataInput, setDataInput] = useState('');
   const [base64Preview, setBase64] = useState("");
   const [utf8Preview, setUtf8] = useState("");
   const [detectedExt, setDetectedExt] = useState("");
+
   const [useAES, setUseAES] = useState(false);
   const [aesKey, setAesKey] = useState("");
 
@@ -23,6 +26,7 @@ const MulberryShuffleEnc = ({ showMsg, theme, onToggleTheme }) => {
     setFileInfo(null);
     setFileInput(null);
     setDetectedExt(null);
+    setDataInput("");
     e.target.value = "";  // Clear file input to allow re-upload of same file if needed
 
     if (!file) return;
@@ -37,6 +41,15 @@ const MulberryShuffleEnc = ({ showMsg, theme, onToggleTheme }) => {
       });
     }
   };
+
+  useEffect(() => {
+      if (dataInput) {
+        setFileInput(textEncoder(dataInput));
+        setBase64(uint8ToBase64(textEncoder(dataInput)));
+        setUtf8(dataInput);
+      }
+    }, [dataInput]
+  )
 
   const handleShuffle = async () => {
     const key = document.getElementById("shuffle-key").value;
@@ -106,6 +119,18 @@ const MulberryShuffleEnc = ({ showMsg, theme, onToggleTheme }) => {
               File: {fileInfo.name}, Type: {fileInfo.type}, Size: {fileInfo.size}
             </p>
           )}
+          <textarea
+            rows="5"
+            value={dataInput}
+            onChange={(e) => {
+                setFileInput(false);
+                setFileInfo(null);
+                setBase64("");
+                setUtf8("");
+                setDataInput(e.target.value);
+            }}
+            placeholder="Enter text..."
+          />
           <p>
             You can shuffle as many times as you like and enter different keys,
             but you will have to do the same in reverse or the data could be lost.
