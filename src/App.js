@@ -1,6 +1,10 @@
 import React, { useState, useCallback } from "react";
 import { HashRouter as Router, Routes, Route, Link } from "react-router-dom";
 import LockScreen from "./components/LockedState.js";
+import AesCbcEnc from "./components/AesCbcEnc.js";
+import AesCbcDec from "./components/AesCbcDec.js";
+import AesGcmEnc from "./components/AesGcmEnc.js";
+import AesGcmDec from "./components/AesGcmDec.js";
 import ObfuscationTools from "./components/ObfuscationTools.js";
 import MulberryShuffleEnc from "./components/MulberryShuffleEnc.js";
 import MulberryShuffleDec from "./components/MulberryShuffleDec.js";
@@ -10,6 +14,7 @@ import SecretsEnc from "./components/secretsEnc.js";
 import SecretsDec from "./components/secretsDec.js";
 import FileIntegrity from "./components/FileIntegrity.js";
 import PasswordGen from "./components/PasswordGen.js";
+import TotpSim from "./components/TotpSim.js";
 import QrGenerator from "./components/QrGenerator.js";
 import "./App.css";
 import { motion } from "framer-motion";
@@ -79,6 +84,10 @@ function App() {
               </>
             )}
           />
+        <Route path="/aes-cbc-enc" element={<AesCbcEnc showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
+        <Route path="/aes-cbc-dec" element={<AesCbcDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
+        <Route path="/aes-gcm-enc" element={<AesGcmEnc showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
+        <Route path="/aes-gcm-dec" element={<AesGcmDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
         <Route path="/obfuscation-tools" element={<ObfuscationTools showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
         <Route path="/mulberry-shuffle-enc" element={<MulberryShuffleEnc showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
         <Route path="/mulberry-shuffle-dec" element={<MulberryShuffleDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
@@ -88,6 +97,7 @@ function App() {
         <Route path="/sss-dec" element={<SecretsDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
         <Route path="/file-integrity" element={<FileIntegrity showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
         <Route path="/password-gen" element={<PasswordGen showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
+        <Route path="/totp-sim" element={<TotpSim showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
         <Route path="/qr-generator" element={<QrGenerator showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
         {/* Add more routes for other tools if needed */}
       </Routes>

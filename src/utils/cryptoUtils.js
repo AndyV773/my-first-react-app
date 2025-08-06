@@ -272,16 +272,6 @@ export async function aesGcmEncrypt(data, password) {
   combined.set(iv, salt.length);
   combined.set(new Uint8Array(encrypted), salt.length + iv.length);
 
-  // Convert to base64
-  // const toBase64 = (bytes) => {
-  //   let binary = '';
-  //   for (let i = 0; i < bytes.length; i++) {
-  //     binary += String.fromCharCode(bytes[i]);
-  //   }
-  //   return btoa(binary);
-  // };
-
-  // return toBase64(combined);
   return combined;
 }
 

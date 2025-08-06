@@ -238,6 +238,11 @@ textarea {
     resize: none;
 }
 
+.theme-night textarea {
+    background: #222;
+    color: #A5D6A7;
+}
+
 input[type=file] {
     padding: 10px 10px 10px 0;
 }
@@ -549,12 +554,12 @@ pre {
 /* -------------------------------------- passwords styles*/
 #pw.grid {
     grid-template-columns: 1fr;
-    text-align: center;
+    gap: 1rem;
 }
 
 #pw.grid>div {
     border: 1px solid #ccc;
-    padding: 2rem;
+    padding: 1rem;
 }
 
 .theme-night #pw.grid>div {
@@ -564,6 +569,13 @@ pre {
 #pw pre {
     margin: 0;
     min-height: auto;
+    letter-spacing: 0.1rem;
+    font-size: 1rem;
+}
+
+/* -------------------------------------- totp styles*/
+.honey-pot {
+    display: none;
 }
 
 /* -------------------------------------- animations */

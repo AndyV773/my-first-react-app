@@ -3,16 +3,16 @@ export const tools = [
       id: "about",
       title: "About",
       description:
-        "The encryption toolkit created for demonstration and educational purposes (although fully functional). Find out more.",
+        "A full functional encryption toolkit created for demonstration and educational purposes. Find out more.",
     },
     {
-      id: "aes-cbc",
+      id: "aes-cbc-enc",
       title: "AES-CBC",
       description:
         "Encrypt and decrypt data using AES with Cipher Block Chaining mode for strong symmetric encryption.",
     },
     {
-      id: "aes-gcm",
+      id: "aes-gcm-enc",
       title: "AES-GCM",
       description:
         "Authenticated encryption with AES Galois/Counter Mode providing confidentiality and integrity.",
@@ -27,13 +27,13 @@ export const tools = [
       id: "mulberry-shuffle-enc",
       title: "Mulberry Shuffle",
       description:
-        "A deterministic Mulberry shuffle for files or text and encrypt with AES-CBC. Download .ec file.",
+        "A deterministic Mulberry shuffle for files or text and encrypt with AES-CBC.",
     },
     {
       id: "quant-shuffle-enc",
       title: "Quantum Shuffle",
       description:
-        "High load randomize file or text shuffle with added AES-GCM encryption. Download as QR or .ec file.",
+        "High load randomize file or text shuffle with added AES-GCM encryption.",
     },
     {
       id: "file-integrity",
@@ -58,6 +58,12 @@ export const tools = [
       title: "Password Generator",
       description:
         "Securely generate strong and randomised passwords.",
+    },
+    {
+      id: "totp-sim",
+      title: "TOTP & Captcha",
+      description:
+        "Try out Time-Based One-Time Password simulator and Bot Captcha.",
     },
     {
       id: "encrypted-qr",
