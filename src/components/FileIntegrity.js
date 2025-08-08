@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from 'react-router-dom';
 import CryptoJS from "crypto-js";
-import { ThemeToggle } from "../utils/uiHelpers";
+import { ThemeToggle, PreCopyOutputBlock } from "../utils/uiHelpers";
 
 const FileIntegrity = ({ showMsg, theme, onToggleTheme }) => {
   const [fileInfo, setFileInfo] = useState(null);
@@ -24,9 +24,10 @@ const FileIntegrity = ({ showMsg, theme, onToggleTheme }) => {
 
       const md5 = CryptoJS.MD5(wordArray).toString(CryptoJS.enc.Hex);
       const sha1 = CryptoJS.SHA1(wordArray).toString(CryptoJS.enc.Hex);
+      const sha3 = CryptoJS.SHA3(wordArray).toString(CryptoJS.enc.Hex);
       const sha256 = CryptoJS.SHA256(wordArray).toString(CryptoJS.enc.Hex);
 
-      setHashes({ md5, sha1, sha256 });
+      setHashes({ md5, sha1, sha3, sha256 });
     };
 
     reader.readAsArrayBuffer(file);
@@ -42,30 +43,43 @@ const FileIntegrity = ({ showMsg, theme, onToggleTheme }) => {
         </nav>
 
         <h2>File Integrity Check</h2>
-        <section>
-            <input type="file" onChange={handleFileChange} className="mb-4" />
+        <section className="file">
+            <input type="file" onChange={handleFileChange} />
 
-            {fileInfo && (
-                <div>
-                <p className="font-semibold">File Information:</p>
-                <ul className="mb-4">
-                    <li>Name: {fileInfo.name}</li>
-                    <li>Size: {fileInfo.size} bytes</li>
-                    <li>Type: {fileInfo.type}</li>
-                </ul>
-                </div>
-            )}
+            <div className="file">
+              {fileInfo && (
+                  <div>
+                    <p>File Information:</p>
+                    <ul>
+                        <li>Name: {fileInfo.name}</li>
+                        <li>Size: {fileInfo.size} bytes</li>
+                        <li>Type: {fileInfo.type}</li>
+                    </ul>
+                  </div>
+              )}
+            </div>
 
-            {hashes && (
-                <div>
-                <p className="font-semibold">Hashes:</p>
-                <ul>
-                    <li>MD5: {hashes.md5}</li>
-                    <li>SHA-1: {hashes.sha1}</li>
-                    <li>SHA-256: {hashes.sha256}</li>
-                </ul>
+              {hashes && (
+                <div className="file-pre">
+                    <h3>Hashes:</h3>
+                    <div>
+                        MD5: 
+                        <PreCopyOutputBlock outputId={`hash-`} text={hashes.md5} />
+                    </div>
+                    <div>
+                        SHA-1: 
+                        <PreCopyOutputBlock outputId={`hash-`} text={hashes.sha1} />
+                    </div>
+                    <div>
+                        SHA-3: 
+                        <PreCopyOutputBlock outputId={`hash-`} text={hashes.sha3} />
+                    </div>
+                    <div>
+                        SHA-256: 
+                        <PreCopyOutputBlock outputId={`hash-`} text={hashes.sha256} />
+                    </div>
                 </div>
-            )}
+              )}
         </section>
     </main>
   );

@@ -3,7 +3,7 @@ export const tools = [
       id: "about",
       title: "About",
       description:
-        "A full functional encryption toolkit created for demonstration and educational purposes. Find out more.",
+        "A fully functional encryption toolkit created for demonstration and educational purposes. Find out more.",
     },
     {
       id: "aes-cbc-enc",
@@ -36,16 +36,34 @@ export const tools = [
         "High load randomize file or text shuffle with added AES-GCM encryption.",
     },
     {
+      id: "opt-quant-enc",
+      title: "Optimised Quantum Shuffle",
+      description:
+        "Optimised all in one Quantum shuffle with AES-GCM encryption.",
+    },
+    {
+      id: "rot-encoder",
+      title: "Rotation Encoder",
+      description:
+        "Optimised all in one Quantum shuffle with AES-GCM encryption.",
+    },
+    {
       id: "file-integrity",
-      title: "File Integrity",
+      title: "File Integrity Check",
       description:
         "Apply common hashing algorithms to data for security and integrity checks.",
     },
     {
-      id: "argon2",
-      title: "SHA-256 & Argon2",
+      id: "hashing",
+      title: "SHA-256 & Argon2 hashing",
       description:
-        "Implement multiple SHA-256 or Argon2 password hashing for memory-hard and secure password storage.",
+        "Implement multiple SHA-256 or Argon2 hashing for files or text.",
+    },
+    {
+      id: "xor-based-enc",
+      title: "XOR-Based Hash Encoder",
+      description:
+        "Implement multiple SHA-256 or Argon2 hashing for files or text.",
     },
     {
       id: "sss-enc",
@@ -66,7 +84,7 @@ export const tools = [
         "Try out Time-Based One-Time Password simulator and Bot Captcha.",
     },
     {
-      id: "encrypted-qr",
+      id: "qr-enc",
       title: "Encrypted QR",
       description:
       "Generate QR codes with encrypted data for secure and private information sharing.",

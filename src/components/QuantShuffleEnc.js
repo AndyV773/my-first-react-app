@@ -7,7 +7,7 @@ import { useByteCounter, ThemeToggle, generateQrCode, getQrCorrectionInfo } from
 
 const QuantShuffleEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
   // Input/file state
-  const [fileInput, setFileInput] = useState(false); 
+  const [fileInput, setFileInput] = useState(""); 
   const [fileInfo, setFileInfo] = useState(null);
   const [utf8Preview, setUtf8] = useState(''); // content decoded from file
   const [dataInputVal, setDataInputVal] = useState('');
@@ -68,30 +68,43 @@ const QuantShuffleEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
   const [showDownloadKey, setShowDownloadKey] = useState(false);
   
 
-   // Handle file upload
+  // Handle file upload
   const handleUpload = (e) => {
     const file = e.target.files[0];
     // reset
+    setFileInput("");
     setFileInfo(null);
-    setFileInput(false);
-    setUtf8('');
     setDataInput('');
+    setDataInputVal('');
+    setShuffleVal("");
+    setKeyVal("");
     e.target.value = "";
     if (!file) return;
 
     uploadFile(file, {
       onFileInfo: setFileInfo,
       onText: setUtf8, // sets utf8Preview
-      onDataLoaded: setDataInput,
+      onBase64: setFileInput,
     });
-    setFileInput(true);
   };
 
+
+  const handleTextInputChange = (e) => {
+      const value = e.target.value;
+
+      setFileInput("");
+      setFileInfo(null);
+      setDataInput("");
+      setDataInput(value);
+      setDataInputVal(value);
+  };
+  
 
   // Sync file content into dataInput once when file loads
   useEffect(() => {
     if (fileInput) {
         setDataInputVal(utf8Preview);
+        setDataInput(fileInput);
     } else {
         setDataInputVal("");
     }
@@ -178,18 +191,18 @@ const QuantShuffleEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
         showMsg("No data.", true);
         return;
     }
+
     const allChar = allCharRef.current?.checked || false;
-    showLoader({ show: true, mode: 'encode', emoji: '🛡️', bytes: inputBytes });
+    showLoader({ show: true, mode: 'Encoding', type: "loader encode", emoji: '🛡️', bytes: inputBytes });
 
     workerRef.current.postMessage({
         type: "shuffle",
-        payload: { 
-            input: dataInput, 
-            fileInput: fileInput, 
+        load: { 
+            input: dataInput,  
             allChar, 
         },
     });
-  }, [dataInput, fileInput, showMsg, showLoader, inputBytes]);
+  }, [dataInput, showMsg, showLoader, inputBytes]);
 
 
   // Encryption handler
@@ -324,13 +337,7 @@ const QuantShuffleEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
           <textarea
             rows="5"
             value={dataInputVal}
-            onChange={(e) => {
-                setFileInput(false);
-                setFileInfo(null);
-                setUtf8('');
-                setDataInputVal(e.target.value);
-                setDataInput(e.target.value);
-            }}
+            onChange={handleTextInputChange}
             placeholder="Enter text..."
           />
           <p>

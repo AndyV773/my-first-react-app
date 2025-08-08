@@ -36,7 +36,6 @@ const MulberryShuffleEnc = ({ showMsg, theme, onToggleTheme }) => {
         onText: setUtf8,
         onBase64: setBase64,
         onFileInfo: setFileInfo,
-        onDetectedExt: setDetectedExt,
         onDataLoaded: setFileInput,
       });
     }

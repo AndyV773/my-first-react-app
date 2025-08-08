@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { isCorrectDateInput, getTodayDate } from '../utils/uiHelpers';  // , getTodayDate
-// import { data } from 'react-router-dom';
+import { isCorrectDateInput, getTodayDate } from '../utils/uiHelpers'; 
 
 
 function LockScreen({ onUnlock, showMsg }) {
@@ -9,9 +8,10 @@ function LockScreen({ onUnlock, showMsg }) {
 
     const date = getTodayDate();
 
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
         e.preventDefault();
-        if (isCorrectDateInput(input)) {
+
+        if (await isCorrectDateInput(input)) {
             showMsg("Unlocked successfully!", false);
             setError('');
             onUnlock();
@@ -20,6 +20,7 @@ function LockScreen({ onUnlock, showMsg }) {
             setError("Incorrect date. Please enter today's date as DD/MM/YYYY");
         }
     }
+
     
     return (
         <main className="lock-screen">

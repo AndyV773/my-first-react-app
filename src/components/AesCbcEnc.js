@@ -99,7 +99,7 @@ const AesCbcEnc = ({ showMsg, theme, onToggleTheme }) => {
                 rows="5"
                 value={dataInput}
                 onChange={(e) => {
-                    setInput(false);
+                    // setInput(false);
                     setFileInfo(null);
                     setBase64("");
                     setUtf8("");

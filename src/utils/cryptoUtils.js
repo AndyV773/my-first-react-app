@@ -1,10 +1,18 @@
 import CryptoJS from "crypto-js";
 import pako from "pako";
 
+
+export const sha256 = async (data) => {
+  const buffer = await crypto.subtle.digest("SHA-256", data);
+  return Array.from(new Uint8Array(buffer))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+};
+
 // Salt utilities
-function generateSaltBytes(length = 16) {
+export function generateSaltBytes(length = 16) {
     const array = new Uint8Array(length);
-    crypto.getRandomValues(array);
+    window.crypto.getRandomValues(array);
     return array;
 }
 
@@ -12,6 +20,16 @@ export function bytesToHex(array) {
     return Array.from(array)
         .map(b => b.toString(16).padStart(2, '0'))
         .join('');
+}
+
+// Convert a hexadecimal string (e.g., from SHA-256) into a byte array
+function hexToBytes(hex) {
+    const bytes = new Uint8Array(hex.length / 2);
+    for (let i = 0; i < bytes.length; i++) {
+        // Parse each pair of hex digits into a byte
+        bytes[i] = parseInt(hex.substr(i * 2, 2), 16);
+    }
+    return bytes;
 }
 
 // PRNG based on seed string
@@ -219,13 +237,13 @@ export function base64ToUint8(base64) {
 
 
 // text encoder helper
-export function textEncoder(str) {
-  return new TextEncoder().encode(str);
+export function textEncoder(input) {
+  return new TextEncoder().encode(input);
 }
 
 // text decoder helper
-export function textDecoder(str) {
-  return new TextDecoder().decode(str);
+export function textDecoder(input) {
+  return new TextDecoder().decode(input);
 }
 
 // pako compression helper
@@ -277,22 +295,105 @@ export async function aesGcmEncrypt(data, password) {
 
 
 // AES gcm Decryption
-export async function aesGcmDecrypt(base64, password) {
-  // const data = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
-  const data = base64;
-  const salt = data.slice(0, 16);
-  const iv = data.slice(16, 28);
-  const ciphertext = data.slice(28);
-  const enc = new TextEncoder();
-  const keyMaterial = await crypto.subtle.importKey("raw", enc.encode(password), { name: "PBKDF2" }, false, ["deriveKey"]);
-  const key = await crypto.subtle.deriveKey(
-    { name: "PBKDF2", salt, iterations: 100000, hash: "SHA-256" },
-    keyMaterial,
-    { name: "AES-GCM", length: 256 },
-    false,
-    ["decrypt"]
-  );
-  const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ciphertext);
-  return new Uint8Array(decrypted); // raw bytes
+export async function aesGcmDecrypt(input, password) {
+    const data = input;
+    const salt = data.slice(0, 16);
+    const iv = data.slice(16, 28);
+    const ciphertext = data.slice(28);
+    const enc = new TextEncoder();
+    const keyMaterial = await crypto.subtle.importKey("raw", enc.encode(password), { name: "PBKDF2" }, false, ["deriveKey"]);
+    const key = await crypto.subtle.deriveKey(
+      { name: "PBKDF2", salt, iterations: 100000, hash: "SHA-256" },
+      keyMaterial,
+      { name: "AES-GCM", length: 256 },
+      false,
+      ["decrypt"]
+    );
+    const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ciphertext);
+    return new Uint8Array(decrypted); // raw bytes
 }
 
+
+export const hashArgon2 = async (input, iterations = 3, hashToVerify = null, verify = false) => {
+
+  const password = typeof input === "string" ? input : new TextDecoder().decode(input);
+  
+  if (verify && hashToVerify) {
+    try {
+        const result = await window.argon2.verify({
+          pass: password,
+          encoded: hashToVerify,
+          type: window.argon2.ArgonType.Argon2id,
+      });
+      return result;
+    } catch (err) {
+      console.error("Argon2 verification error:", err);
+      return false;
+    }
+  }
+
+  const salt = generateSaltBytes(); 
+  
+  const result = await window.argon2.hash({
+    pass: password,
+    salt: salt,
+    time: iterations,
+    mem: 1024, // memory in KiB
+    hashLen: 32,
+    type: window.argon2.ArgonType.Argon2id,
+  });
+
+  return result.encoded;
+};
+
+
+// Encrypt text using XOR and a hash-based key (hex string)
+// Result is a base64-encoded string safe for storage/display
+export function xorEncoder(input, hashHex) {
+    const textBytes = input;
+    const keyBytes = hexToBytes(hashHex);
+
+    const result = new Uint8Array(textBytes.length);
+    for (let i = 0; i < textBytes.length; i++) {
+      // XOR each byte of text with corresponding byte from the hash (cycled)
+      result[i] = textBytes[i] ^ keyBytes[i % keyBytes.length];
+    }
+
+    return result;
+}
+
+// Decrypt a base64-encoded string using the same hash-based key
+export function xorDecoder(inputBytes, hashHex) {
+    const keyBytes = hexToBytes(hashHex);
+   
+    const result = new Uint8Array(inputBytes.length);
+    for (let i = 0; i < inputBytes.length; i++) {
+      // XOR again to decrypt
+      result[i] = inputBytes[i] ^ keyBytes[i % keyBytes.length];
+    }
+
+    return result; 
+}
+
+
+export const rotateBytes = (bytes, keyArray) => {
+
+    const result = new Uint8Array(bytes.length);
+  
+    for (let i = 0; i < bytes.length; i++) {
+        result[i] = (bytes[i] + keyArray[i % keyArray.length]) & 0xff;
+    }
+
+    return result;
+};
+
+export const unrotateBytes = (bytes, keyArray) => {
+
+    const result = new Uint8Array(bytes.length);
+
+    for (let i = 0; i < bytes.length; i++) {
+        result[i] = (bytes[i] - keyArray[i % keyArray.length] + 256) & 0xff;
+    }
+
+    return result;
+};

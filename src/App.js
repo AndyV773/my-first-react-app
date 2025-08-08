@@ -10,11 +10,20 @@ import MulberryShuffleEnc from "./components/MulberryShuffleEnc.js";
 import MulberryShuffleDec from "./components/MulberryShuffleDec.js";
 import QuantShuffleEnc from "./components/QuantShuffleEnc.js";
 import QuantShuffleDec from "./components/QuantShuffleDec.js";
+import OptQuantEnc from "./components/OptQuantEnc.js";
+import OptQuantDec from "./components/OptQuantDec.js";
 import SecretsEnc from "./components/secretsEnc.js";
 import SecretsDec from "./components/secretsDec.js";
+import RotEncoder from "./components/Encoder.js";
+import RotDecoder from "./components/RotDecoder.js";
 import FileIntegrity from "./components/FileIntegrity.js";
 import PasswordGen from "./components/PasswordGen.js";
 import TotpSim from "./components/TotpSim.js";
+import XorBasedEnc from "./components/XorBasedEnc.js";
+import XorBasedDec from "./components/XorBasedDec.js";
+import Hashing from "./components/Hashing.js";
+import QrEnc from "./components/QrEnc.js";
+import QrDec from "./components/QrDec.js";
 import QrGenerator from "./components/QrGenerator.js";
 import "./App.css";
 import { motion } from "framer-motion";
@@ -28,7 +37,7 @@ function App() {
   const [unlocked, setUnlocked] = useState(false);
   const [theme, setTheme] = useState('day');
   const [msg, setMsg] = useState({ text: '', error: false });
-  const [loaderState, setLoaderState] = useState({ show: false, mode: "encode", emoji: "", bytes: 0});
+  const [loaderState, setLoaderState] = useState({ show: false, mode: "encode", type: "loader", emoji: "", bytes: 0});
 
   const toggleTheme = () => {
     setTheme(prev => (prev === 'day' ? 'night' : 'day'));
@@ -39,8 +48,8 @@ function App() {
   }, []);
 
   const showLoader = useCallback(
-    ({ show = false, mode = 'encode', emoji = '', bytes = 0 }) =>
-      setLoaderState({ show, mode, emoji, bytes }),
+    ({ show = false, mode = 'encode', type = "loader", emoji = '', bytes = 0 }) =>
+      setLoaderState({ show, mode, type, emoji, bytes }),
     []
   );
   
@@ -52,6 +61,7 @@ function App() {
       <Loader
         show={loaderState.show}
         mode={loaderState.mode}
+        type={loaderState.type}
         emoji={loaderState.emoji}
         bytes={loaderState.bytes}
       />
@@ -93,13 +103,21 @@ function App() {
         <Route path="/mulberry-shuffle-dec" element={<MulberryShuffleDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
         <Route path="/quant-shuffle-enc" element={<QuantShuffleEnc showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} showLoader={showLoader} />} />
         <Route path="/quant-shuffle-dec" element={<QuantShuffleDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} showLoader={showLoader} />} />
+        <Route path="/opt-quant-enc" element={<OptQuantEnc showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} showLoader={showLoader} />} />
+        <Route path="/opt-quant-dec" element={<OptQuantDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} showLoader={showLoader} />} />
         <Route path="/sss-enc" element={<SecretsEnc showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
         <Route path="/sss-dec" element={<SecretsDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
+        <Route path="/rot-encoder" element={<RotEncoder showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
+        <Route path="/rot-decoder" element={<RotDecoder showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
         <Route path="/file-integrity" element={<FileIntegrity showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
         <Route path="/password-gen" element={<PasswordGen showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
         <Route path="/totp-sim" element={<TotpSim showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
+        <Route path="/xor-based-enc" element={<XorBasedEnc showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
+        <Route path="/xor-based-dec" element={<XorBasedDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
+        <Route path="/hashing" element={<Hashing showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
+        <Route path="/qr-enc" element={<QrEnc showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
+        <Route path="/qr-dec" element={<QrDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
         <Route path="/qr-generator" element={<QrGenerator showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
-        {/* Add more routes for other tools if needed */}
       </Routes>
       <footer className="footer">
         <p>

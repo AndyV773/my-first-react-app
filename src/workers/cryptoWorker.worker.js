@@ -1,41 +1,67 @@
-import { randomizer, uint8ToBase64, base64ToUint8 } from '../utils/cryptoUtils';
+import { randomizer, base64ToUint8, compress, decompress, aesGcmEncrypt, aesGcmDecrypt, textDecoder } from '../utils/cryptoUtils';
 import { detectFileExtension } from '../utils/fileUtils';
 /* eslint-env worker */
 /* eslint-disable no-restricted-globals */
 
 self.addEventListener("message", async (e) => {
-  const { type, payload } = e.data;
+  const { type, load, dataPw, keyPw } = e.data;
 
   if (type === "shuffle") {
-    const { input, fileInput, allChar } = payload;
+    const { input, allChar } = load;
 
-    let rawInput = "";
-
-    if (fileInput) {
-      // Input is Uint8Array (from file read) → base64 for shuffling
-      rawInput = uint8ToBase64(input);
-    } else {
-      const text = input; // plain text input
-      if (!text) {
-        return self.postMessage({ type: "error", error: "No input provided." });
-      }
-      rawInput = text;
+    let rawInput = input;
+    
+    if (!rawInput) {
+      return self.postMessage({ type: "error", error: "No input provided." });
     }
 
     try {
       const { shuffled, key } = quantShuffle(rawInput, allChar);
+      let encryptedData = "";
+      let encryptedKey = "";
+
+      if (dataPw && keyPw) {
+        try {
+          const compressedData = compress(shuffled);
+          const compressedKey = compress(key);
+
+          encryptedData = await aesGcmEncrypt(compressedData, dataPw);
+          encryptedKey = await aesGcmEncrypt(compressedKey, keyPw);
+        
+        } catch (err) {
+          self.postMessage({ type: "error", error: err?.message ?? String(err) });
+        }
+      }
+
       self.postMessage({
         type: "done-shuffle",
         result: { shuffled, key },
+        encryptedData,
+        encryptedKey,
       });
     } catch (err) {
       self.postMessage({ type: "error", error: err?.message ?? String(err) });
     }
 
   } else if (type === "unshuffle") {
-    const { shuffled, key } = payload;
+    let { shuffled, key } = load;
 
     try {
+      if (dataPw && keyPw) {
+        try {
+          const decryptedData = await aesGcmDecrypt(shuffled, dataPw);
+          const decryptedKey = await aesGcmDecrypt(key, keyPw);
+
+          const decompressedData = decompress(decryptedData);
+          const decompressedKey = decompress(decryptedKey);
+
+          shuffled = textDecoder(decompressedData);
+          key = textDecoder(decompressedKey);
+  
+        } catch (err) {
+          self.postMessage({ type: "error", error: err?.message ?? String(err) });
+        }
+      }
       const unshuffled = await quantUnshuffle(shuffled, key);
       let output, ext;
 
@@ -90,12 +116,12 @@ function quantShuffle(input, allChar = false) {
 
   return {
     shuffled: data.shuffled,
-    key: data.key, // will be turned into Uint32Array by caller
+    key: data.key, 
   };
 }
 
 
-// takes data and key and returns undhuffled data
+// takes data and key and returns unshuffled data
 async function quantUnshuffle(inputData, inputKey) {
   const key = inputKey.split(",").map(Number);
   let decodedString = "";

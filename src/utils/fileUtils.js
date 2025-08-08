@@ -1,4 +1,4 @@
-import { uint8ToBase64 } from './cryptoUtils';
+import { base64ToUint8, uint8ToBase64 } from './cryptoUtils';
 import JSZip from "jszip";
 import jsQR from 'jsqr';
 
@@ -115,6 +115,7 @@ export async function uploadEncFile(file, options = {}) {
       });
 
       if (onText) onText(bytes);
+      if (onDataLoaded) onDataLoaded(base64ToUint8(bytes));
       if (onFileInfo) {
         onFileInfo({
           name: file.name,

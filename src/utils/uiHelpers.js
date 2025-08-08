@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from "react-router-dom";
-import { sha256 } from "js-sha256";
+import { sha256 } from "./cryptoUtils";
 import { detectFileExtension } from "./fileUtils";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClone } from '@fortawesome/free-regular-svg-icons';
 import { faCircleHalfStroke } from '@fortawesome/free-solid-svg-icons';
 import QRCode from 'qrcode';
+import { Html5Qrcode } from "html5-qrcode";
+
+
 
 
 // changes colors of body and text based on path
@@ -117,18 +120,17 @@ export function Msg({ message, error, onClear }) {
  * @param {string} emoji - emoji to display
  * @param {number} bytes - bytes size compared to threshold = 50000
  */
-export function Loader({ show = false, mode = "", emoji = "", bytes = 0}) {
+export function Loader({ show = false, mode = "", type = "", emoji = "", bytes = 0}) {
   const threshold = 50000;
 
   if (!show || bytes <= threshold) return null;
 
-  const verb = mode === "encode" ? "Encoding" : "Decoding";
-  const defaultMsg = `${verb}... Please wait`;
+  const defaultMsg = `${mode}... Please wait`;
 
   return (
     <div className="loader-overlay" aria-live="polite">
       <div className="loader-wrapper">
-        <div className={`loader ${mode}`} />
+        <div className={`${type}`} />
         <div className="loader-icon">
           {emoji}
         </div>
@@ -150,15 +152,20 @@ export function getTodayDate() {
   return `${dd}/${mm}/${yyyy}`;
 }
 
-// Returns hash of today’s date
-export function getTodayDateHash() {
-  return sha256(getTodayDate());
+
+// Returns hash of today’s date using crypto.subtle
+export async function getTodayDateHash() {
+  const dateStr = getTodayDate(); 
+  const encoded = new TextEncoder().encode(dateStr);
+  return await sha256(encoded);
 }
 
 // Checks input against today’s hash
-export function isCorrectDateInput(input) {
-  const inputHash = sha256(input.trim());
-  return inputHash === getTodayDateHash();
+export async function isCorrectDateInput(input) {
+  const encodedInput = new TextEncoder().encode(input.trim());
+  const inputHash = await sha256(encodedInput);
+  const todayHash = await getTodayDateHash();
+  return inputHash === todayHash;
 }
 
 // updates views 
@@ -282,3 +289,65 @@ export function getQrCorrectionInfo(byteLength) {
   if (byteLength <= 2900) return { level: "L", label: "Low (L) - max 2900 B" };
   return { level: null, label: "Data too large for QR, max 2900 B" };
 }
+
+
+
+export const QrScanner = ({ onScan, onClose, onError }) => {
+  const qrRegionId = "qr-scanner";
+  const html5QrCode = useRef(null);
+  const [isRunning, setIsRunning] = useState(false);
+
+  const stopScanner = async () => {
+    if (html5QrCode.current && isRunning) {
+      try {
+        await html5QrCode.current.stop();
+        await html5QrCode.current.clear();
+        setIsRunning(false);
+        if (onClose) onClose();
+      } catch (err) {
+        console.error("Failed to stop scanner:", err);
+      }
+    }
+  };
+
+  useEffect(() => {
+    html5QrCode.current = new Html5Qrcode(qrRegionId);
+
+    async function startScanner() {
+      try {
+        await html5QrCode.current.start(
+          { facingMode: "environment" },
+          { fps: 10, qrbox: 250 },
+          (decodedText) => {
+            onScan(decodedText);
+            stopScanner();
+          },
+          (errorMessage) => {
+            console.warn("QR Scan error:", errorMessage);
+          }
+        );
+        setIsRunning(true);
+      } catch (err) {
+        if (onError) onError("Camera error: " + (err?.message || "Unknown error"));
+        if (onClose) onClose();
+        return; // early return on error to stop further execution
+      }
+    }
+
+    startScanner();
+
+    return () => {
+      stopScanner();
+    };
+  }, [onScan, onClose, onError, isRunning]);
+
+  return (
+    <div className="overlay">
+      <div id={qrRegionId} className="qrRegion" />
+      <button
+        className="closeButton"
+        onClick={stopScanner}
+      >X</button>
+    </div>
+  );
+};

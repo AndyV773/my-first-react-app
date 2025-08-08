@@ -206,7 +206,6 @@ const QuantShuffleDec = ({ showMsg, theme, onToggleTheme, showLoader }) => {
             if (type === "done-unshuffle") {
                 const { output, ext } = result;
             
-                console.log(ext)
                 // Set state and UI
                 setDetectedExt(ext);
                 if (ext !== "txt" && ext !== "bin") {
@@ -243,11 +242,11 @@ const QuantShuffleDec = ({ showMsg, theme, onToggleTheme, showLoader }) => {
         setOutputData("");
         setDetectedExt(null);
 
-        showLoader({ show: true, mode: 'decode', emoji: '🧩', bytes: keyBytes });
+        showLoader({ show: true, mode: 'Decoding', typre: "loader decode", emoji: '🧩', bytes: keyBytes });
 
         workerRef.current.postMessage({
             type: "unshuffle",
-            payload: { 
+            load: { 
                 shuffled: dataDecVal, 
                 key: keyDecVal, 
             },

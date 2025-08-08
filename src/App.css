@@ -439,8 +439,8 @@ input[type="color"] {
 .loader {
     width: 80px;
     height: 80px;
-    border: 6px solid rgba(0, 0, 0, 0.0);
     border-radius: 50%;
+    border: 6px solid rgba(0, 0, 0, 0.0);
     animation: spin 0.8s linear infinite;
     position: relative;
     display: flex;
@@ -462,6 +462,37 @@ input[type="color"] {
     border-right: 6px solid #00ffd5;
     border-bottom: 6px solid transparent;
     border-left: 6px solid #00ffd5;
+}
+
+.radar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.radar.encode {
+    background: conic-gradient(
+        from 0deg,
+        rgba(59, 130, 246, 0) 0deg,
+        rgba(59, 130, 246, 0.1) 90deg,
+        rgba(59, 130, 246, 1) 360deg 
+    );
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.6);
+}
+
+.radar.decode {
+    background: conic-gradient(
+        from 0deg,
+        rgba(0, 255, 213, 0) 0deg,
+        rgba(0, 255, 213, 0.1) 90deg,
+        rgba(0, 255, 213, 1) 360deg
+    );
+    box-shadow: 0 0 15px #00ffd5;
 }
 
 .loader-icon {
@@ -537,6 +568,41 @@ pre {
     margin: auto;
     image-rendering: pixelated;
 }
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #000000dd;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.qr-region {
+  width: 100%;
+  max-width: 400px;
+  height: 400px;
+  background-color: #fff;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 1.5rem;
+  background: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+
 /* -------------------------------------- sss styles*/
 .sss-pre pre {
     margin: 0.5rem 0;
@@ -571,6 +637,25 @@ pre {
     min-height: auto;
     letter-spacing: 0.1rem;
     font-size: 1rem;
+}
+
+/* -------------------------------------- file checker styles*/
+section.file {
+    min-height: 300px;
+} 
+div.file {
+    min-height: 150px;
+    background: #ecf0f1;
+    color: var(--secondary-text);
+    padding: 1rem;
+    border-radius: 4px;
+}
+
+.file-pre pre {
+    margin: 0.5rem 0;
+    min-height: auto;
+    /* padding-top: 2rem; */
+    padding: 2rem 2rem 0.5rem 0.5rem;
 }
 
 /* -------------------------------------- totp styles*/
