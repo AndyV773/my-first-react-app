@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useLocation } from "react-router-dom";
 import { sha256 } from "./cryptoUtils";
 import { detectFileExtension } from "./fileUtils";
@@ -6,8 +6,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClone } from '@fortawesome/free-regular-svg-icons';
 import { faCircleHalfStroke } from '@fortawesome/free-solid-svg-icons';
 import QRCode from 'qrcode';
-import { Html5Qrcode } from "html5-qrcode";
-
 
 
 
@@ -297,7 +295,7 @@ export const QrScanner = ({ onScan, onClose, onError }) => {
   const html5QrCode = useRef(null);
   const [isRunning, setIsRunning] = useState(false);
 
-  const stopScanner = async () => {
+  const stopScanner = useCallback(async () => {
     if (html5QrCode.current && isRunning) {
       try {
         await html5QrCode.current.stop();
@@ -308,10 +306,11 @@ export const QrScanner = ({ onScan, onClose, onError }) => {
         console.error("Failed to stop scanner:", err);
       }
     }
-  };
+  }, [isRunning, onClose]);
 
   useEffect(() => {
-    html5QrCode.current = new Html5Qrcode(qrRegionId);
+
+    html5QrCode.current = new window.Html5Qrcode(qrRegionId);
 
     async function startScanner() {
       try {
@@ -320,7 +319,7 @@ export const QrScanner = ({ onScan, onClose, onError }) => {
           { fps: 10, qrbox: 250 },
           (decodedText) => {
             onScan(decodedText);
-            stopScanner();
+            setTimeout(() => stopScanner(), 200);
           },
           (errorMessage) => {
             console.warn("QR Scan error:", errorMessage);
@@ -334,18 +333,21 @@ export const QrScanner = ({ onScan, onClose, onError }) => {
       }
     }
 
-    startScanner();
+    const timeoutId = setTimeout(() => {
+      startScanner();
+    }, 200);
 
     return () => {
+      clearTimeout(timeoutId);
       stopScanner();
     };
-  }, [onScan, onClose, onError, isRunning]);
+  }, [onScan, onClose, stopScanner, onError]);
 
   return (
     <div className="overlay">
-      <div id={qrRegionId} className="qrRegion" />
+      <div id={qrRegionId} className="qr-region" />
       <button
-        className="closeButton"
+        className="close-button"
         onClick={stopScanner}
       >X</button>
     </div>

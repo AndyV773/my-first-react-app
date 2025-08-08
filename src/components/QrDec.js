@@ -92,9 +92,9 @@ const QrDec = ({ showMsg, theme, onToggleTheme }) => {
                 <button onClick={() => setShowScanner(true)}>Open QR Scanner</button>
                 {showScanner && (
                     <QrScanner
-                    onScan={handleScan}
-                    onClose={handleClose}
-                    onError={handleError}
+                        onScan={handleScan}
+                        onClose={handleClose}
+                        onError={handleError}
                     />
                 )}
             </div>

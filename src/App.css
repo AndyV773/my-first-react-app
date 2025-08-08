@@ -570,36 +570,35 @@ pre {
 }
 
 .overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #000000dd;
-  z-index: 9999;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #000000dd;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
 
 .qr-region {
-  width: 100%;
-  max-width: 400px;
-  height: 400px;
-  background-color: #fff;
+    width: 100%;
+    max-width: 400px;
+    height: 400px;
 }
 
-.close-button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 1.5rem;
-  background: #fff;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 5px;
-  cursor: pointer;
+button.close-button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 50px;
+    font-size: 2rem;
+    background: none;
+    border: none;
+    color: var(--primary-text);
+    cursor: pointer;
 }
 
 
