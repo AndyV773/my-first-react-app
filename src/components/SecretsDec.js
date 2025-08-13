@@ -46,7 +46,12 @@ const SecretsDec = ({ showMsg, theme, onToggleTheme }) => {
           </div>
           <ThemeToggle theme={theme} onToggle={onToggleTheme} />
         </nav>
-        <h2>Secret Sharing</h2>
+
+        <div className="learn-more">
+          <h2>Secret Sharing</h2>
+          <Link to="/about#about-sss">Learn more</Link>
+        </div>
+
         <section id="decode-shares">
           <h2>Decode</h2>
           <label htmlFor="add-shares">Add shares:</label>

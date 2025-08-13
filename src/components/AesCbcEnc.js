@@ -83,8 +83,10 @@ const AesCbcEnc = ({ showMsg, theme, onToggleTheme }) => {
           </div>
           <ThemeToggle theme={theme} onToggle={onToggleTheme} />
         </nav>
-
-        <h2>AES-CBC</h2>
+        <div className="learn-more">
+          <h2>AES-CBC</h2>
+          <Link to="/about#about-aes-cbc">Learn more</Link>
+        </div>
 
         {/* Encode Section */}
         <section>

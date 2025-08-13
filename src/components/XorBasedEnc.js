@@ -125,7 +125,10 @@ const XorBasedEnc = ({ showMsg, theme, onToggleTheme }) => {
           <ThemeToggle theme={theme} onToggle={onToggleTheme} />
         </nav>
 
-        <h2>XOR-Based Hash Encoder</h2>
+        <div className="learn-more">
+          <h2>XOR-Based Encoder</h2>
+          <Link to="/about#about-xor-based">Learn more</Link>
+        </div>
 
         {/* Encode Section */}
         <section>

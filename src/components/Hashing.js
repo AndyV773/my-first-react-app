@@ -153,7 +153,10 @@ const Hashing = ({ showMsg, theme, onToggleTheme }) => {
           <ThemeToggle theme={theme} onToggle={onToggleTheme} />
         </nav>
 
-        <h2>Hashing</h2>
+        <div className="learn-more">
+          <h2>Hashing</h2>
+          <Link to="/about#about-hashing">Learn more</Link>
+        </div>
 
         {/* Encode Section */}
         <section>

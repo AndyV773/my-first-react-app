@@ -16,6 +16,8 @@ export function ColorController({ theme }) {
   useEffect(() => {
     const footer = document.querySelector('footer');
     const isHome = location.pathname === '/';
+    const isAbout = location.pathname === '/about';
+
 
     // Reset body classes and styles
     document.body.classList.remove('p2', 'theme-day', 'theme-night');
@@ -29,7 +31,7 @@ export function ColorController({ theme }) {
       });
     });
 
-    if (isHome) {
+    if (isHome || isAbout) {
       document.body.style.background = "var(--primary-bg)";
       document.body.style.color = "var(--primary-text)";
       document.body.classList.add("p2");
@@ -73,7 +75,9 @@ export function ScrollToTop() {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    if (pathname !== "about") {
+      window.scrollTo(0, 0);
+    }
   }, [pathname]);
 
   return null;
@@ -290,66 +294,92 @@ export function getQrCorrectionInfo(byteLength) {
 
 
 
-export const QrScanner = ({ onScan, onClose, onError }) => {
+export const QrScanner = ({
+  onScan,
+  onClose,
+  fps = 1,
+  qrbox = 270,
+  facingMode = "environment",
+}) => {
   const qrRegionId = "qr-scanner";
-  const html5QrCode = useRef(null);
+  const html5QrCodeRef = useRef(null);
+  const isStartingRef = useRef(false); 
   const [isRunning, setIsRunning] = useState(false);
 
   const stopScanner = useCallback(async () => {
-    if (html5QrCode.current && isRunning) {
-      try {
-        await html5QrCode.current.stop();
-        await html5QrCode.current.clear();
-        setIsRunning(false);
-        if (onClose) onClose();
-      } catch (err) {
-        console.error("Failed to stop scanner:", err);
-      }
+    // Prevent stopping during start phase
+    if (isStartingRef.current) {
+      return;
+    }
+
+    if (!html5QrCodeRef.current || !isRunning) {
+      return; // Safe guard
+    }
+
+    try {
+      await html5QrCodeRef.current.stop();
+      await html5QrCodeRef.current.clear();
+    } catch (err) {
+      return { error: "Failed to stop scanner." };
+    } finally {
+      setIsRunning(false);
+      onClose?.();
     }
   }, [isRunning, onClose]);
 
-  useEffect(() => {
-
-    html5QrCode.current = new window.Html5Qrcode(qrRegionId);
-
-    async function startScanner() {
-      try {
-        await html5QrCode.current.start(
-          { facingMode: "environment" },
-          { fps: 10, qrbox: 250 },
-          (decodedText) => {
-            onScan(decodedText);
-            setTimeout(() => stopScanner(), 200);
-          },
-          (errorMessage) => {
-            console.warn("QR Scan error:", errorMessage);
-          }
-        );
-        setIsRunning(true);
-      } catch (err) {
-        if (onError) onError("Camera error: " + (err?.message || "Unknown error"));
-        if (onClose) onClose();
-        return; // early return on error to stop further execution
-      }
+  const startScanner = useCallback(async () => {
+    if (!window.Html5Qrcode) {
+      return { error: "QR scanning library not found." };
     }
 
-    const timeoutId = setTimeout(() => {
-      startScanner();
-    }, 200);
+    if (!html5QrCodeRef.current) {
+      html5QrCodeRef.current = new window.Html5Qrcode(qrRegionId);
+    }
+
+    isStartingRef.current = true; 
+
+    try {
+      await html5QrCodeRef.current.start(
+        { facingMode },
+        { fps, qrbox },
+        (decodedText) => {
+          onScan(decodedText);
+          setTimeout(() => stopScanner(), 1000);
+        },
+        (errorMessage) => {
+          // console.warn("QR Scan error:", errorMessage);
+          return { error: "QR Scan error:" + errorMessage };
+        }
+      );
+
+      setIsRunning(true);
+      return { success: true };
+    } catch (err) {
+      await stopScanner();
+      return { error: `Camera error: ${err?.message || "Unknown error"}` };
+    } finally {
+      isStartingRef.current = false; 
+    }
+  }, [fps, qrbox, facingMode, onScan, stopScanner]);
+
+
+  useEffect(() => {
+    const timeoutId = setTimeout(startScanner, 200);
 
     return () => {
       clearTimeout(timeoutId);
-      stopScanner();
+
+      if (isRunning) {
+        stopScanner();
+      }
     };
-  }, [onScan, onClose, stopScanner, onError]);
+  }, [startScanner, stopScanner, isRunning]);
 
   return (
     <div className="overlay">
       <div id={qrRegionId} className="qr-region" />
-      <button
-        className="close-button"
-        onClick={stopScanner}
-      >X</button>
+        <button className="close-button" aria-label="Close QR Scanner" onClick={stopScanner}>X</button>
     </div>
   );
 };
+

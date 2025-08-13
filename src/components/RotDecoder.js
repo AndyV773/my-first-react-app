@@ -110,7 +110,12 @@ const RotDecoder = ({ showMsg, theme, onToggleTheme }) => {
                 </div>
                 <ThemeToggle theme={theme} onToggle={onToggleTheme} />
             </nav>
-            <h2>Rotation Encoder</h2>
+
+            <div className="learn-more">
+                <h2>Rotation Encoder</h2>
+                <Link to="/about#about-rot-encoder">Learn more</Link>
+            </div>
+
             <section>
                 <h2>Decoder</h2>
                 <p>Upload ec file</p>

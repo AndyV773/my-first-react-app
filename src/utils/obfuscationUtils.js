@@ -5,18 +5,61 @@ export function reverseString(text) {
   return text.split('').reverse().join('');
 }
 
-// Unicode
-export function unicodeEscape(s) {
+// Unicode UTF-8
+export function utf8Escape(s) {
+  const encoder = new TextEncoder();
+  const bytes = encoder.encode(s);
+  return [...bytes].map(b => '\\x' + b.toString(16).padStart(2, '0')).join('');
+}
+
+export function utf8Unescape(escaped) {
+  // Match all \xXX hex byte sequences
+  const bytes = [];
+  const regex = /\\x([0-9a-fA-F]{2})/g;
+  let match;
+  while ((match = regex.exec(escaped)) !== null) {
+    bytes.push(parseInt(match[1], 16));
+  }
+
+  // Decode bytes back to string using TextDecoder
+  const decoder = new TextDecoder();
+  return decoder.decode(new Uint8Array(bytes));
+}
+
+// Unicode UTF-16
+export function utf16Escape(s) {
   return [...s]
     .map(c => '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0'))
     .join('');
 }
 
-export function unicodeUnescape(s) {
+export function utf16Unescape(s) {
   return s.replace(/\\u([\dA-Fa-f]{4})/g, (_, g) =>
     String.fromCharCode(parseInt(g, 16))
   );
 }
+
+// Code points
+export function stringCodePoints(s) {
+  return [...s]
+    .map(char => char.codePointAt(0))  
+    .join(' ');                
+}
+
+export function decimalCodePoints(s) {
+  return s
+    .split(/\s+/)
+    .map(numStr => {
+      const codePoint = parseInt(numStr, 10);
+      try {
+        return String.fromCodePoint(codePoint);
+      } catch {
+        return '�'; // replacement character for invalid code points
+      }
+    })
+    .join('');
+}
+
 
 // ROT
 export function rot13(text) {
@@ -122,4 +165,46 @@ export function decompressText(text) {
   } catch {
     return 'Invalid compressed text.';
   }
+}
+
+// Convert string to Uint8Array (UTF-8 encoding)
+export function toUint8Array(str) {
+  const encoder = new TextEncoder(); // UTF-8 encoder
+  return encoder.encode(str);
+}
+
+export function fromUint8Array(str) {
+  const arr = new Uint8Array(str.split(',').map(n => Number(n.trim())));
+  const decoder = new TextDecoder(); // UTF-8 decoder
+  return decoder.decode(arr);
+}
+
+// Convert string to Uint16Array (UTF-16 code units)
+export function toUint16Array(str) {
+  const buffer = new ArrayBuffer(str.length * 2); // 2 bytes per char
+  const view = new Uint16Array(buffer);
+  for (let i = 0; i < str.length; i++) {
+    view[i] = str.charCodeAt(i); // UTF-16 code unit for each char
+  }
+  return view;
+}
+
+export function fromUint16Array(str) {
+  // Convert comma-separated string to Uint16Array
+  const arr = new Uint16Array(str.split(',').map(n => Number(n.trim())));
+  // Convert each code unit back to a character
+  return String.fromCharCode(...arr);
+}
+
+
+// Convert string to Uint32Array (Unicode code points)
+export function toUint32Array(str) {
+  const codePoints = Array.from(str, (c) => c.codePointAt(0));
+  return new Uint32Array(codePoints);
+}
+
+// Convert comma-separated string of code points back to a string
+export function fromUint32Array(str) {
+  const arr = new Uint32Array(str.split(',').map(n => Number(n.trim())));
+  return String.fromCodePoint(...arr);
 }

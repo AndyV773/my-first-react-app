@@ -188,7 +188,10 @@ const OptQuantEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
             <ThemeToggle theme={theme} onToggle={onToggleTheme} />
         </nav>
 
-        <h2>Optimised Quantum Shuffle</h2>
+        <div className="learn-more">
+            <h2>Optimised Quantum Shuffle</h2>
+            <Link to="/about#about-opt-quant">Learn more</Link>
+        </div>
 
         <section>
             <h2>Encode</h2>

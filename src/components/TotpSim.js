@@ -129,11 +129,16 @@ const TotpSim = ({ showMsg, theme, onToggleTheme }) => {
 
   return (
     <main className="container">
-            <nav>
-                <Link to="/">Home</Link>
-                <ThemeToggle theme={theme} onToggle={onToggleTheme} />
-            </nav>
+        <nav>
+            <Link to="/">Home</Link>
+            <ThemeToggle theme={theme} onToggle={onToggleTheme} />
+        </nav>
+
+        <div className="learn-more">
             <h2>TOTP & Captcha</h2>
+            <Link to="/about#about-totp-sim">Learn more</Link>
+        </div>
+
         <section>
             <h2>TOTP Simulator</h2>
         

@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { HashRouter as Router, Routes, Route, Link } from "react-router-dom";
 import LockScreen from "./components/LockedState.js";
+import About from "./components/About.js";
 import AesCbcEnc from "./components/AesCbcEnc.js";
 import AesCbcDec from "./components/AesCbcDec.js";
 import AesGcmEnc from "./components/AesGcmEnc.js";
@@ -94,6 +95,7 @@ function App() {
               </>
             )}
           />
+        <Route path="/about" element={<About showMsg={showMsg} />} />
         <Route path="/aes-cbc-enc" element={<AesCbcEnc showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
         <Route path="/aes-cbc-dec" element={<AesCbcDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
         <Route path="/aes-gcm-enc" element={<AesGcmEnc showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />

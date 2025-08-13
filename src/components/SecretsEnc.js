@@ -55,7 +55,12 @@ const SecretsEnc = ({ showMsg, theme, onToggleTheme }) => {
           </div>
           <ThemeToggle theme={theme} onToggle={onToggleTheme} />
         </nav>
-        <h2>Secret Sharing</h2>
+
+        <div className="learn-more">
+          <h2>Secret Sharing</h2>
+          <Link to="/about#about-sss">Learn more</Link>
+        </div>
+
         <section>
             <h2>Encode</h2>
             <input

@@ -42,15 +42,19 @@ const FileIntegrity = ({ showMsg, theme, onToggleTheme }) => {
           <ThemeToggle theme={theme} onToggle={onToggleTheme} />
         </nav>
 
-        <h2>File Integrity Check</h2>
+        <div className="learn-more">
+          <h2>File Integrity Check</h2>
+          <Link to="/about#about-file-integrity">Learn more</Link>          
+        </div>
+
         <section className="file">
             <input type="file" onChange={handleFileChange} />
 
-            <div className="file">
+            <div>
               {fileInfo && (
-                  <div>
+                  <div className="file">
                     <p>File Information:</p>
-                    <ul>
+                    <ul className="file">
                         <li>Name: {fileInfo.name}</li>
                         <li>Size: {fileInfo.size} bytes</li>
                         <li>Type: {fileInfo.type}</li>

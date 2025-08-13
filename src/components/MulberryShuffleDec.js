@@ -101,7 +101,10 @@ const MulberryShuffleDec = ({ showMsg, theme, onToggleTheme }) => {
           <ThemeToggle theme={theme} onToggle={onToggleTheme} />
         </nav>
 
-        <h2>Mulberry Shuffle</h2>
+        <div className="learn-more">
+          <h2>Mulberry Shuffle</h2>
+          <Link to="/about#about-mulberry-shuffle">Learn more</Link>
+        </div>
 
         {/* Decode Section */}
         <section>

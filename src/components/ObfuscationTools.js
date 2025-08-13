@@ -3,8 +3,12 @@ import { Link } from 'react-router-dom';
 import { PreCopyOutputBlock, ThemeToggle } from '../utils/uiHelpers'
 import {
   reverseString,
-  unicodeEscape,
-  unicodeUnescape,
+  utf8Escape,
+  utf8Unescape,
+  utf16Escape,
+  utf16Unescape,
+  stringCodePoints,
+  decimalCodePoints,
   rot13,
   rot18,
   rotN,
@@ -16,7 +20,13 @@ import {
   base64Encode,
   base64Decode,
   compressText,
-  decompressText
+  decompressText,
+  toUint8Array,
+  fromUint8Array,
+  toUint16Array,
+  fromUint16Array,
+  toUint32Array,
+  fromUint32Array,
 } from '../utils/obfuscationUtils';
 
 
@@ -58,14 +68,34 @@ const ObfuscationTools = ({ theme, onToggleTheme }) => {
     document.getElementById('xor_output').innerText = xorBase64Decode(text);
   };
 
-  const doUnicodeEscape = () => {
-    const text = document.getElementById('unicode_input').value;
-    document.getElementById('unicode_output').innerText = unicodeEscape(text);
+  const doUnicodeEscape8 = () => {
+    const text = document.getElementById('unicode_input8').value;
+    document.getElementById('unicode_output8').innerText = utf8Escape(text);
   };
 
-  const doUnicodeUnescape = () => {
-    const text = document.getElementById('unicode_input').value;
-    document.getElementById('unicode_output').innerText = unicodeUnescape(text);
+  const doUnicodeUnescape8 = () => {
+    const text = document.getElementById('unicode_input8').value;
+    document.getElementById('unicode_output8').innerText = utf8Unescape(text);
+  };
+
+  const doUnicodeEscape16 = () => {
+    const text = document.getElementById('unicode_input16').value;
+    document.getElementById('unicode_output16').innerText = utf16Escape(text);
+  };
+
+  const doUnicodeUnescape16 = () => {
+    const text = document.getElementById('unicode_input16').value;
+    document.getElementById('unicode_output16').innerText = utf16Unescape(text);
+  };
+
+  const doStringCodePoints = () => {
+    const text = document.getElementById('input_points').value;
+    document.getElementById('output_points').innerText = stringCodePoints(text);
+  };
+
+  const doDecimalCodePoints = () => {
+    const num = document.getElementById('input_points').value;
+    document.getElementById('output_points').innerText = decimalCodePoints(num);
   };
 
   const doHexEncode = () => {
@@ -98,7 +128,35 @@ const ObfuscationTools = ({ theme, onToggleTheme }) => {
     document.getElementById('compress_output').innerText = decompressText(text);
   };
 
+  const doUnit8Array = () => {
+    const text = document.getElementById('unit8_input').value;
+    document.getElementById('unit8_output').innerText = toUint8Array(text);
+  };
 
+  const doFromUnit8Array = () => {
+    const text = document.getElementById('unit8_input').value;
+    document.getElementById('unit8_output').innerText = fromUint8Array(text);
+  };
+
+  const doUnit16Array = () => {
+    const text = document.getElementById('unit16_input').value;
+    document.getElementById('unit16_output').innerText = toUint16Array(text);
+  };
+
+  const doFromUnit16Array = () => {
+    const text = document.getElementById('unit16_input').value;
+    document.getElementById('unit16_output').innerText = fromUint16Array(text);
+  };
+
+  const doUnit32Array = () => {
+    const text = document.getElementById('unit32_input').value;
+    document.getElementById('unit32_output').innerText = toUint32Array(text);
+  };
+
+  const doFromUnit32Array = () => {
+    const text = document.getElementById('unit32_input').value;
+    document.getElementById('unit32_output').innerText = fromUint32Array(text);
+  };
 
   return (
     <main id='obfuscation' className="container">
@@ -106,12 +164,13 @@ const ObfuscationTools = ({ theme, onToggleTheme }) => {
         <Link to="/">Home</Link>
         <ThemeToggle theme={theme} onToggle={onToggleTheme} />
       </nav>
-      <h2>Obfuscation &amp; Encoding</h2>
-      <p>
-        These tools include reversing text, Rotate (ROT), Exclusive OR (XOR), 
-        Unicode & Hexadecimal, Base64, and compression (Zlib). 
-        Good for basic encoding/decoding, and obfuscation tasks.
-      </p>
+
+      <div className="learn-more">
+        <h2>Obfuscation &amp; Encoding</h2>  
+        <Link to="/about#about-obfuscation-tools">Learn more</Link>        
+      </div>
+
+      
       <section>
         <h3>Reverse</h3>
         <textarea id="reverse_input" placeholder="Enter text to reverse"></textarea>
@@ -156,26 +215,6 @@ const ObfuscationTools = ({ theme, onToggleTheme }) => {
       </section>
 
       <section>
-        <h3>Unicode Escape/Unescape</h3>
-        <textarea id="unicode_input" placeholder="Enter text for Unicode escape"></textarea>
-        <div className="flex g1">
-            <button onClick={doUnicodeEscape} className="encode">Escape</button>
-            <button onClick={doUnicodeUnescape} className="decode">Unescape</button>
-        </div>
-        <PreCopyOutputBlock outputId="unicode_output" />
-      </section>
-
-      <section>
-        <h3>Hex Encode/Decode</h3>
-        <textarea id="hex_input" placeholder="Enter text for Hex"></textarea>
-        <div className="flex g1">
-            <button onClick={doHexEncode} className="encode">Encode</button>
-            <button onClick={doHexDecode} className="decode">Decode</button> 
-        </div>
-        <PreCopyOutputBlock outputId="hex_output" />
-      </section>
-
-      <section>
         <h3>Base64 Encode/Decode</h3>
         <textarea id="base64_input" placeholder="Enter text for Base64"></textarea>
         <div className="flex g1">
@@ -193,6 +232,80 @@ const ObfuscationTools = ({ theme, onToggleTheme }) => {
             <button onClick={doDecompress} className="decode">Decompress</button>
         </div>
         <PreCopyOutputBlock outputId="compress_output" />
+      </section>
+
+      <section>
+        <h3>Hex Encode/Decode</h3>
+        <textarea id="hex_input" placeholder="Enter text for Hex"></textarea>
+        <div className="flex g1">
+            <button onClick={doHexEncode} className="encode">Encode</button>
+            <button onClick={doHexDecode} className="decode">Decode</button> 
+        </div>
+        <PreCopyOutputBlock outputId="hex_output" />
+      </section>
+
+      <section>
+        <h3>Unicode Escape/Unescape (UTF-8)</h3>
+        <textarea id="unicode_input8" placeholder="Enter text for Unicode escape"></textarea>
+        <div className="flex g1">
+            <button onClick={doUnicodeEscape8} className="encode">Escape</button>
+            <button onClick={doUnicodeUnescape8} className="decode">Unescape</button>
+        </div>
+        <PreCopyOutputBlock outputId="unicode_output8" />
+      </section>
+
+      <section>
+        <h3>Unicode Escape/Unescape (UTF-16)</h3>
+        <textarea id="unicode_input16" placeholder="Enter text for Unicode escape"></textarea>
+        <div className="flex g1">
+            <button onClick={doUnicodeEscape16} className="encode">Escape</button>
+            <button onClick={doUnicodeUnescape16} className="decode">Unescape</button>
+        </div>
+        <PreCopyOutputBlock outputId="unicode_output16" />
+      </section>
+
+      <section>
+        <h3>Unicode Escape/Unescape (Code Points)</h3>
+        <p>Code points range from 0 to 4,294,967,295 (0xFFFFFFFF), which fits within a 32-bit unsigned integer (Uint32Array).</p>
+        <textarea id="input_points" placeholder="Enter text for Unicode escape"></textarea>
+        <div className="flex g1">
+            <button onClick={doStringCodePoints} className="encode">Escape</button>
+            <button onClick={doDecimalCodePoints} className="decode">Unescape</button>
+        </div>
+        <PreCopyOutputBlock outputId="output_points" />
+      </section>
+
+      <section>
+        <h3>Unit 8 Array (8 bits)</h3>
+        <p>Each element can store values from 0 - 256 (0xFF).</p>
+        <textarea id="unit8_input" placeholder="Enter text to compress"></textarea>
+        <div className="flex g1">
+            <button onClick={doUnit8Array} className="encode">Escape</button>
+            <button onClick={doFromUnit8Array} className="decode">Unescape</button>
+        </div>
+        <PreCopyOutputBlock outputId="unit8_output" />
+      </section>
+
+      <section>
+        <h3>Unit 16 Array (16 bits)</h3>
+        <p>Each element can store values from 0 - 65,535 (0xFFFF).</p>
+        <textarea id="unit16_input" placeholder="Enter text to compress"></textarea>
+        <div className="flex g1">
+            <button onClick={doUnit16Array} className="encode">Escape</button>
+            <button onClick={doFromUnit16Array} className="decode">Unescape</button>
+        </div>
+        <PreCopyOutputBlock outputId="unit16_output" />
+      </section>
+
+      <section>
+        <h3>Uint32 Array (32 bits)</h3>
+        <p>Each element can store values from 0 to 4,294,967,295 (0xFFFFFFFF).</p>
+        <textarea id="unit32_input" placeholder="Enter text to compress"></textarea>
+        <div className="flex g1">
+            <button onClick={doUnit32Array} className="encode">Escape</button>
+            <button onClick={doFromUnit32Array} className="decode">Unescape</button>
+        </div>
+        <PreCopyOutputBlock outputId="unit32_output" />
       </section>
     </main>
   );

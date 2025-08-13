@@ -81,7 +81,10 @@ const AesGcmDec = ({ showMsg, theme, onToggleTheme }) => {
             <ThemeToggle theme={theme} onToggle={onToggleTheme} />
         </nav>
 
-        <h2>AES-GCM</h2>
+        <div className="learn-more">
+            <h2>AES-GCM</h2>
+            <Link to="/about#about-aes-gcm">Learn more</Link>
+        </div>
 
         {/* Decode Section */}
         <section>

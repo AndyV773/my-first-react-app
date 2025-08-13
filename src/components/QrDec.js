@@ -15,19 +15,23 @@ const QrDec = ({ showMsg, theme, onToggleTheme }) => {
 
     const handleScan = (decodedText) => {
         setInput(decodedText);
-        setShowScanner(false); // close scanner after success
-    };
-
-    // Callback to close scanner manually
-    const handleClose = () => {
         setShowScanner(false);
     };
 
-    const handleError = (msg) => {
-        showMsg(msg, true);
+    const handleScannerOpen = async () => {
+        setShowScanner(true);
+    };
+
+    const handleScannerClose = () => {
         setShowScanner(false);
     };
-    
+
+    const handleError = (errorObj) => {
+        if (errorObj?.error) {
+            showMsg(errorObj.error, true);
+        }
+        setShowScanner(false);
+    };
 
     const handleUpload = async (e) => {
         const file = e.target.files?.[0];
@@ -76,54 +80,58 @@ const QrDec = ({ showMsg, theme, onToggleTheme }) => {
 
     return (
         <main className="container">
-        <nav>
-            <div className="flex g1">
-                <Link to="/">Home</Link>
-                <Link to="/qr-enc">Encode</Link>
+            <nav>
+                <div className="flex g1">
+                    <Link to="/">Home</Link>
+                    <Link to="/qr-enc">Encode</Link>
+                </div>
+                <ThemeToggle theme={theme} onToggle={onToggleTheme} />
+            </nav>
+
+            <div className="learn-more">
+                <h2>Encrypted QR Code</h2>
+                <Link to="/about#about-qr-enc">Learn more</Link>
             </div>
-            <ThemeToggle theme={theme} onToggle={onToggleTheme} />
-        </nav>
 
-        <h2>QR Code Decryption</h2>
+            <section>
+                <h2>Decode</h2>
+                <div>
+                    <button onClick={handleScannerOpen}>Open QR Scanner</button>
 
-        <section>
-            <h2>Decode</h2>
-            <div>
-                <button onClick={() => setShowScanner(true)}>Open QR Scanner</button>
-                {showScanner && (
-                    <QrScanner
-                        onScan={handleScan}
-                        onClose={handleClose}
-                        onError={handleError}
-                    />
+                    {showScanner && (
+                        <QrScanner
+                            onScan={handleScan}
+                            onClose={handleScannerClose}
+                            onError={handleError}
+                        />
+                    )}
+                </div>
+
+                <p>Upload QR code image</p>
+                <input type="file" onChange={handleUpload} />
+                {fileInfo && (
+                    <p className="file-info">
+                        File: {fileInfo.name}, Type: {fileInfo.type}, Size: {fileInfo.size}
+                    </p>
                 )}
-            </div>
+                <textarea
+                    value={input}
+                    rows="5"
+                    placeholder="Input"
+                    readOnly
+                />
 
-            <p>Upload QR code image</p>
-            <input type="file" onChange={handleUpload} />
-            {fileInfo && (
-                <p className="file-info">
-                    File: {fileInfo.name}, Type: {fileInfo.type}, Size: {fileInfo.size}
-                </p>
-            )}
-            <textarea
-                value={input}
-                rows="5"
-                placeholder="Input"
-                readOnly
-            />
+                <input ref={pwRef} placeholder="Password" type="password" />
 
-            <input ref={pwRef} placeholder="Password" type="password" />
+                <button onClick={handleDecrypt}>Decrypt</button>
 
-            <button onClick={handleDecrypt}>Decrypt</button>
-
-            {decryptedText && (
-            <>
-                <h3>Decrypted Output</h3>
-                <textarea value={decryptedText} readOnly rows="5" />
-            </>
-            )}
-        </section>
+                {decryptedText && (
+                <>
+                    <h3>Decrypted Output</h3>
+                    <textarea value={decryptedText} readOnly rows="5" />
+                </>
+                )}
+            </section>
         </main>
     );
 };

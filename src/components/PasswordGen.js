@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link } from 'react-router-dom';
 import { PreCopyOutputBlock, ThemeToggle } from "../utils/uiHelpers";
 
@@ -36,16 +36,16 @@ const PasswordGen = ({ showMsg, theme, onToggleTheme }) => {
   const [useSpecialChars, setUseSpecialChars] = useState(true);
   const [passwords, setPasswords] = useState([]);
 
-  const generatePasswords = () => {
+  const generatePasswords = useCallback(() => {
     const newPasswords = Array.from({ length: 6 }, () =>
       generatePassword(length, chunkSize, useSpecialChars)
     );
     setPasswords(newPasswords);
-  };
+  }, [length, chunkSize, useSpecialChars]);
 
   useEffect(() => {
     generatePasswords();
-  }, [length, chunkSize, useSpecialChars]);
+  }, [generatePasswords]);
 
   return (
     <main className="container">
@@ -53,7 +53,11 @@ const PasswordGen = ({ showMsg, theme, onToggleTheme }) => {
         <Link to="/">Home</Link>
         <ThemeToggle theme={theme} onToggle={onToggleTheme} />
       </nav>
-      <h2>Password Generator</h2>
+
+      <div className="learn-more">
+        <h2>Password Generator</h2>
+        <Link to="/about#about-password-gen">Learn more</Link>
+      </div>
 
       <section>
         <div>

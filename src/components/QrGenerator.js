@@ -72,7 +72,11 @@ const QrGenerator = ({ showMsg, theme, onToggleTheme }) => {
         <Link to="/">Home</Link>
         <ThemeToggle theme={theme} onToggle={onToggleTheme} />
       </nav>
-      <h2>QR Code Generator</h2>
+
+      <div className="learn-more">
+        <h2>QR Code Generator</h2>
+        <Link to="/about#about-qr-gen">Learn more</Link>
+      </div>
 
       <section>
         <label htmlFor="input">Enter text, URL, image or file link:</label>

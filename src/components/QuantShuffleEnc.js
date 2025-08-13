@@ -315,7 +315,10 @@ const QuantShuffleEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
         <ThemeToggle theme={theme} onToggle={onToggleTheme} />
       </nav>
 
-      <h2>Quantum Shuffle</h2>
+      <div className="learn-more">
+        <h2>Quantum Shuffle</h2>
+        <Link to="/about#about-quant-shuffle">Learn more</Link>
+      </div>
 
       <section>
         <h2>Encode</h2>

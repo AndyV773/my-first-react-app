@@ -58,7 +58,10 @@ const QrEnc = ({ showMsg, theme, onToggleTheme }) => {
             <ThemeToggle theme={theme} onToggle={onToggleTheme} />
       </nav>
 
-      <h2>Encrypted QR Code Generator</h2>
+      <div className="learn-more">
+        <h2>Encrypted QR Code</h2>
+        <Link to="/about#about-qr-enc">Learn more</Link>
+      </div>
 
       <section>
         <h2>Encode</h2>

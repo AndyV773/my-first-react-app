@@ -111,6 +111,17 @@ button.decode {
     color: white;
 }
 
+.learn-more {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.theme-night .learn-more a {
+    color: #cfd8dc;
+}
+
 .flex {
     display: flex;
 }
@@ -324,6 +335,48 @@ input[type="color"] {
 
 .tool-link span:hover {
     border-color: #00ffd5;
+}
+
+/* -------------------------------------- about */
+.about-page {
+    max-width: 1200px;
+    margin: auto;
+    gap: 1rem;
+    font-size: 1rem;
+    color: #cfd8dc;
+}
+
+.about-box {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;       
+}
+
+.about-list {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.about-list li {
+    margin: 1rem 1rem 1rem 0;
+}
+
+.about-link>a {
+    color: #00ffd5;
+    font-weight: 600;
+    font-size: 1rem;
+    border-bottom: 1.5px solid transparent;
+    transition: border-color 0.3s ease;
+    text-align: left;
+}
+
+.contact-form {
+    max-width: 800px;
+    margin: auto;
 }
 
 /* -------------------------------------- footer */
@@ -638,23 +691,32 @@ button.close-button {
     font-size: 1rem;
 }
 
-/* -------------------------------------- file checker styles*/
+/* -------------------------------------- file check styles*/
 section.file {
     min-height: 300px;
 } 
+
 div.file {
     min-height: 150px;
     background: #ecf0f1;
     color: var(--secondary-text);
     padding: 1rem;
     border-radius: 4px;
+    word-break: break-word;
+}
+
+ul.file {
+    padding: 0 0 0 1rem;
+}
+
+ul.file li {
+    margin: 0.5rem 0;
 }
 
 .file-pre pre {
     margin: 0.5rem 0;
     min-height: auto;
-    /* padding-top: 2rem; */
-    padding: 2rem 2rem 0.5rem 0.5rem;
+    padding: 0.5rem 2rem 0.5rem 0.5rem;
 }
 
 /* -------------------------------------- totp styles*/
