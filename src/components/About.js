@@ -45,7 +45,7 @@ export const About = ({ showMsg }) => {
             
         <p>{appDescription.description}</p>
         {appDescription.libs && (
-            <ol>
+            <ol className="about-list">
                 {appDescription.libs.map((lib, idx) => (
                     <li key={idx}>{lib}</li>
                 ))}

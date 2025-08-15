@@ -73,24 +73,32 @@ function seededShuffle(array, key, reverse = false) {
  * @param {boolean} reverse - If true, unshuffles the data.
  * @returns {Uint8Array} The shuffled (or unshuffled) result.
  */
-export function mulberryShuffle(fileInput, key) {
-    if (!fileInput) {
-        return { error: "Upload a file." };
+export function mulberryShuffle(input, key) {
+    if (!input) {
+        return { error: "Input data." };
     }
     if (!key || key.trim() === "") {
         return { error: "Enter a key." };
     }
 
-    const saltBytes = generateSaltBytes();
-    const salt = bytesToHex(saltBytes);
+    const saltBytesKey = generateSaltBytes();
+    const saltBytesInput = generateSaltBytes();
+    const salt = bytesToHex(saltBytesKey);
     const newKey = key + salt;
 
-    const shuffled = seededShuffle(fileInput, newKey);
+
+    const newInput = new Uint8Array(input.length + saltBytesInput.length);
+    newInput.set(saltBytesInput, 0);                 
+    newInput.set(input, saltBytesInput.length); 
+
+    
+
+    const shuffled = seededShuffle(newInput, newKey);
 
     // Append salt bytes to end of shuffled data
-    const combined = new Uint8Array(shuffled.length + saltBytes.length);
+    const combined = new Uint8Array(shuffled.length + saltBytesKey.length);
     combined.set(shuffled);
-    combined.set(saltBytes, shuffled.length);
+    combined.set(saltBytesKey, shuffled.length);
 
     return { result: combined };
 }
@@ -116,7 +124,9 @@ export function mulberryUnshuffle(fileInput, key) {
 
   const unshuffled = seededShuffle(output, newKey, true);
 
-  return { result: unshuffled };
+  const trimmed = unshuffled.slice(16);
+
+  return { result: trimmed };
 }
 
 

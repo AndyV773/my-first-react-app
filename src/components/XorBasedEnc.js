@@ -13,7 +13,6 @@ const XorBasedEnc = ({ showMsg, theme, onToggleTheme }) => {
     const [utf8Preview, setUtf8] = useState("");
     const [detectedExt, setDetectedExt] = useState("");
     
-
     const [output, setOutput] = useState("");
 
     const [hashKeys, setHashKeys] = useState([]);
