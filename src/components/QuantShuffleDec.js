@@ -242,7 +242,7 @@ const QuantShuffleDec = ({ showMsg, theme, onToggleTheme, showLoader }) => {
         setOutputData("");
         setDetectedExt(null);
 
-        showLoader({ show: true, mode: 'Decoding', typre: "loader decode", emoji: '🧩', bytes: keyBytes });
+        showLoader({ show: true, mode: 'Decoding', type: "loader decode", emoji: '🧩', bytes: keyBytes });
 
         workerRef.current.postMessage({
             type: "unshuffle",

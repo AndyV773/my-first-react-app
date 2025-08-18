@@ -33,13 +33,19 @@ export const tools = [
       id: "quant-shuffle-enc",
       title: "Quantum Shuffle",
       description:
-        "High load randomize file or text shuffle with added AES-GCM encryption.",
+        "High load randomize file or text shuffle using Unicode points with added AES-GCM encryption.",
     },
     {
       id: "opt-quant-enc",
       title: "Optimised Quantum Shuffle",
       description:
-        "Optimised all in one Quantum shuffle with AES-GCM encryption.",
+        "Optimised all in one Quantum shuffle using Unicode points with AES-GCM encryption.",
+    },
+    {
+      id: "quant-shuffle-enc-32",
+      title: "Quantum Shuffle Uint32",
+      description:
+        "High load randomize file or text shuffle using uint32 array with added AES-GCM encryption.",
     },
     {
       id: "rot-encoder",
@@ -52,6 +58,12 @@ export const tools = [
       title: "File Integrity Check",
       description:
         "Apply common hashing algorithms to data for security and integrity checks.",
+    },
+    {
+      id: "ip-addy",
+      title: "IP Information",
+      description:
+        "Quick tool for obtaining your IP address and information.",
     },
     {
       id: "hashing",
@@ -92,6 +104,12 @@ export const tools = [
     {
       id: "qr-generator",
       title: "QR Code Generator",
+      description:
+        "Create QR codes easily for URLs, text, or other data.",
+    },
+    {
+      id: "test",
+      title: "test",
       description:
         "Create QR codes easily for URLs, text, or other data.",
     },

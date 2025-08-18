@@ -3,7 +3,7 @@ export const aboutInfo = [
     id: "about-app",
     title: "About This App",
     description:
-        "This encryption toolkit is designed as an educational and demonstration tool to showcase a variety of shuffle and cryptographic techniques. It is a static JavaScript app that handles encryption entirely on the front end, within the browser. Therefore, no backend is needed. However, this means there may be limitations due to browser memory or device speed, so large images or files can cause the browser to crash. I have not implemented any restrictions on file sizes - this app is completely experimental, explore the features and learn how each component works. The libraries used in this app consist of:",
+        "This data transformation and encryption toolkit is designed for educational and demonstration purposes to showcase a variety of shuffle and cryptographic techniques. It is a static JavaScript app that handles encryption entirely on the front end, within the browser. Therefore, no backend is needed. However, this means there are limitations due to browser memory or device speed, so large images or files can cause the browser to crash. I have not implemented any restrictions on file sizes - this app is completely experimental, explore the features and learn how each component works. The libraries used in this app consist of:",
     libs: [
         "crypto-js - Providing AES (CBC & GCM) encryption and hashing algorithms like SHA-256.",
         "pako - Zlib-compatible compression and decompression of data.",
@@ -30,7 +30,7 @@ export const aboutInfo = [
     ],
     additional: "If your password is weak, an attacker who obtains the encrypted data (including the salt and IV) can attempt to brute force the password using the same key derivation and encryption methods. The salt and IV do not protect against guessing the password - they only ensure unique encryption and key derivation. Therefore, using a strong, password is essential to maintain security.",
     originalPage: "/aes-cbc-enc",
-    linkText: "Go to AES-CBC Encryption Tool"
+    linkText: "Go to AES-CBC Encryption"
   },
   {
     id: "about-aes-gcm",
@@ -48,7 +48,7 @@ export const aboutInfo = [
     ],
     additional: "Similar to AES-CBC, if your password is weak, the encryption is vulnerable to brute force attacks - where an attacker tries hundreds of thousands of password combinations using computational methods. AES-GCM provides confidentiality and integrity via an authentication tag (also called a MAC - Message Authentication Code), which helps detect if the data has been tampered with. However, using a strong, high-entropy password is essential to ensure your data remains secure.",
     originalPage: "/aes-gcm-enc",
-    linkText: "Go to AES-GCM Encryption Tool"
+    linkText: "Go to AES-GCM Encryption"
   },
   {
     id: "about-obfuscation-tools",
@@ -76,29 +76,38 @@ export const aboutInfo = [
     id: "about-mulberry-shuffle",
     title: "About Mulberry Shuffle",
     description:
-      "Mulberry Shuffle is a deterministic algorithm that rearranges data to make it unpredictable before encrypting it with AES-CBC, increasing complexity and security.",
+      "Mulberry Shuffle is a deterministic algorithm that rearranges data using a seeded pseudo-random number generator (PRNG) before encrypting it with AES-CBC, increasing complexity and security.",
     steps: [
-      "Input data is shuffled using the Mulberry algorithm.",
-      "Shuffled data is then encrypted with AES-CBC.",
-      "Decryption reverses the AES-CBC encryption.",
-      "Shuffled data is unshuffled to retrieve original content."
+      "You can upload a file or type text directly, and the content is displayed in both Base64 and UTF-8 formats so you can view the transformation.",
+      "Enter a key and click 'Shuffle'. For text input, the data is encoded into a Uint8Array, while file uploads use the raw binary data as-is.",
+      "A random salt (16 bytes) is added to the key to make it unique, and another random salt (16 bytes) is added to the input data for additional obscurity.",
+      "The data and key are passed through a seeded shuffle, where the key is processed using the mulberry32 pseudo-random number generator (PRNG) to create a reversible shuffle pattern based on the key.",
+      "The process can be repeated to increase complexity and security, with transformations viewable at each stage.",
+      "AES-CBC encryption can optionally be applied after shuffling for stronger security.",
+      "The final output can be saved and downloaded as an encrypted file.",
+      "To decode, go to the Decode section, upload the correct file, and enter the correct shuffle key and AES key (if used). If you have shuffled multiple times, you must repeat the steps in the correct reverse order or the data may be lost.",
     ],
+    additional: "The Mulberry Shuffle is not cryptographic by itself - it is an advanced shuffling technique. Although extra precautions are taken to obscure the data, the data itself remains the same. For example, if you input 'Hello World', you can still see the original characters, just reordered and mixed with additional characters. Try it for yourself!",
     originalPage: "/mulberry-shuffle-enc",
-    linkText: "Go to Mulberry Shuffle Tool"
+    linkText: "Go to Mulberry Shuffle"
   },
   {
     id: "about-quant-shuffle",
     title: "About Quantum Shuffle",
     description:
-      "Quantum Shuffle applies a high-load randomization process to files or text and then encrypts the result using AES-GCM for robust security against pattern analysis.",
+      "Quantum Shuffle applies a high-load randomization process to files or text, using rotation with Unicode code points. You can choose to further encrypt the data using AES-GCM. The process is broken down into stages, allowing you to view the transformation at each stage.",
     steps: [
-      "Apply heavy randomization to the input data.",
-      "Encrypt the randomized data with AES-GCM.",
-      "Transmit encrypted data securely.",
-      "Decrypt and reverse the shuffle process to recover data."
+      "Upload a file or input text. Files are Base64 encoded to handle the binary as text format.",
+      "The character range is kept between 10000 to reduce computation. You can check the box to use all characters in the range of 1,114,112 (0x10FFFF) Unicode characters.",
+      "When you click Shuffle, a random number is generated for each character within the desired range. This number and the original input are used to generate a new Unicode code point representing the data. It is then split into two outputs: the shuffled data and the rotation key.",
+      "Next, you have the choice to add AES-GCM encryption using a separate key for both the data and the key. You can also choose to skip encryption.",
+      "In the final stage, you can choose to store and save the binary data as Base64. This is the preferred method for QR codes, as some QR codes will not generate correctly with binary data.",
+      "You can then choose to generate and save a QR code. If the data or key is below 2,900 bytes, it will display the error correction level of the QR code based on its size. Alternatively, you can save it as an encrypted file.",
+      "Decrypt and reverse the shuffle process to recover the data."
     ],
+    additional: "This technique is not original - it has been known for many years and uses rotation. I named it Quantum Shuffle, as I believe it to be quantum-proof and not possible to decode without the correct key. The key or data alone are meaningless, the key can be extremely long, based on the size of the input. Even if the user inputs 'Hello World' (11 bytes), each character is shuffled randomly so that, even with the data, attempting to brute-force the original input without the key could yield any 11-byte string, e.g., 'big red fox' or any other 11-byte word or phrase. I will be adding a technique later to disguise the character length, making it even more difficult. If you believe I am wrong and know of a way to break the encryption, I am always open for discussion - please get in touch.",
     originalPage: "/quant-shuffle-enc",
-    linkText: "Go to Quantum Shuffle Tool"
+    linkText: "Go to Quantum Shuffle"
   },
   {
     id: "about-opt-quant",
@@ -111,7 +120,20 @@ export const aboutInfo = [
       "Use optimized methods for decryption and unshuffling."
     ],
     originalPage: "/opt-quant-enc",
-    linkText: "Go to Optimised Quantum Shuffle Tool"
+    linkText: "Go to Optimised Quantum Shuffle"
+  },
+  {
+    id: "about-quant-shuffle-32",
+    title: "About Quantum Shuffle Uint32",
+    description:
+      "An all-in-one optimized variant of the Quantum Shuffle, combining efficient randomization with AES-GCM encryption for enhanced performance and security.",
+    steps: [
+      "Efficiently randomize input data with optimized algorithm.",
+      "Encrypt randomized data with AES-GCM.",
+      "Use optimized methods for decryption and unshuffling."
+    ],
+    originalPage: "/quant-shuffle-enc-32",
+    linkText: "Go to Quantum Shuffle Uint32"
   },
   {
     id: "about-rot-encoder",
@@ -124,7 +146,7 @@ export const aboutInfo = [
       "Decoding requires reversing rotation and decryption."
     ],
     originalPage: "/rot-encoder",
-    linkText: "Go to Rotation Encoder Tool"
+    linkText: "Go to Rotation Encoder"
   },
   {
     id: "about-file-integrity",
@@ -138,7 +160,21 @@ export const aboutInfo = [
       "Detect tampering if hashes don't match."
     ],
     originalPage: "/file-integrity",
-    linkText: "Go to File Integrity Check Tool"
+    linkText: "Go to File Integrity Check"
+  },
+  {
+    id: "about-ip-addy",
+    title: "About IP Information",
+    description:
+      "Ensure your files remain unaltered by using common hashing algorithms that verify data integrity and detect any unauthorized changes.",
+    steps: [
+      "Select file to check integrity.",
+      "Apply hashing algorithm (e.g., SHA-256).",
+      "Compare hash output to expected value.",
+      "Detect tampering if hashes don't match."
+    ],
+    originalPage: "/ip-addy",
+    linkText: "Go to IP Information"
   },
   {
     id: "about-hashing",
@@ -151,7 +187,7 @@ export const aboutInfo = [
       "Hashes can be used for verification or password storage."
     ],
     originalPage: "/hashing",
-    linkText: "Go to SHA-256 & Argon2 Hashing Tool"
+    linkText: "Go to SHA-256 & Argon2 Hashing"
   },
   {
     id: "about-xor-based",
@@ -164,7 +200,7 @@ export const aboutInfo = [
       "Reverse XOR operation for decoding."
     ],
     originalPage: "/xor-based-enc",
-    linkText: "Go to XOR-Based Hash Encoder Tool"
+    linkText: "Go to XOR-Based Hash Encoder"
   },
   {
     id: "about-sss",
@@ -178,7 +214,7 @@ export const aboutInfo = [
       "Combine threshold number of shares to reconstruct secret."
     ],
     originalPage: "/sss-enc",
-    linkText: "Go to Secret Sharing Tool"
+    linkText: "Go to Secret Sharing"
   },
   {
     id: "about-password-gen",
@@ -191,7 +227,7 @@ export const aboutInfo = [
       "Use generated password for account or data protection."
     ],
     originalPage: "/password-gen",
-    linkText: "Go to Password Generator Tool"
+    linkText: "Go to Password Generator"
   },
   {
     id: "about-totp-sim",
@@ -204,7 +240,7 @@ export const aboutInfo = [
       "Use Captcha to prevent automated bot access."
     ],
     originalPage: "/totp-sim",
-    linkText: "Go to TOTP & Captcha Simulator Tool"
+    linkText: "Go to TOTP & Captcha Simulator"
   },
   {
     id: "about-qr-enc",
@@ -217,7 +253,7 @@ export const aboutInfo = [
       "Scan and decrypt QR code on the receiving end."
     ],
     originalPage: "/qr-enc",
-    linkText: "Go to Encrypted QR Code Tool"
+    linkText: "Go to Encrypted QR Code"
   },
   {
     id: "about-qr-gen",
@@ -230,6 +266,6 @@ export const aboutInfo = [
       "Use QR codes for sharing or quick access."
     ],
     originalPage: "/qr-generator",
-    linkText: "Go to QR Code Generator Tool"
+    linkText: "Go to QR Code Generator"
   },
 ];

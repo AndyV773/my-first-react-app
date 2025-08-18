@@ -8,7 +8,7 @@ export const About = ({ showMsg }) => {
     useEffect(() => {
         if (hash) {
             const el = document.querySelector(hash);
-            if (el) el.scrollIntoView({ behavior: "smooth" });
+            if (el) el.scrollIntoView({ behavior: "auto" });
         }
     }, [hash]);
 

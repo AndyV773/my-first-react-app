@@ -67,9 +67,9 @@ const QrDec = ({ showMsg, theme, onToggleTheme }) => {
         }
 
         try {
-            const unit8 = base64ToUint8(input);
+            const uint8 = base64ToUint8(input);
 
-            const decrypted = await aesGcmDecrypt(unit8, pwRef);
+            const decrypted = await aesGcmDecrypt(uint8, pwRef);
             const decoded = textDecoder(decrypted);
 
             setDecryptedText(decoded);

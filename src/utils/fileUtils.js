@@ -145,6 +145,7 @@ export async function uploadEncFile(file, options = {}) {
         }
         onText(text);
       }
+      
       if (onFileInfo) {
         onFileInfo({
           name: file.name,
@@ -159,10 +160,8 @@ export async function uploadEncFile(file, options = {}) {
   }
 }
 
-
-
 // returns file size
-function formatBytes(bytes) {
+export function formatBytes(bytes) {
   const sizes = ["Bytes", "KB", "MB", "GB"];
   if (bytes === 0) return "0 Bytes";
   const i = Math.floor(Math.log(bytes) / Math.log(1024));
@@ -265,4 +264,88 @@ export function downloadQrCode(canvas, name) {
     link.href = canvas.toDataURL('image/png');
     link.download = `${name}${fileId}.png`;
     link.click();    
+}
+
+
+export function saveFileAsEc32(input, name) {
+    if (!name) name = "";
+
+    // Magic number (1 element, 32-bit): 0xEC01
+    const MAGIC_UINT32 = new Uint32Array([0xEC01]);
+
+    // Combine header + data into one Uint32Array
+    const combined = new Uint32Array(MAGIC_UINT32.length + input.length);
+    combined.set(MAGIC_UINT32, 0);
+    combined.set(input, MAGIC_UINT32.length);
+
+    // Save as raw bytes
+    const blob = new Blob([combined.buffer], { type: "application/octet-stream" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `${name}${fileId}.ec32`; // extension for clarity
+    a.click();
+}
+
+
+// Upload and parse a .ec32 file (Uint32Array format with 32-bit magic).
+export async function uploadEncFile32(file, options = {}) {
+  const { onUint32, onInt32, onText, onTextInt, onFileInfo } = options;
+
+  const reader = new FileReader();
+  const fileData = await new Promise((resolve, reject) => {
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error("Failed to read file"));
+    reader.readAsArrayBuffer(file);
+  });
+
+  try {
+    const uint32 = new Uint32Array(fileData);
+    const int32 = new Int32Array(fileData);
+
+    if (uint32.length < 1 || uint32[0] !== 0xEC01) {
+      throw new Error("Invalid .ec32 file (missing magic number)");
+    }
+    if (int32.length < 1 || int32[0] !== 0xEC01) {
+      throw new Error("Invalid .ec32 file (missing magic number)");
+    }
+
+    const uintData = uint32.slice(1); // strip 32-bit magic
+    const intKey = int32.slice(1); // strip 32-bit magic
+
+    if (onUint32) onUint32(uintData);
+    if (onInt32) onInt32(intKey);
+
+    if (onText) {
+      let text;
+      try {
+        text = new TextDecoder().decode(new Uint8Array(uintData.buffer));
+      } catch {
+        text = "[Unreadable binary data]";
+      }
+      onText(text);
+    }
+
+    if (onTextInt) {
+      let text;
+      try {
+        text = Array.from(intKey).join(",");
+      } catch {
+        text = "[Unreadable binary data]";
+      }
+      onTextInt(text);
+    }
+
+    if (onFileInfo) {
+      onFileInfo({
+        name: file.name,
+        type: file.type || "application/x-ec32",
+        size: file.size,
+        ext: ".ec32",
+      });
+    }
+
+    return { success: true };
+  } catch (err) {
+    return { error: "Failed to process file: " + (err?.message || "unknown") };
+  }
 }

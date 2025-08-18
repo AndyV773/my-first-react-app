@@ -128,34 +128,34 @@ const ObfuscationTools = ({ theme, onToggleTheme }) => {
     document.getElementById('compress_output').innerText = decompressText(text);
   };
 
-  const doUnit8Array = () => {
-    const text = document.getElementById('unit8_input').value;
-    document.getElementById('unit8_output').innerText = toUint8Array(text);
+  const doUint8Array = () => {
+    const text = document.getElementById('uint8_input').value;
+    document.getElementById('uint8_output').innerText = toUint8Array(text);
   };
 
-  const doFromUnit8Array = () => {
-    const text = document.getElementById('unit8_input').value;
-    document.getElementById('unit8_output').innerText = fromUint8Array(text);
+  const doFromUint8Array = () => {
+    const text = document.getElementById('uint8_input').value;
+    document.getElementById('uint8_output').innerText = fromUint8Array(text);
   };
 
-  const doUnit16Array = () => {
-    const text = document.getElementById('unit16_input').value;
-    document.getElementById('unit16_output').innerText = toUint16Array(text);
+  const doUint16Array = () => {
+    const text = document.getElementById('uint16_input').value;
+    document.getElementById('uint16_output').innerText = toUint16Array(text);
   };
 
-  const doFromUnit16Array = () => {
-    const text = document.getElementById('unit16_input').value;
-    document.getElementById('unit16_output').innerText = fromUint16Array(text);
+  const doFromUint16Array = () => {
+    const text = document.getElementById('uint16_input').value;
+    document.getElementById('uint16_output').innerText = fromUint16Array(text);
   };
 
-  const doUnit32Array = () => {
-    const text = document.getElementById('unit32_input').value;
-    document.getElementById('unit32_output').innerText = toUint32Array(text);
+  const doUint32Array = () => {
+    const text = document.getElementById('uint32_input').value;
+    document.getElementById('uint32_output').innerText = toUint32Array(text);
   };
 
-  const doFromUnit32Array = () => {
-    const text = document.getElementById('unit32_input').value;
-    document.getElementById('unit32_output').innerText = fromUint32Array(text);
+  const doFromUint32Array = () => {
+    const text = document.getElementById('uint32_input').value;
+    document.getElementById('uint32_output').innerText = fromUint32Array(text);
   };
 
   return (
@@ -276,36 +276,36 @@ const ObfuscationTools = ({ theme, onToggleTheme }) => {
       </section>
 
       <section>
-        <h3>Unit 8 Array (8 bits)</h3>
+        <h3>Uint 8 Array (8 bits)</h3>
         <p>Each element can store values from 0 - 256 (0xFF).</p>
-        <textarea id="unit8_input" placeholder="Enter text to compress"></textarea>
+        <textarea id="uint8_input" placeholder="Enter text to compress"></textarea>
         <div className="flex g1">
-            <button onClick={doUnit8Array} className="encode">Escape</button>
-            <button onClick={doFromUnit8Array} className="decode">Unescape</button>
+            <button onClick={doUint8Array} className="encode">Escape</button>
+            <button onClick={doFromUint8Array} className="decode">Unescape</button>
         </div>
-        <PreCopyOutputBlock outputId="unit8_output" />
+        <PreCopyOutputBlock outputId="uint8_output" />
       </section>
 
       <section>
-        <h3>Unit 16 Array (16 bits)</h3>
+        <h3>Uint 16 Array (16 bits)</h3>
         <p>Each element can store values from 0 - 65,535 (0xFFFF).</p>
-        <textarea id="unit16_input" placeholder="Enter text to compress"></textarea>
+        <textarea id="uint16_input" placeholder="Enter text to compress"></textarea>
         <div className="flex g1">
-            <button onClick={doUnit16Array} className="encode">Escape</button>
-            <button onClick={doFromUnit16Array} className="decode">Unescape</button>
+            <button onClick={doUint16Array} className="encode">Escape</button>
+            <button onClick={doFromUint16Array} className="decode">Unescape</button>
         </div>
-        <PreCopyOutputBlock outputId="unit16_output" />
+        <PreCopyOutputBlock outputId="uint16_output" />
       </section>
 
       <section>
         <h3>Uint32 Array (32 bits)</h3>
         <p>Each element can store values from 0 to 4,294,967,295 (0xFFFFFFFF).</p>
-        <textarea id="unit32_input" placeholder="Enter text to compress"></textarea>
+        <textarea id="uint32_input" placeholder="Enter text to compress"></textarea>
         <div className="flex g1">
-            <button onClick={doUnit32Array} className="encode">Escape</button>
-            <button onClick={doFromUnit32Array} className="decode">Unescape</button>
+            <button onClick={doUint32Array} className="encode">Escape</button>
+            <button onClick={doFromUint32Array} className="decode">Unescape</button>
         </div>
-        <PreCopyOutputBlock outputId="unit32_output" />
+        <PreCopyOutputBlock outputId="uint32_output" />
       </section>
     </main>
   );

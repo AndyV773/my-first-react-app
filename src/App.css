@@ -150,6 +150,10 @@ button.decode {
     padding: 2rem;
 }
 
+.min-h200 {
+    min-height: 200px;
+}
+
 /* -------------------------------------- day night theme and toggler */
 body.theme-day {
     background: var(--day-bg);
