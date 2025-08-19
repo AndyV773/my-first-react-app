@@ -166,7 +166,7 @@ const QuantShuffleDec32 = ({ showMsg, theme, onToggleTheme, showLoader }) => {
             <button className="decode" onClick={handleUnshuffle}>Unshuffle</button>
         </section>
 
-        <section>
+        <section className={`padding ${outputBytes === 0 ? 'hidden' : ''}`}>
             <textarea
                 rows="5"
                 value={outputVal}
@@ -179,10 +179,7 @@ const QuantShuffleDec32 = ({ showMsg, theme, onToggleTheme, showLoader }) => {
             <p>
                 Detected file type: {detectedExt ? `${detectedExt}` : "(none)"}
             </p>
-    
-            <div className={`padding ${outputBytes === 0 ? 'hidden' : ''}`}>
-                <button onClick={() => handleSaveFile("key")}> Save as {detectedExt}</button>
-            </div>
+            <button onClick={() => handleSaveFile("key")}> Save as {detectedExt}</button>
         </section>
     </main>
   );

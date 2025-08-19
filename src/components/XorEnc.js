@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link } from 'react-router-dom';
-import { uploadFile, saveFileAsExt, saveFileAsEc, detectFileExtension } from "../utils/fileUtils";
+import { uploadFile, saveFileAsExt, saveFileAsEc32 } from "../utils/fileUtils";
 import { ThemeToggle, useByteCounter } from "../utils/uiHelpers";
-import { rotateBytes, textDecoder, textEncoder } from "../utils/cryptoUtils";
+import { textDecoder, textEncoder, uint8ToUint32, xorUint32 } from "../utils/cryptoUtils";
 
 
-
-const Encoder = ({ showMsg, theme, onToggleTheme }) => {
+const XorEnc = ({ showMsg, theme, onToggleTheme }) => {
     const [dataInput, setDataInput] = useState("");
     const [textInputVal, setTextInputVal] = useState('');
     const [fileInput, setFileInput] = useState(""); 
@@ -16,13 +15,12 @@ const Encoder = ({ showMsg, theme, onToggleTheme }) => {
     const [keyLength, setKeyLength] = useState('');
     const [output, setOutput] = useState("");
     const [outputVal, setOutputVal] = useState("");
-    const [detectedExt, setDetectedExt] = useState("");
 
     const [inputBytes, setInputBytes] = useState(0);
     useByteCounter(textInputVal, setInputBytes);
 
     const [index, setIndex] = useState(0);
-    const RANGE_VALUES = [256, 512, 1024];
+    const RANGE_VALUES = [10000, 100000, 1000000, 1000000000, 4294967295];
     const displayValue = RANGE_VALUES[index].toLocaleString();
 
     const handleSlider = (e) => {
@@ -42,6 +40,7 @@ const Encoder = ({ showMsg, theme, onToggleTheme }) => {
         setKeyInput(keys.join(','));
     };
 
+
     // Parse key string into array of integers
     const parseKey = (keyStr) =>
         keyStr
@@ -49,6 +48,7 @@ const Encoder = ({ showMsg, theme, onToggleTheme }) => {
         .map((s) => s.trim())
         .map(Number)
         .filter((n) => Number.isInteger(n));
+
 
     // Handle file upload
     const handleUpload = (e) => {
@@ -78,6 +78,7 @@ const Encoder = ({ showMsg, theme, onToggleTheme }) => {
         setTextInputVal(value);
     };
 
+
     // Sync file content into dataInput once when file loads
       useEffect(() => {
         if (fileInput) {
@@ -88,6 +89,7 @@ const Encoder = ({ showMsg, theme, onToggleTheme }) => {
         }
       }, [fileInput, utf8Preview]);
     
+
     const handleEncode = async () => {
         if (!dataInput) {
             showMsg("Please input text or upload a file.", true);
@@ -101,10 +103,9 @@ const Encoder = ({ showMsg, theme, onToggleTheme }) => {
         return;
         }
         try {
-            const rotated = rotateBytes(dataInput, keyArray);
-            const ext = await detectFileExtension(rotated);
+            const uint32View = uint8ToUint32(dataInput)
+            const rotated = xorUint32(uint32View, keyArray);
 
-            setDetectedExt(ext);
             setOutputVal(textDecoder(rotated));
 
             setOutput(rotated);
@@ -119,10 +120,10 @@ const Encoder = ({ showMsg, theme, onToggleTheme }) => {
         saveFileAsExt(keyInput, "txt", "key");
     };
 
-    const handleSaveEcFile = () => {
+    const handleSaveEc32File = () => {
         if (!output) return showMsg("Nothing to save.", true);
         
-        saveFileAsEc(output);
+        saveFileAsEc32(output);
     };
 
     return (
@@ -130,13 +131,13 @@ const Encoder = ({ showMsg, theme, onToggleTheme }) => {
             <nav>
                 <div className="flex g1">
                     <Link to="/">Home</Link>
-                    <Link to="/rot-decoder">Decode</Link>
+                    <Link to="/xor-dec">Decode</Link>
                 </div>
                 <ThemeToggle theme={theme} onToggle={onToggleTheme} />
             </nav>
 
             <div className="learn-more">
-                <h2>Rotation Encoder Uint8</h2>
+                <h2>XOR Uint32</h2>
                 <Link to="/about#about-rot-encoder">Learn more</Link>
             </div>
             
@@ -207,13 +208,10 @@ const Encoder = ({ showMsg, theme, onToggleTheme }) => {
                     value={outputVal}
                     placeholder="Output"
                 />
-                <p>
-                    Detected file type: {detectedExt ? `${detectedExt}` : "(none)"}
-                </p>
-                <button onClick={handleSaveEcFile}>Save as ec</button>
+                <button onClick={handleSaveEc32File}>Save as ec32</button>
             </section>
         </main>
     );
 }
 
-export default Encoder;
+export default XorEnc;

@@ -2,33 +2,35 @@ import React, { useState, useCallback } from "react";
 import { HashRouter as Router, Routes, Route, Link } from "react-router-dom";
 import LockScreen from "./components/LockedState.js";
 import About from "./components/About.js";
+import ObfuscationTools from "./components/ObfuscationTools.js";
 import AesCbcEnc from "./components/AesCbcEnc.js";
 import AesCbcDec from "./components/AesCbcDec.js";
 import AesGcmEnc from "./components/AesGcmEnc.js";
 import AesGcmDec from "./components/AesGcmDec.js";
-import ObfuscationTools from "./components/ObfuscationTools.js";
 import MulberryShuffleEnc from "./components/MulberryShuffleEnc.js";
 import MulberryShuffleDec from "./components/MulberryShuffleDec.js";
 import QuantShuffleEnc from "./components/QuantShuffleEnc.js";
 import QuantShuffleDec from "./components/QuantShuffleDec.js";
-import QuantShuffleEnc32 from "./components/QuantShuffleEnc32.js";
-import QuantShuffleDec32 from "./components/QuantShuffleDec32.js";
 import OptQuantEnc from "./components/OptQuantEnc.js";
 import OptQuantDec from "./components/OptQuantDec.js";
-import SecretsEnc from "./components/SecretsEnc.js";
-import SecretsDec from "./components/SecretsDec.js";
+import QuantShuffleEnc32 from "./components/QuantShuffleEnc32.js";
+import QuantShuffleDec32 from "./components/QuantShuffleDec32.js";
 import RotEncoder from "./components/RotEncoder.js";
 import RotDecoder from "./components/RotDecoder.js";
-import FileIntegrity from "./components/FileIntegrity.js";
-import IpAddy from "./components/IpAddy.js";
-import PasswordGen from "./components/PasswordGen.js";
-import TotpSim from "./components/TotpSim.js";
 import XorBasedEnc from "./components/XorBasedEnc.js";
 import XorBasedDec from "./components/XorBasedDec.js";
+import XorEnc from "./components/XorEnc.js";
+import XorDec from "./components/XorDec.js";
+import SecretsEnc from "./components/SecretsEnc.js";
+import SecretsDec from "./components/SecretsDec.js";
 import Hashing from "./components/Hashing.js";
+import FileIntegrity from "./components/FileIntegrity.js";
+import IpAddy from "./components/IpAddy.js";
 import QrEnc from "./components/QrEnc.js";
 import QrDec from "./components/QrDec.js";
 import QrGenerator from "./components/QrGenerator.js";
+import TotpSim from "./components/TotpSim.js";
+import PasswordGen from "./components/PasswordGen.js";
 import Test from "./components/test.js";
 import "./App.css";
 import { motion } from "framer-motion";
@@ -80,7 +82,7 @@ function App() {
         emoji={loaderState.emoji}
         bytes={loaderState.bytes}
       />
-      <h1>Encryption & Data Transformation ToolKit</h1>
+      <h1>Encryption & Data Transformation Toolkit</h1>
 
       <Routes>
         <Route
@@ -110,33 +112,35 @@ function App() {
             )}
           />
         <Route path="/about" element={<About showMsg={showMsg} />} />
+        <Route path="/obfuscation-tools" element={<ObfuscationTools showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
         <Route path="/aes-cbc-enc" element={<AesCbcEnc showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
         <Route path="/aes-cbc-dec" element={<AesCbcDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
         <Route path="/aes-gcm-enc" element={<AesGcmEnc showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
         <Route path="/aes-gcm-dec" element={<AesGcmDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
-        <Route path="/obfuscation-tools" element={<ObfuscationTools showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
         <Route path="/mulberry-shuffle-enc" element={<MulberryShuffleEnc showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
         <Route path="/mulberry-shuffle-dec" element={<MulberryShuffleDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
         <Route path="/quant-shuffle-enc" element={<QuantShuffleEnc showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} showLoader={showLoader} />} />
         <Route path="/quant-shuffle-dec" element={<QuantShuffleDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} showLoader={showLoader} />} />
-        <Route path="/quant-shuffle-enc-32" element={<QuantShuffleEnc32 showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} showLoader={showLoader} />} />
-        <Route path="/quant-shuffle-dec-32" element={<QuantShuffleDec32 showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} showLoader={showLoader} />} />
         <Route path="/opt-quant-enc" element={<OptQuantEnc showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} showLoader={showLoader} />} />
         <Route path="/opt-quant-dec" element={<OptQuantDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} showLoader={showLoader} />} />
-        <Route path="/sss-enc" element={<SecretsEnc showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
-        <Route path="/sss-dec" element={<SecretsDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
+        <Route path="/quant-shuffle-enc-32" element={<QuantShuffleEnc32 showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} showLoader={showLoader} />} />
+        <Route path="/quant-shuffle-dec-32" element={<QuantShuffleDec32 showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} showLoader={showLoader} />} />
         <Route path="/rot-encoder" element={<RotEncoder showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
         <Route path="/rot-decoder" element={<RotDecoder showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
-        <Route path="/file-integrity" element={<FileIntegrity showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
-        <Route path="/ip-addy" element={<IpAddy showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
-        <Route path="/password-gen" element={<PasswordGen showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
-        <Route path="/totp-sim" element={<TotpSim showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
         <Route path="/xor-based-enc" element={<XorBasedEnc showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
         <Route path="/xor-based-dec" element={<XorBasedDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
+        <Route path="/xor-enc" element={<XorEnc showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
+        <Route path="/xor-dec" element={<XorDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
+        <Route path="/sss-enc" element={<SecretsEnc showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
+        <Route path="/sss-dec" element={<SecretsDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
         <Route path="/hashing" element={<Hashing showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
+        <Route path="/file-integrity" element={<FileIntegrity showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
+        <Route path="/ip-addy" element={<IpAddy showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
         <Route path="/qr-enc" element={<QrEnc showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
         <Route path="/qr-dec" element={<QrDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
         <Route path="/qr-generator" element={<QrGenerator showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
+        <Route path="/totp-sim" element={<TotpSim showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
+        <Route path="/password-gen" element={<PasswordGen showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
         <Route path="/test" element={<Test showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} handleTest={handleTest} test={test} />} />
       </Routes>
       <footer className="footer">

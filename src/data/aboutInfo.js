@@ -15,6 +15,28 @@ export const aboutInfo = [
     ],
   },
   {
+    id: "about-obfuscation-tools",
+    title: "About Obfuscation Tools",
+    description:
+    "Obfuscation tools modify and encode text to make it harder to read or analyze, adding a layer of security through obscurity. This section shows you some basic methods of data transformation, also useful for testing.",
+    steps: [
+      "Reverse: Reverse the characters of the input text.",
+      "ROT13 / ROT18 / ROTN: Apply letter/number rotation to obfuscate the text.",
+      "XOR / XOR + Base64: Obfuscate text using XOR with optional Base64 encoding; can also decode.",
+      "Base64 Encode/Decode: Convert text to/from Base64 representation.",
+      "Compress/Decompress (Zlib): Compress text to reduce size, or decompress it back to original.",
+      "Hex Encode/Decode: Convert text to/from hexadecimal representation.",
+      "Unicode Escape/Unescape (UTF-8): Escape or unescape text to/from UTF-8 Unicode sequences.",
+      "Unicode Escape/Unescape (UTF-16): Escape or unescape text to/from UTF-16 Unicode sequences.",
+      "Unicode Escape/Unescape (Code Points): Escape or unescape text using full Unicode code points (32-bit).",
+      "Unit 8 Array (8 bits): Convert text to/from 8-bit arrays; each element stores 0 - 255.",
+      "Unit 16 Array (16 bits): Convert text to/from 16-bit arrays; each element stores 0 - 65,535.",
+      "Uint32 Array (32 bits): Convert text to/from 32-bit arrays; each element stores 0 - 4,294,967,295."
+    ],
+    originalPage: "/obfuscation-tools",
+    linkText: "Go to Obfuscation Tools"
+  },
+  {
     id: "about-aes-cbc",
     title: "About AES-CBC Encryption",
     description:
@@ -51,28 +73,6 @@ export const aboutInfo = [
     linkText: "Go to AES-GCM Encryption"
   },
   {
-    id: "about-obfuscation-tools",
-    title: "About Obfuscation Tools",
-    description:
-      "Obfuscation tools modify and encode text to make it harder to read or analyze, adding a layer of security through obscurity. This section shows you some basic methods of data transformation, also useful for testing.",
-    steps: [
-        "Reverse: Reverse the characters of the input text.",
-        "ROT13 / ROT18 / ROTN: Apply letter/number rotation to obfuscate the text.",
-        "XOR / XOR + Base64: Obfuscate text using XOR with optional Base64 encoding; can also decode.",
-        "Base64 Encode/Decode: Convert text to/from Base64 representation.",
-        "Compress/Decompress (Zlib): Compress text to reduce size, or decompress it back to original.",
-        "Hex Encode/Decode: Convert text to/from hexadecimal representation.",
-        "Unicode Escape/Unescape (UTF-8): Escape or unescape text to/from UTF-8 Unicode sequences.",
-        "Unicode Escape/Unescape (UTF-16): Escape or unescape text to/from UTF-16 Unicode sequences.",
-        "Unicode Escape/Unescape (Code Points): Escape or unescape text using full Unicode code points (32-bit).",
-        "Unit 8 Array (8 bits): Convert text to/from 8-bit arrays; each element stores 0 - 255.",
-        "Unit 16 Array (16 bits): Convert text to/from 16-bit arrays; each element stores 0 - 65,535.",
-        "Uint32 Array (32 bits): Convert text to/from 32-bit arrays; each element stores 0 - 4,294,967,295."
-    ],
-    originalPage: "/obfuscation-tools",
-    linkText: "Go to Obfuscation Tools"
-  },
-  {
     id: "about-mulberry-shuffle",
     title: "About Mulberry Shuffle",
     description:
@@ -105,7 +105,7 @@ export const aboutInfo = [
       "You can then choose to generate and save a QR code. If the data or key is below 2,900 bytes, it will display the error correction level of the QR code based on its size. Alternatively, you can save it as an encrypted file.",
       "Decrypt and reverse the shuffle process to recover the data."
     ],
-    additional: "This technique is not original - it has been known for many years and uses rotation. I named it Quantum Shuffle, as I believe it to be quantum-proof and not possible to decode without the correct key. The key or data alone are meaningless, the key can be extremely long, based on the size of the input. Even if the user inputs 'Hello World' (11 bytes), each character is shuffled randomly so that, even with the data, attempting to brute-force the original input without the key could yield any 11-byte string, e.g., 'big red fox' or any other 11-byte word or phrase. I will be adding a technique later to disguise the character length, making it even more difficult. If you believe I am wrong and know of a way to break the encryption, I am always open for discussion - please get in touch.",
+    additional: "This technique is not original - it has been known for many years and uses rotation. I named it Quantum Shuffle, as I believe it is not possible to decode without the correct key. The key or data alone are meaningless, the key can be extremely long, based on the size of the input. Even if the user inputs 'Hello World' (11 bytes), each character is shuffled randomly so that, even with the data, attempting to brute-force the original input without the key could yield any 11-byte string, e.g., 'big red fox' or any other 11-byte word or phrase. I will be adding a technique later to disguise the character length, making it even more difficult. If you believe I am wrong and know of a way to break the encryption, I am always open for discussion - please get in touch.",
     originalPage: "/quant-shuffle-enc",
     linkText: "Go to Quantum Shuffle"
   },
@@ -137,7 +137,7 @@ export const aboutInfo = [
   },
   {
     id: "about-rot-encoder",
-    title: "About Rotation Encoder",
+    title: "About Rotation Encoder Uint8",
     description:
       "This tool applies rotation ciphers and integrates advanced encryption to encode text, providing an additional layer of complexity for secure communication.",
     steps: [
@@ -147,6 +147,85 @@ export const aboutInfo = [
     ],
     originalPage: "/rot-encoder",
     linkText: "Go to Rotation Encoder"
+  },
+  {
+    id: "about-xor-based",
+    title: "About XOR-Based Hash Encoder",
+    description:
+    "Explore how XOR-based encoding combines with hashing to provide a lightweight method of obscuring data and adding security.",
+    steps: [
+      "Apply XOR operation on input data with a key.",
+      "Hash the XORed data for additional security.",
+      "Reverse XOR operation for decoding."
+    ],
+    originalPage: "/xor-based-enc",
+    linkText: "Go to XOR-Based Hash Encoder"
+  },
+  {
+    id: "about-xor-enc",
+    title: "About XOR Uint32",
+    description:
+    "Explore how XOR-based encoding combines with hashing to provide a lightweight method of obscuring data and adding security.",
+    steps: [
+      "Apply XOR operation on input data with a key.",
+      "Hash the XORed data for additional security.",
+      "Reverse XOR operation for decoding."
+    ],
+    originalPage: "/xor-enc",
+    linkText: "Go to XOR Uint32"
+  },
+  {
+    id: "about-sss",
+    title: "About Shamir's Secret Sharing",
+    description:
+    "Shamir's Secret Sharing allows you to split sensitive information into multiple parts or shares, requiring a threshold number to reconstruct, enhancing secure key management.",
+    steps: [
+      "Input secret or private key.",
+      "Split into multiple shares with defined threshold.",
+      "Distribute shares securely to participants.",
+      "Combine threshold number of shares to reconstruct secret."
+    ],
+    originalPage: "/sss-enc",
+    linkText: "Go to Secret Sharing"
+  },
+  {
+    id: "about-qr-enc",
+    title: "About Encrypted QR Codes",
+    description:
+    "Generate QR codes with encrypted data to securely share sensitive information while protecting it from unauthorized scanning or interception.",
+    steps: [
+      "Encrypt the data to be embedded in the QR code.",
+      "Generate QR code with encrypted payload.",
+      "Scan and decrypt QR code on the receiving end."
+    ],
+    originalPage: "/qr-enc",
+    linkText: "Go to Encrypted QR Code"
+  },
+  {
+    id: "about-qr-gen",
+    title: "About QR Code Generator",
+    description:
+    "Create QR codes easily for URLs, text, or other data. This section covers how QR codes are generated and their practical uses within the app.",
+    steps: [
+      "Input URL, text, or data.",
+      "Generate QR code based on input.",
+      "Use QR codes for sharing or quick access."
+    ],
+    originalPage: "/qr-generator",
+    linkText: "Go to QR Code Generator"
+  },
+  {
+    id: "about-hashing",
+    title: "About SHA-256 & Argon2 Hashing",
+    description:
+      "This section explains how multiple SHA-256 and Argon2 hashing algorithms are implemented to securely hash files or text, safeguarding data against attacks.",
+    steps: [
+      "Input data is hashed with SHA-256 for fixed-length output.",
+      "Argon2 is used for memory-hard hashing improving security.",
+      "Hashes can be used for verification or password storage."
+    ],
+    originalPage: "/hashing",
+    linkText: "Go to SHA-256 & Argon2 Hashing"
   },
   {
     id: "about-file-integrity",
@@ -177,44 +256,17 @@ export const aboutInfo = [
     linkText: "Go to IP Information"
   },
   {
-    id: "about-hashing",
-    title: "About SHA-256 & Argon2 Hashing",
+    id: "about-totp-sim",
+    title: "About TOTP & Captcha Simulator",
     description:
-      "This section explains how multiple SHA-256 and Argon2 hashing algorithms are implemented to securely hash files or text, safeguarding data against attacks.",
+    "This tool simulates Time-Based One-Time Passwords (TOTP) and bot-detection captchas to demonstrate multifactor authentication and security against automated attacks.",
     steps: [
-      "Input data is hashed with SHA-256 for fixed-length output.",
-      "Argon2 is used for memory-hard hashing improving security.",
-      "Hashes can be used for verification or password storage."
+      "Generate TOTP codes based on shared secret and current time.",
+      "Validate TOTP codes for authentication.",
+      "Use Captcha to prevent automated bot access."
     ],
-    originalPage: "/hashing",
-    linkText: "Go to SHA-256 & Argon2 Hashing"
-  },
-  {
-    id: "about-xor-based",
-    title: "About XOR-Based Hash Encoder",
-    description:
-      "Explore how XOR-based encoding combines with hashing to provide a lightweight method of obscuring data and adding security.",
-    steps: [
-      "Apply XOR operation on input data with a key.",
-      "Hash the XORed data for additional security.",
-      "Reverse XOR operation for decoding."
-    ],
-    originalPage: "/xor-based-enc",
-    linkText: "Go to XOR-Based Hash Encoder"
-  },
-  {
-    id: "about-sss",
-    title: "About Secret Sharing",
-    description:
-      "Secret Sharing allows you to split sensitive information into multiple parts or shares, requiring a threshold number to reconstruct, enhancing secure key management.",
-    steps: [
-      "Input secret or private key.",
-      "Split into multiple shares with defined threshold.",
-      "Distribute shares securely to participants.",
-      "Combine threshold number of shares to reconstruct secret."
-    ],
-    originalPage: "/sss-enc",
-    linkText: "Go to Secret Sharing"
+    originalPage: "/totp-sim",
+    linkText: "Go to TOTP & Captcha Simulator"
   },
   {
     id: "about-password-gen",
@@ -228,44 +280,5 @@ export const aboutInfo = [
     ],
     originalPage: "/password-gen",
     linkText: "Go to Password Generator"
-  },
-  {
-    id: "about-totp-sim",
-    title: "About TOTP & Captcha Simulator",
-    description:
-      "This tool simulates Time-Based One-Time Passwords (TOTP) and bot-detection captchas to demonstrate multifactor authentication and security against automated attacks.",
-    steps: [
-      "Generate TOTP codes based on shared secret and current time.",
-      "Validate TOTP codes for authentication.",
-      "Use Captcha to prevent automated bot access."
-    ],
-    originalPage: "/totp-sim",
-    linkText: "Go to TOTP & Captcha Simulator"
-  },
-  {
-    id: "about-qr-enc",
-    title: "About Encrypted QR Codes",
-    description:
-      "Generate QR codes with encrypted data to securely share sensitive information while protecting it from unauthorized scanning or interception.",
-    steps: [
-      "Encrypt the data to be embedded in the QR code.",
-      "Generate QR code with encrypted payload.",
-      "Scan and decrypt QR code on the receiving end."
-    ],
-    originalPage: "/qr-enc",
-    linkText: "Go to Encrypted QR Code"
-  },
-  {
-    id: "about-qr-gen",
-    title: "About QR Code Generator",
-    description:
-      "Create QR codes easily for URLs, text, or other data. This section covers how QR codes are generated and their practical uses within the app.",
-    steps: [
-      "Input URL, text, or data.",
-      "Generate QR code based on input.",
-      "Use QR codes for sharing or quick access."
-    ],
-    originalPage: "/qr-generator",
-    linkText: "Go to QR Code Generator"
   },
 ];

@@ -6,6 +6,12 @@ export const tools = [
         "A fully functional encryption toolkit created for demonstration and educational purposes. Find out more.",
     },
     {
+      id: "obfuscation-tools",
+      title: "Obfuscation Tools",
+      description:
+        "Obfuscation Tools help transform and encode text to make it harder to read or interpret.",
+    },
+    {
       id: "aes-cbc-enc",
       title: "AES-CBC",
       description:
@@ -16,12 +22,6 @@ export const tools = [
       title: "AES-GCM",
       description:
         "Authenticated encryption with AES Galois/Counter Mode providing confidentiality and integrity.",
-    },
-    {
-      id: "obfuscation-tools",
-      title: "Obfuscation Tools",
-      description:
-        "Obfuscation Tools help transform and encode text to make it harder to read or interpret.",
     },
     {
       id: "mulberry-shuffle-enc",
@@ -45,55 +45,31 @@ export const tools = [
       id: "quant-shuffle-enc-32",
       title: "Quantum Shuffle Uint32",
       description:
-        "High load randomize file or text shuffle using uint32 array with added AES-GCM encryption.",
+        "High load randomization of file or text data using Uint32Array and an Int32Array key.",
     },
     {
       id: "rot-encoder",
-      title: "Rotation Encoder",
+      title: "Rotation Encoder Uint8",
       description:
-        "Optimised all in one Quantum shuffle with AES-GCM encryption.",
-    },
-    {
-      id: "file-integrity",
-      title: "File Integrity Check",
-      description:
-        "Apply common hashing algorithms to data for security and integrity checks.",
-    },
-    {
-      id: "ip-addy",
-      title: "IP Information",
-      description:
-        "Quick tool for obtaining your IP address and information.",
-    },
-    {
-      id: "hashing",
-      title: "SHA-256 & Argon2 hashing",
-      description:
-        "Implement multiple SHA-256 or Argon2 hashing for files or text.",
+        "Encode using byte-wise modular addition/subtraction on a Uint8Array, with wrap-around at 256.",
     },
     {
       id: "xor-based-enc",
       title: "XOR-Based Hash Encoder",
       description:
-        "Implement multiple SHA-256 or Argon2 hashing for files or text.",
+        "Apply multiple layers of encryption using XOR with a key derived from the hash.",
+    },
+    {
+      id: "xor-enc",
+      title: "XOR Uint32",
+      description:
+        "Apply multiple layers of encryption using XOR with a key derived from the hash.",
     },
     {
       id: "sss-enc",
-      title: "Secrect Sharing",
+      title: "Shamir's Secrect Sharing",
       description:
-        "Enter a secret or private key, split it into shares, and set thresholds with this interesting concept.",
-    },
-    {
-      id: "password-gen",
-      title: "Password Generator",
-      description:
-        "Securely generate strong and randomised passwords.",
-    },
-    {
-      id: "totp-sim",
-      title: "TOTP & Captcha",
-      description:
-        "Try out Time-Based One-Time Password simulator and Bot Captcha.",
+      "Enter a secret or private key, split it into shares, and set thresholds with this interesting concept.",
     },
     {
       id: "qr-enc",
@@ -105,7 +81,37 @@ export const tools = [
       id: "qr-generator",
       title: "QR Code Generator",
       description:
-        "Create QR codes easily for URLs, text, or other data.",
+      "Create QR codes easily for URLs, text, or other data.",
+    },
+    {
+      id: "hashing",
+      title: "SHA-256 & Argon2 hashing",
+      description:
+      "Implement multiple SHA-256 or Argon2 hashing for files or text.",
+    },
+    {
+      id: "file-integrity",
+      title: "File Integrity Check",
+      description:
+        "Use common hashing algorithms on data for security and integrity checks.",
+    },
+    {
+      id: "ip-addy",
+      title: "IP Information",
+      description:
+        "Quick tool for obtaining your IP address and information.",
+    },
+    {
+      id: "totp-sim",
+      title: "TOTP & Captcha",
+      description:
+      "Try out Time-Based One-Time Password simulator and Bot Captcha.",
+    },
+    {
+      id: "password-gen",
+      title: "Password Generator",
+      description:
+        "Securely generate strong and randomised passwords.",
     },
     {
       id: "test",

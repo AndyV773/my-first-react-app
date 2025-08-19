@@ -152,87 +152,77 @@ const QuantShuffleEnc32 = ({ showMsg, theme, onToggleTheme, showLoader }) => {
         }
     }
 
-  return (
-    <main className="container">
-      <nav>
-        <div className="flex g1">
-          <Link to="/">Home</Link>
-          <Link to="/quant-shuffle-dec-32">Decode</Link>
-        </div>
-        <ThemeToggle theme={theme} onToggle={onToggleTheme} />
-      </nav>
+  	return (
+		<main className="container">
+			<nav>
+				<div className="flex g1">
+					<Link to="/">Home</Link>
+					<Link to="/quant-shuffle-dec-32">Decode</Link>
+				</div>
+					<ThemeToggle theme={theme} onToggle={onToggleTheme} />
+			</nav>
 
-      <div className="learn-more">
-        <h2>Quantum Shuffle Uint32</h2>
-        <Link to="/about#about-quant-shuffle-32">Learn more</Link>
-      </div>
+			<div className="learn-more">
+				<h2>Quantum Shuffle Uint32</h2>
+				<Link to="/about#about-quant-shuffle-32">Learn more</Link>
+			</div>
 
-      <section>
-        <h2>Encode</h2>
-        <p>Upload File or Input Text</p>
+			<section>
+				<h2>Encode</h2>
+				<p>Upload File or Input Text</p>
 
-        <input type="file" onChange={handleUpload} />
-        {fileInfo && (
-          <p className="file-info">
-            File: {fileInfo.name}, Type: {fileInfo.type}, Size: {fileInfo.size}
-          </p>
-        )}
+				<input type="file" onChange={handleUpload} />
+				{fileInfo && (
+					<p className="file-info">
+						File: {fileInfo.name}, Type: {fileInfo.type}, Size: {fileInfo.size}
+					</p>
+				)}
 
-        <label>
-          Include all characters
-          <input type="checkbox" id="all-char" ref={allCharRef} />
-        </label>
+				<label>
+					Include all characters
+					<input type="checkbox" id="all-char" ref={allCharRef} />
+				</label>
 
-        <div>
-          <textarea
-            rows="5"
-            value={dataInputVal}
-            onChange={handleTextInputChange}
-            placeholder="Enter text..."
-          />
-          <p>
-            Byte size: <span>{inputBytes}</span> bytes
-          </p>
-        </div>
+				<div>
+					<textarea
+						rows="5"
+						value={dataInputVal}
+						onChange={handleTextInputChange}
+						placeholder="Enter text..."
+					/>
+					<p>
+						Byte size: <span>{inputBytes}</span> bytes
+					</p>
+				</div>
 
-        <button className="encode" onClick={handleShuffle}>
-          Shuffle
-        </button>
-    
-        <div>
-            <h3>Data</h3>
-            <textarea
-                rows="5"
-                value={dataOutputVal}
-                placeholder="Data output"
-                readOnly
-            />
-            <p>
-                Data Byte size: <span>{dataOutputBytes}</span> bytes
-            </p>
-            <div className={`padding ${dataOutputBytes === 0 ? 'hidden' : ''}`}>
-                <button onClick={() => handleSaveFile("data")}> Download .ec32 </button>
-            </div>
-        </div>
-
-        <div>
-            <h3>Key</h3>
-            <textarea
-                rows="5"
-                value={keyOutputVal}
-                placeholder="Key output"
-                readOnly
-            />
-            <p>
-                Key Byte size: <span>{keyOutputBytes}</span> bytes
-            </p>
-            <div className={`padding ${keyOutputBytes === 0 ? 'hidden' : ''}`}>
-                <button onClick={() => handleSaveFile("key")}> Download .ec32 </button>
-            </div>
-        </div>
-      </section>
-    </main>
-  );
+				<button className="encode" onClick={handleShuffle}>Shuffle</button>
+			</section>
+			<section className={dataOutputBytes === 0 ? "hidden" : ""}>
+				<h3>Data</h3>
+				<textarea
+					rows="5"
+					value={dataOutputVal}
+					placeholder="Data output"
+					readOnly
+				/>
+				<p>
+					Data Byte size: <span>{dataOutputBytes}</span> bytes
+				</p>
+				<button onClick={() => handleSaveFile("data")}> Download .ec32 </button>
+				<h3>Key</h3>
+				<textarea
+					rows="5"
+					value={keyOutputVal}
+					placeholder="Key output"
+					readOnly
+				/>
+				<p>
+					Key Byte size: <span>{keyOutputBytes}</span> bytes
+				</p>
+				<button onClick={() => handleSaveFile("key")}> Download .ec32 </button>
+			</section>
+		</main>
+	);
 };
 
 export default QuantShuffleEnc32;

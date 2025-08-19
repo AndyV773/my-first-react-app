@@ -1,26 +1,20 @@
 import React, { useState } from "react";
 import { Link } from 'react-router-dom';
-import { uploadFile, uploadEncFile, saveFileAsExt, detectFileExtension } from "../utils/fileUtils";
+import { uploadFile, uploadEncFile32, saveFileAsExt, detectFileExtension } from "../utils/fileUtils";
 import { ThemeToggle, useByteCounter } from "../utils/uiHelpers";
-import { unrotateBytes, textDecoder } from "../utils/cryptoUtils";
+import { textDecoder, uint32ToUint8, xorUint32 } from "../utils/cryptoUtils";
 
 
-
-const RotDecoder = ({ showMsg, theme, onToggleTheme }) => {
+const XorDec = ({ showMsg, theme, onToggleTheme }) => {
     const [dataInput, setDataInput] = useState("");
     const [keyInput, setKeyInput] = useState("");
-
     const [fileInfo, setFileInfo] = useState(null);
-
     const [utf8Preview, setUtf8] = useState(''); // content decoded from file
     const [output, setOutput] = useState("");
     const [outputVal, setOutputVal] = useState("");
-
     const [detectedExt, setDetectedExt] = useState("");
-
     const [inputBytes, setInputBytes] = useState(0);
     useByteCounter(utf8Preview, setInputBytes);
-
 
     const handleUploadEc = async (e) => {
         const file = e.target.files?.[0];
@@ -33,10 +27,10 @@ const RotDecoder = ({ showMsg, theme, onToggleTheme }) => {
 
         if (!file) return;
 
-        const result = await uploadEncFile(file, {
+        const result = await uploadEncFile32(file, {
             onFileInfo: setFileInfo,
             onText: setUtf8,
-            onDataLoaded: setDataInput,
+            onUint32: setDataInput,
         });
 
         if (result?.error) {
@@ -48,7 +42,7 @@ const RotDecoder = ({ showMsg, theme, onToggleTheme }) => {
         }
     };
 
-     // Handle file upload
+    // Handle file upload
     const handleUploadKey = (e) => {
         const file = e.target.files[0];
         // reset
@@ -62,8 +56,6 @@ const RotDecoder = ({ showMsg, theme, onToggleTheme }) => {
         });
     };
 
-    
-
     // Parse key string into array of integers, ignore invalid values
     const parseKey = (keyStr) =>
         keyStr
@@ -71,25 +63,30 @@ const RotDecoder = ({ showMsg, theme, onToggleTheme }) => {
         .map((s) => s.trim())
         .map(Number)
         .filter((n) => Number.isInteger(n));
-    
 
     const handleDecode = async () => {
             if (!dataInput) {
                 showMsg("Please input text or upload a file.", true);
-            return;
+                return;
             }
             const keyArray = parseKey(keyInput);
             if (keyArray.length === 0) {
                 showMsg("Please enter a valid rotation key (comma separated numbers).", true);
-            return;
+                return;
             }
             try {
-                const unrotated = unrotateBytes(dataInput, keyArray);
-                const ext = await detectFileExtension(unrotated);
+                console.log('data input', dataInput)
+                const unrotated = xorUint32(dataInput, keyArray);
+                console.log('unrotated', unrotated)
+
+                const uint8 = uint32ToUint8(unrotated)
+                console.log('uint8', uint8)
+
+                const ext = await detectFileExtension(uint8);
 
                 setDetectedExt(ext);
-                setOutputVal(textDecoder(unrotated));
-                setOutput(unrotated);
+                setOutputVal(textDecoder(uint8));
+                setOutput(uint8);
             } catch (err) {
                 showMsg("Error during decoding: " + err.message, true);
             }
@@ -106,19 +103,19 @@ const RotDecoder = ({ showMsg, theme, onToggleTheme }) => {
             <nav>
                 <div className="flex g1">
                     <Link to="/">Home</Link>
-                    <Link to="/rot-encoder">Encode</Link>
+                    <Link to="/xor-enc">Encode</Link>
                 </div>
                 <ThemeToggle theme={theme} onToggle={onToggleTheme} />
             </nav>
 
             <div className="learn-more">
-                <h2>Rotation Encoder Uint8</h2>
-                <Link to="/about#about-rot-encoder">Learn more</Link>
+                <h2>XOR Uint32</h2>
+                <Link to="/about#about-rot-enc">Learn more</Link>
             </div>
 
             <section>
                 <h2>Decoder</h2>
-                <p>Upload ec file</p>
+                <p>Upload ec32 file</p>
                 <input type="file" onChange={handleUploadEc} />
                 {fileInfo && (
                     <p className="file-info">
@@ -170,4 +167,4 @@ const RotDecoder = ({ showMsg, theme, onToggleTheme }) => {
     );
 }
 
-export default RotDecoder;
+export default XorDec;
