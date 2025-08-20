@@ -20,15 +20,15 @@ const FileIntegrity = ({ showMsg, theme, onToggleTheme }) => {
 
 		const reader = new FileReader();
 		reader.onload = (event) => {
-		const arrayBuffer = event.target.result;
-		const wordArray = CryptoJS.lib.WordArray.create(arrayBuffer);
+			const arrayBuffer = event.target.result;
+			const wordArray = CryptoJS.lib.WordArray.create(arrayBuffer);
 
-		const md5 = CryptoJS.MD5(wordArray).toString(CryptoJS.enc.Hex);
-		const sha1 = CryptoJS.SHA1(wordArray).toString(CryptoJS.enc.Hex);
-		const sha256 = CryptoJS.SHA256(wordArray).toString(CryptoJS.enc.Hex);
-		const sha512 = CryptoJS.SHA512(wordArray).toString(CryptoJS.enc.Hex);
+			const md5 = CryptoJS.MD5(wordArray).toString(CryptoJS.enc.Hex);
+			const sha1 = CryptoJS.SHA1(wordArray).toString(CryptoJS.enc.Hex);
+			const sha256 = CryptoJS.SHA256(wordArray).toString(CryptoJS.enc.Hex);
+			const sha512 = CryptoJS.SHA512(wordArray).toString(CryptoJS.enc.Hex);
 
-		setHashes({ md5, sha1, sha256, sha512 });
+			setHashes({ md5, sha1, sha256, sha512 });
 		};
 
 		reader.readAsArrayBuffer(file);

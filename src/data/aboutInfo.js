@@ -144,7 +144,7 @@ export const aboutInfo = [
     id: "about-rot-encoder",
     title: "About Rotation Encoder Uint8",
     description:
-      "This tool applies byte-wise rotation with wrap-around, modifying the values of a Uint8 array across all 256 possible byte values.",
+      "This tool applies byte-wise rotation with wrap-around (byte-wise mod 256), modifying the values of a Uint8 array across all 256 possible byte values.",
     steps: [
       "Upload a file or enter text.",
       "You can randomly generate a key first, then use the slider to select the range of values from 256-1024. Any value over 256 will wrap around from 0-256.",
@@ -162,9 +162,13 @@ export const aboutInfo = [
     description:
       "Explore how XOR-based encoding combines with hashing to provide a lightweight method of obscuring data and adding security.",
     steps: [
-      "Apply XOR operation on input data with a key.",
-      "Hash the XORed data for additional security.",
-      "Reverse XOR operation for decoding."
+      "Upload a file or enter text.",
+      "The input box allows you to specify how many iterations you would like to apply with different hash keys.",
+      "Once you click 'Generate Hash and Encrypt,' the process will generate a 64-byte salt (the length of a SHA-256 hash key) and append it to the input. This helps obfuscate small inputs and ensures randomness.",
+      "A hash key will then be generated from the total input value. This is hex-encoded into numbers and used to perform XOR encoding on the data.",
+      "Depending on the number of iterations entered, this process will be repeated, but with a smaller salt (16 bytes) to reduce size, and a different hash generated each time.",
+      "You can then download all hash keys to a .txt file and download the data, which is base64-encoded into a .ec file.",
+      "To decode, upload the file or enter the base64 text. Then either upload the hash key file or input each key individually. As long as they are in the correct order, you will recover the original input."
     ],
     originalPage: "/xor-based-enc",
     linkText: "Go to XOR-Based Hash Encoder"
@@ -173,7 +177,7 @@ export const aboutInfo = [
     id: "about-xor-enc",
     title: "About XOR Uint32",
     description:
-    "Explore how XOR-based encoding combines with hashing to provide a lightweight method of obscuring data and adding security.",
+      "Explore how XOR-based encoding combines with hashing to provide a lightweight method of obscuring data and adding security.",
     steps: [
       "Apply XOR operation on input data with a key.",
       "Hash the XORed data for additional security.",
@@ -186,13 +190,14 @@ export const aboutInfo = [
     id: "about-sss",
     title: "About Shamir's Secret Sharing",
     description:
-    "Shamir's Secret Sharing allows you to split sensitive information into multiple parts or shares, requiring a threshold number to reconstruct, enhancing secure key management.",
+      "Shamir's Secret Sharing allows you to split sensitive information into multiple parts or shares, requiring a threshold number to reconstruct, enhancing secure key management.",
     steps: [
-      "Input secret or private key.",
-      "Split into multiple shares with defined threshold.",
-      "Distribute shares securely to participants.",
-      "Combine threshold number of shares to reconstruct secret."
+      "Input the secret and set the number of shares. This determines how many people can potentially split it.",
+      "Set the threshold - the number of shares required to reveal the secret. The minimum is 2. For example, if the total number of shares is 5, you could set the threshold to 3 or 4 so that if someone loses their share, the secret can still be recovered. Any fewer than the threshold and recovery is not possible.",
+      "Click 'Split Secret' and the data will be divided into the selected number of shares. You can easily copy them to the clipboard or download all as a .txt file.",
+      "To recover the secret, paste the threshold number of shares into the input boxes (order does not matter), or simply upload the file for easy testing. Click 'Combine Shares' to reveal the secret."
     ],
+    additional: "One of my favorite concepts, implemented via CDN due to conflicts I had with other libraries. Try it for yourself: https://cdn.jsdelivr.net/npm/secrets.js-grempe/secrets.min.js",
     originalPage: "/sss-enc",
     linkText: "Go to Secret Sharing"
   },
@@ -200,7 +205,7 @@ export const aboutInfo = [
     id: "about-qr-enc",
     title: "About Encrypted QR Codes",
     description:
-    "Generate QR codes with encrypted data to securely share sensitive information while protecting it from unauthorized scanning or interception.",
+      "Generate QR codes with encrypted data to securely share sensitive information while protecting it from unauthorized scanning or interception.",
     steps: [
       "Encrypt the data to be embedded in the QR code.",
       "Generate QR code with encrypted payload.",
@@ -213,7 +218,7 @@ export const aboutInfo = [
     id: "about-qr-gen",
     title: "About QR Code Generator",
     description:
-    "Create QR codes easily for URLs, text, or other data. This section covers how QR codes are generated and their practical uses within the app.",
+      "Create QR codes easily for URLs, text, or other data. This section covers how QR codes are generated and their practical uses within the app.",
     steps: [
       "Input URL, text, or data.",
       "Generate QR code based on input.",
@@ -224,28 +229,33 @@ export const aboutInfo = [
   },
   {
     id: "about-hashing",
-    title: "About SHA-256 & Argon2 Hashing",
+    title: "About SHA & Argon2 Hashing",
     description:
-      "This section explains how multiple SHA-256 and Argon2 hashing algorithms are implemented to securely hash files or text, safeguarding data against attacks.",
+      "Use SHA and Argon2 algorithms to securely hash text or files, providing fixed-length outputs or computationally expensive hashes for enhanced security.",
     steps: [
-      "Input data is hashed with SHA-256 for fixed-length output.",
-      "Argon2 is used for memory-hard hashing improving security.",
-      "Hashes can be used for verification or password storage."
+      "Upload a file or input text to hash.",
+      "Select a hashing algorithm: SHA-2 (256, 384, 512), SHA-3 (256, 384, 512), or Argon2.",
+      "For SHA algorithms, you can iterate as many times as you like - higher iteration counts increase computation time.",
+      "For Argon2, iterations are limited to 12 to balance security and computation.",
+      "Generate the hash and copy it for verification, storage, or comparison."
     ],
+    additional:
+      "Argon2 is an award-winning memory-hard hashing algorithm primarily used for password hashing. Each password is hashed with a unique random salt, making the output different each time. Its computationally intensive design prevents attackers from easily deriving the original password from the hash, unlike classic SHA hashes which produce deterministic outputs.",
     originalPage: "/hashing",
-    linkText: "Go to SHA-256 & Argon2 Hashing"
+    linkText: "Go to SHA & Argon2 Hashing"
   },
   {
     id: "about-file-integrity",
     title: "About File Integrity Check",
     description:
-      "Ensure your files remain unaltered by using common hashing algorithms that verify data integrity and detect any unauthorized changes.",
+      "Ensure your files remain unaltered by using common hashing algorithms to verify data integrity and detect any unauthorized changes.",
     steps: [
-      "Select file to check integrity.",
-      "Apply hashing algorithm (e.g., SHA-256).",
-      "Compare hash output to expected value.",
-      "Detect tampering if hashes don't match."
+      "Upload a file to quickly view its name, type, and size.",
+      "Generate common hashing algorithms to check integrity. MD5 and SHA-1 are still used, but collisions are possible. SHA-256 and SHA-512 are highly secure and collision-resistant.",
+      "If you have a reliable source, comparing the hashes helps detect any tampering. If the hashes differ, the file may have been altered or contain malicious content."
     ],
+    additional:
+      "Always verify that both the file and its hash come from a legitimate source. Ideally, you would also check for a digital signature.",
     originalPage: "/file-integrity",
     linkText: "Go to File Integrity Check"
   },
@@ -253,13 +263,15 @@ export const aboutInfo = [
     id: "about-ip-addy",
     title: "About IP Information",
     description:
-      "Ensure your files remain unaltered by using common hashing algorithms that verify data integrity and detect any unauthorized changes.",
+      "Check your IP address and location with ease. Quickly view your current IP, ISP, and country details, with one-click copy to clipboard.",
     steps: [
-      "Select file to check integrity.",
-      "Apply hashing algorithm (e.g., SHA-256).",
-      "Compare hash output to expected value.",
-      "Detect tampering if hashes don't match."
+      "Click 'Get My IP Info'.",
+      "Instantly view your up-to-date IP address.",
+      "Easily copy the IP address to your clipboard.",
+      "See additional details like your country and Internet Service Provider (ISP)."
     ],
+    additional:
+      "This feature uses the free API service from https://ipinfo.io/json to fetch accurate IP address and location details in real time.",
     originalPage: "/ip-addy",
     linkText: "Go to IP Information"
   },
@@ -267,7 +279,7 @@ export const aboutInfo = [
     id: "about-totp-sim",
     title: "About TOTP & Captcha Simulator",
     description:
-    "This tool simulates Time-Based One-Time Passwords (TOTP) and bot-detection captchas to demonstrate multifactor authentication and security against automated attacks.",
+      "This tool simulates Time-Based One-Time Passwords (TOTP) and bot-detection captchas to demonstrate multifactor authentication and security against automated attacks.",
     steps: [
       "Generate TOTP codes based on shared secret and current time.",
       "Validate TOTP codes for authentication.",

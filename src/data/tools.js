@@ -63,31 +63,31 @@ export const tools = [
       id: "xor-enc",
       title: "XOR Uint32",
       description:
-        "Apply multiple layers of encryption using XOR with a key derived from the hash.",
+        "Explore different rotation ranges using XOR with a Uint32 array, offering 4,294,967,295 possible values.",
     },
     {
       id: "sss-enc",
       title: "Shamir's Secrect Sharing",
       description:
-      "Enter a secret or private key, split it into shares, and set thresholds with this interesting concept.",
+        "Enter a secret or private key, split it into shares, and set thresholds with this interesting concept.",
     },
     {
       id: "qr-enc",
       title: "Encrypted QR",
       description:
-      "Generate QR codes with encrypted data for secure and private information sharing.",
+        "Generate QR codes with encrypted data for secure and private information sharing.",
     },
     {
       id: "qr-generator",
       title: "QR Code Generator",
       description:
-      "Create QR codes easily for URLs, text, or other data.",
+        "Create QR codes easily for URLs, text, or other data.",
     },
     {
       id: "hashing",
-      title: "SHA-256 & Argon2 hashing",
+      title: "SHA & Argon2 hashing",
       description:
-      "Implement multiple SHA-256 or Argon2 hashing for files or text.",
+        "Implement multiple SHA or Argon2 hashing for files or text.",
     },
     {
       id: "file-integrity",
@@ -105,7 +105,7 @@ export const tools = [
       id: "totp-sim",
       title: "TOTP & Captcha",
       description:
-      "Try out Time-Based One-Time Password simulator and Bot Captcha.",
+        "Try out Time-Based One-Time Password simulator and Bot Captcha.",
     },
     {
       id: "password-gen",

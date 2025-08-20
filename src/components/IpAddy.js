@@ -9,7 +9,7 @@ const IpAddy = ({ showMsg, theme, onToggleTheme }) => {
     const fetchIpDetails = async () => {
         setLoading(true);
         try {
-            const response = await fetch('https://ipinfo.io/json?token='); // optional token
+            const response = await fetch('https://ipinfo.io/json');
             const data = await response.json();
             setIpData(data);
         } catch (err) {

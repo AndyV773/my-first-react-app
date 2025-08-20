@@ -110,7 +110,7 @@ const XorDec = ({ showMsg, theme, onToggleTheme }) => {
 
             <div className="learn-more">
                 <h2>XOR Uint32</h2>
-                <Link to="/about#about-rot-enc">Learn more</Link>
+                <Link to="/about#about-xor-enc">Learn more</Link>
             </div>
 
             <section>

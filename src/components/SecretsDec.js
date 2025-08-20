@@ -34,17 +34,24 @@ const SecretsDec = ({ showMsg, theme, onToggleTheme }) => {
 	};
 
 	useEffect(() => {
-		const newInputs = Array(shareCount).fill("").map((_, i) => inputs[i] || "");
-
-		const isSame = newInputs.every((val, i) => val === inputs[i]);
-		if (!isSame) setInputs(newInputs);
-
-	}, [shareCount, inputs]);
+		setInputs((prev) => {
+			if (prev.length > shareCount) {
+				// shrink array
+				return prev.slice(0, shareCount);
+			} else if (prev.length < shareCount) {
+				// expand array
+				return [...prev, ...Array(shareCount - prev.length).fill("")];
+			}
+			return prev; 
+		});
+	}, [shareCount]);
 
 	const updateInput = (value, index) => {
-		const updated = [...inputs];
-		updated[index] = value;
-		setInputs(updated);
+		setInputs(prev => {
+			const updated = [...prev];
+			updated[index] = value;
+			return updated;
+		});
 	};
 
 	const combineShares = () => {
@@ -52,13 +59,13 @@ const SecretsDec = ({ showMsg, theme, onToggleTheme }) => {
 		if (validShares.length < 2) return showMsg("Enter at least 2 shares.", true);
 
 		try {
-		const sec = window.secrets; // Use global secrets from CDN
-		const hex = sec.combine(validShares);
-		const original = sec.hex2str(hex);
-		setReconstructed(original);
+			const sec = window.secrets; // Use global secrets from CDN
+			const hex = sec.combine(validShares);
+			const original = sec.hex2str(hex);
+			setReconstructed(original);
 		} catch (e) {
-		showMsg("Error combining shares. Make sure they are valid.", true);
-		setReconstructed("");
+			showMsg("Error combining shares. Make sure they are valid.", true);
+			setReconstructed("");
 		}
 	};
 
@@ -85,7 +92,7 @@ const SecretsDec = ({ showMsg, theme, onToggleTheme }) => {
 				<label htmlFor="add-shares">Add shares:</label>
 				<select id="add-shares" value={shareCount} onChange={(e) => setShareCount(parseInt(e.target.value))}>
 					{Array.from({ length: 19 }, (_, i) => i + 2).map((n) => (
-					<option key={n} value={n}>{n}</option>
+						<option key={n} value={n}>{n}</option>
 					))}
 				</select>
 
