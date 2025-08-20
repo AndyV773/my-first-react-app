@@ -159,17 +159,17 @@ const OptQuantDec = ({ showMsg, theme, onToggleTheme, showLoader }) => {
             <label htmlFor="data-upload">Upload data:</label>
             <input type="file" id="data-upload" onChange={(e) => handleUpload("data", e)} />
             {fileInfoData && (
-            <p className="file-info">
-                File: {fileInfoData.name}, Type: {fileInfoData.type}, Size: {fileInfoData.size}
-            </p>
+                <p className="file-info">
+                    File: {fileInfoData.name}, Type: {fileInfoData.type}, Size: {fileInfoData.size}
+                </p>
             )}
 
             <label htmlFor="key-upload">Upload Key:</label>
             <input type="file" id="key-upload" onChange={(e) => handleUpload("key", e)} />
             {fileInfoKey && (
-            <p className="file-info">
-                File: {fileInfoKey.name}, Type: {fileInfoKey.type}, Size: {fileInfoKey.size}
-            </p>
+                <p className="file-info">
+                    File: {fileInfoKey.name}, Type: {fileInfoKey.type}, Size: {fileInfoKey.size}
+                </p>
             )}
             
             <input ref={pwDataRef} placeholder="Password for Data" />
@@ -179,24 +179,21 @@ const OptQuantDec = ({ showMsg, theme, onToggleTheme, showLoader }) => {
             </button>
         </section>
 
-        <section>
-            <div>
-                <textarea
-                    rows="5"
-                    value={outputVal}
-                    placeholder="Data output"
-                    readOnly
-                />
-                <p>
-                    Data Byte size: <span>{outputBytes}</span> bytes
-                </p>
-                <p>
-                    Detected file type: {detectedExt ? `${detectedExt}` : "(none)"}
-                </p>
-            </div>
-            <div className={`${outputBytes === 0 ? 'hidden' : ''}`}>
-                <button onClick={() => handleSaveFile()}> Save as {detectedExt}</button>
-            </div>
+        <section className={`${outputBytes === 0 ? 'hidden' : ''}`}>
+            <textarea
+                rows="5"
+                value={outputVal}
+                placeholder="Data output"
+                readOnly
+            />
+            <p>
+                Data Byte size: <span>{outputBytes}</span> bytes
+            </p>
+            <p>
+                Detected file type: {detectedExt ? `${detectedExt}` : "(none)"}
+            </p>
+        
+            <button onClick={() => handleSaveFile()}>Download .{detectedExt}</button>
       </section>
     </main>
   );

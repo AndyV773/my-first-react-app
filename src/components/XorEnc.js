@@ -33,7 +33,7 @@ const XorEnc = ({ showMsg, theme, onToggleTheme }) => {
             showMsg("Please enter a valid number greater than 0.", true);
             return;
         }
-
+        
         const keys = Array.from({ length: count }, () =>
             Math.floor(Math.random() * RANGE_VALUES[index]) + 1);
 
@@ -44,10 +44,10 @@ const XorEnc = ({ showMsg, theme, onToggleTheme }) => {
     // Parse key string into array of integers
     const parseKey = (keyStr) =>
         keyStr
-        .split(",")
-        .map((s) => s.trim())
-        .map(Number)
-        .filter((n) => Number.isInteger(n));
+            .split(",")
+            .map(s => Number(s.trim()))
+            .filter(n => Number.isInteger(n))
+            .map(n => n >>> 0);
 
 
     // Handle file upload
@@ -194,7 +194,7 @@ const XorEnc = ({ showMsg, theme, onToggleTheme }) => {
                         onChange={(e) => setKeyInput(e.target.value)}
                         placeholder="Or enter key e.g. 125,274,2789..."
                     />
-                    <button onClick={handleSaveKey}>Save key</button>
+                    <button onClick={handleSaveKey}>Download key</button>
                 </div>
 
                 <button onClick={handleEncode} className="encode">Encode</button>
@@ -208,7 +208,7 @@ const XorEnc = ({ showMsg, theme, onToggleTheme }) => {
                     value={outputVal}
                     placeholder="Output"
                 />
-                <button onClick={handleSaveEc32File}>Save as ec32</button>
+                <button onClick={handleSaveEc32File}>Download .ec32</button>
             </section>
         </main>
     );

@@ -123,15 +123,15 @@ const QrDec = ({ showMsg, theme, onToggleTheme }) => {
 
                 <input ref={pwRef} placeholder="Password" type="password" />
 
-                <button onClick={handleDecrypt}>Decrypt</button>
+                <button onClick={handleDecrypt} className='decode'>Decrypt</button>
+            </section>
 
-                {decryptedText && (
-                <>
+            {decryptedText && (
+                <section>
                     <h3>Decrypted Output</h3>
                     <textarea value={decryptedText} readOnly rows="5" />
-                </>
-                )}
-            </section>
+                </section>                    
+            )}
         </main>
     );
 };

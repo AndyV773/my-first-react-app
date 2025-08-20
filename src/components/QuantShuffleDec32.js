@@ -124,8 +124,8 @@ const QuantShuffleDec32 = ({ showMsg, theme, onToggleTheme, showLoader }) => {
     <main className="container">
         <nav>
             <div className="flex g1">
-            <Link to="/">Home</Link>
-            <Link to="/quant-shuffle-enc-32">Encode</Link>
+                <Link to="/">Home</Link>
+                <Link to="/quant-shuffle-enc-32">Encode</Link>
             </div>
             <ThemeToggle theme={theme} onToggle={onToggleTheme} />
         </nav>
@@ -179,7 +179,7 @@ const QuantShuffleDec32 = ({ showMsg, theme, onToggleTheme, showLoader }) => {
             <p>
                 Detected file type: {detectedExt ? `${detectedExt}` : "(none)"}
             </p>
-            <button onClick={() => handleSaveFile("key")}> Save as {detectedExt}</button>
+            <button onClick={() => handleSaveFile("key")}>Download .{detectedExt}</button>
         </section>
     </main>
   );

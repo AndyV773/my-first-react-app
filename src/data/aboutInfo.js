@@ -105,7 +105,7 @@ export const aboutInfo = [
       "You can then choose to generate and save a QR code. If the data or key is below 2,900 bytes, it will display the error correction level of the QR code based on its size. Alternatively, you can save it as an encrypted file.",
       "Decrypt and reverse the shuffle process to recover the data."
     ],
-    additional: "This technique is not original - it has been known for many years and uses rotation. I named it Quantum Shuffle, as I believe it is not possible to decode without the correct key. The key or data alone are meaningless, the key can be extremely long, based on the size of the input. Even if the user inputs 'Hello World' (11 bytes), each character is shuffled randomly so that, even with the data, attempting to brute-force the original input without the key could yield any 11-byte string, e.g., 'big red fox' or any other 11-byte word or phrase. I will be adding a technique later to disguise the character length, making it even more difficult. If you believe I am wrong and know of a way to break the encryption, I am always open for discussion - please get in touch.",
+    additional: "This technique is not original - it has been known for many years and uses rotation with Unicode code points. I named it Quantum Shuffle, as I believe it is not possible to decode without the correct key. The key or data alone are meaningless, the key can be extremely long, based on the size of the input. Even if the user inputs 'Hello World' (11 bytes), each character is shuffled randomly so that, even with the data, attempting to brute-force the original input without the key could yield any 11-byte string, e.g., 'big red fox' or any other 11-byte word or phrase. I will be adding a technique later to disguise the character length, making it even more difficult. If you believe I am wrong and know of a way to break the encryption, I am always open for discussion - please get in touch.",
     originalPage: "/quant-shuffle-enc",
     linkText: "Go to Quantum Shuffle"
   },
@@ -115,10 +115,12 @@ export const aboutInfo = [
     description:
       "An all-in-one optimized variant of the Quantum Shuffle, combining efficient randomization with AES-GCM encryption for enhanced performance and security.",
     steps: [
-      "Efficiently randomize input data with optimized algorithm.",
-      "Encrypt randomized data with AES-GCM.",
-      "Use optimized methods for decryption and unshuffling."
+      "Upload a file or enter text.",
+      "Choose all characters (1,114,112 possibilities) or keep the default 10,000, and enter the AES key for both data and key.",
+      "Click 'Encrypt' and then choose to download as a .ec file or as a QR code if the data is small enough.",
+      "To decode, upload both files and enter the correct AES keys to reveal the data."
     ],
+    additional: "Same process as Quantum Shuffle, but without the extra steps and with less rendering in the browser, saving on computation.",
     originalPage: "/opt-quant-enc",
     linkText: "Go to Optimised Quantum Shuffle"
   },
@@ -126,12 +128,15 @@ export const aboutInfo = [
     id: "about-quant-shuffle-32",
     title: "About Quantum Shuffle Uint32",
     description:
-      "An all-in-one optimized variant of the Quantum Shuffle, combining efficient randomization with AES-GCM encryption for enhanced performance and security.",
+      "High-load Uint32 array randomized shuffle method with variable length, an improved version of the Quantum Shuffle that originally used Unicode characters.",
     steps: [
-      "Efficiently randomize input data with optimized algorithm.",
-      "Encrypt randomized data with AES-GCM.",
-      "Use optimized methods for decryption and unshuffling."
+      "Upload a file or enter text, then choose to include all characters (over 4 billion possibilities) or stick with the default (~1 million).",
+      "Once you click 'Shuffle', the data is first handled as a Uint8 array. Two random numbers (0-99) are generated, and that amount of random Uint8 values is appended to the front and back of the data.",
+      "Next, the data is converted into a Uint32 array and then shuffled using the randomly generated key, similar to the Quantum Shuffle.",
+      "When the process is finished, you can download both the key and the data as an .ec32 file.",
+      "To decode, upload both correct files and click 'Unshuffle' to reveal the original data."
     ],
+    additional: "Quantum Shuffle (Uint32) uses the same rotation method as previous quantum methods, but it operates bit-wise or word-wise and utilizes the full range of the Uint32 array, providing up to 4,294,967,295 possibilities. Unlike previous methods, it does not need to avoid surrogate pairs, making it much more versatile and not reliant on character code points.",
     originalPage: "/quant-shuffle-enc-32",
     linkText: "Go to Quantum Shuffle Uint32"
   },
@@ -139,11 +144,14 @@ export const aboutInfo = [
     id: "about-rot-encoder",
     title: "About Rotation Encoder Uint8",
     description:
-      "This tool applies rotation ciphers and integrates advanced encryption to encode text, providing an additional layer of complexity for secure communication.",
+      "This tool applies byte-wise rotation with wrap-around, modifying the values of a Uint8 array across all 256 possible byte values.",
     steps: [
-      "Input text is encoded using rotation cipher techniques.",
-      "Encrypted with AES-GCM or similar methods.",
-      "Decoding requires reversing rotation and decryption."
+      "Upload a file or enter text.",
+      "You can randomly generate a key first, then use the slider to select the range of values from 256-1024. Any value over 256 will wrap around from 0-256.",
+      "Next, enter the number of rotations you would like. The best approach is to have a key the same length as the input for maximum randomness. If the key is shorter than the data, it will repeat to match the length of the data.",
+      "Alternatively, you can enter values manually, separated by commas. Once done, you can download the key as a .txt file.",
+      "Click 'Encode' to see the UTF-8 output. You can then download it as a .ec file.",
+      "To decode, upload the data and input the key or upload the key file. Click 'Decode' and the original output will be restored."
     ],
     originalPage: "/rot-encoder",
     linkText: "Go to Rotation Encoder"
@@ -152,7 +160,7 @@ export const aboutInfo = [
     id: "about-xor-based",
     title: "About XOR-Based Hash Encoder",
     description:
-    "Explore how XOR-based encoding combines with hashing to provide a lightweight method of obscuring data and adding security.",
+      "Explore how XOR-based encoding combines with hashing to provide a lightweight method of obscuring data and adding security.",
     steps: [
       "Apply XOR operation on input data with a key.",
       "Hash the XORed data for additional security.",

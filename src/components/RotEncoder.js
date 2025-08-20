@@ -193,7 +193,7 @@ const Encoder = ({ showMsg, theme, onToggleTheme }) => {
                         onChange={(e) => setKeyInput(e.target.value)}
                         placeholder="Or enter key e.g. 125,274,2789..."
                     />
-                    <button onClick={handleSaveKey}>Save key</button>
+                    <button onClick={handleSaveKey}>Download key</button>
                 </div>
 
                 <button onClick={handleEncode} className="encode">Encode</button>
@@ -210,7 +210,7 @@ const Encoder = ({ showMsg, theme, onToggleTheme }) => {
                 <p>
                     Detected file type: {detectedExt ? `${detectedExt}` : "(none)"}
                 </p>
-                <button onClick={handleSaveEcFile}>Save as ec</button>
+                <button onClick={handleSaveEcFile}>Download .ec</button>
             </section>
         </main>
     );

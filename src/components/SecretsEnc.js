@@ -100,7 +100,7 @@ const SecretsEnc = ({ showMsg, theme, onToggleTheme }) => {
 							<PreCopyOutputBlock outputId={`share-${i}`} text={s} />
 						</div>
 					))}
-					<button onClick={saveShares}>Save as txt</button>
+					<button onClick={saveShares}>Download all</button>
 				</section>
 			)}
 		</main>

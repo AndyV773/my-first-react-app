@@ -149,13 +149,13 @@ const XorBasedEnc = ({ showMsg, theme, onToggleTheme }) => {
 				{hashKeys.length > 0 && (
 					<div>
 						<h3>Generated Keys:</h3>
-						{hashKeys.map((s, i) => (
-							<div className="sss-pre" key={i}>
-							Key {i + 1}: 
-								<PreCopyOutputBlock outputId={`hash-key-${i}`} text={s} />
-							</div>
-						))}
-						<button onClick={handleSaveFileTxT}>Save as txt</button>
+                            {hashKeys.map((s, i) => (
+                                <div className="sss-pre" key={i}>
+                                Key {i + 1}: 
+                                    <PreCopyOutputBlock outputId={`hash-key-${i}`} text={s} />
+                                </div>
+                            ))}
+						<button onClick={handleSaveFileTxT}>Download all</button>
 					</div>
 				)}
 
@@ -171,7 +171,7 @@ const XorBasedEnc = ({ showMsg, theme, onToggleTheme }) => {
                     Detected file type: {detectedExt ? `${detectedExt}` : "(none)"}
                 </p>
 
-                <button onClick={handleSaveFile}>Save as ec</button>
+                <button onClick={handleSaveFile}>Download .ec</button>
 			</section>
         </main>
     );

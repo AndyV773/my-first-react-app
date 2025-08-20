@@ -5,7 +5,6 @@ import { ThemeToggle, useByteCounter } from "../utils/uiHelpers";
 import { unrotateBytes, textDecoder } from "../utils/cryptoUtils";
 
 
-
 const RotDecoder = ({ showMsg, theme, onToggleTheme }) => {
     const [dataInput, setDataInput] = useState("");
     const [keyInput, setKeyInput] = useState("");
@@ -61,8 +60,6 @@ const RotDecoder = ({ showMsg, theme, onToggleTheme }) => {
             onText: setKeyInput, 
         });
     };
-
-    
 
     // Parse key string into array of integers, ignore invalid values
     const parseKey = (keyStr) =>
@@ -164,7 +161,7 @@ const RotDecoder = ({ showMsg, theme, onToggleTheme }) => {
                 <p>
                     Detected file type: {detectedExt ? `${detectedExt}` : "(none)"}
                 </p>
-                <button onClick={handleSaveFile}>Save as {detectedExt}</button>
+                <button onClick={handleSaveFile}>Downlaod .{detectedExt}</button>
             </section>
         </main>
     );

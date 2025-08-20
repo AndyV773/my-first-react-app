@@ -395,22 +395,67 @@ export function xorUint8(inputBytes, hashHex) {
 }
 
 export const xorUint32 = (data, keyArray) => {
+
+	console.log('key arry',keyArray)
+	console.log('data in',data)
+
     const result = new Uint32Array(data.length);
 
     for (let i = 0; i < data.length; i++) {
-        // Add and wrap around 32-bit space
+
         result[i] = data[i] ^ keyArray[i % keyArray.length];
     }
+	console.log('data out',result)
 
     return result;
 };
+
+// 32-bit rotate left
+function rol32(x, n) {
+  	return ((x << n) | (x >>> (32 - n))) >>> 0;
+}
+
+// 32-bit rotate right
+function ror32(x, n) {
+  	return ((x >>> n) | (x << (32 - n))) >>> 0;
+}
+
+// Encrypt: XOR + rotation
+export function encryptXorRotate32(data, key) {
+	const result = new Uint32Array(data.length);
+	for (let i = 0; i < data.length; i++) {
+		const k = key[i % key.length] >>> 0;
+		const shift = k & 31; // use lower 5 bits (0–31) as rotation
+		let x = data[i] ^ k;
+		// alternate left/right per index
+		x = (i % 2 === 0) ? rol32(x, shift) : ror32(x, shift);
+		result[i] = x >>> 0;
+	}
+	return result;
+}
+
+// Decrypt: reverse order (undo rotation first, then XOR)
+export function decryptXorRotate32(data, key) {
+	const result = new Uint32Array(data.length);
+	for (let i = 0; i < data.length; i++) {
+		const k = key[i % key.length] >>> 0;
+		const shift = k & 31;
+		let x = data[i];
+		// reverse the rotation (note opposite direction)
+		x = (i % 2 === 0) ? ror32(x, shift) : rol32(x, shift);
+		x = x ^ k;
+		result[i] = x >>> 0;
+	}
+	return result;
+}
+
 
 // Random rotation generator fo uint32
 export function randomizerUint32(allChar = false) {
 	const rand = Math.random() * Math.random(); // bias toward lower numbers
 	let value = allChar
 		? Math.floor(rand * 4294967295) // full 32-bit range
-		: Math.floor(rand * 10000) - 500; // ASCII-ish with negative
+		: Math.floor(rand * 1000000) - 1000000; 
 	if (Math.random() < 0.5) value = -value; // allow negative
 	return value;
 }

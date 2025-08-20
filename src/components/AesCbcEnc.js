@@ -141,7 +141,7 @@ const AesCbcEnc = ({ showMsg, theme, onToggleTheme }) => {
                 Detected file type: {detectedExt ? `.${detectedExt}` : "(none)"}
             </p>
 
-            <button onClick={handleSaveFile}>Save as .ec</button>
+            <button onClick={handleSaveFile}>Download .ec</button>
         </section>
       </main>
     </>

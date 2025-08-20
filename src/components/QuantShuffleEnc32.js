@@ -208,7 +208,7 @@ const QuantShuffleEnc32 = ({ showMsg, theme, onToggleTheme, showLoader }) => {
 				<p>
 					Data Byte size: <span>{dataOutputBytes}</span> bytes
 				</p>
-				<button onClick={() => handleSaveFile("data")}> Download .ec32 </button>
+				<button onClick={() => handleSaveFile("data")}>Download .ec32</button>
 				<h3>Key</h3>
 				<textarea
 					rows="5"
@@ -219,7 +219,7 @@ const QuantShuffleEnc32 = ({ showMsg, theme, onToggleTheme, showLoader }) => {
 				<p>
 					Key Byte size: <span>{keyOutputBytes}</span> bytes
 				</p>
-				<button onClick={() => handleSaveFile("key")}> Download .ec32 </button>
+				<button onClick={() => handleSaveFile("key")}>Download .ec32</button>
 			</section>
 		</main>
 	);

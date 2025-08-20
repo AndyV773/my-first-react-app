@@ -16,6 +16,7 @@ self.addEventListener("message", async (e) => {
     try {
         const expanded = expandUint8(uint8);
         const uint32View = uint8ToUint32(expanded);
+
         const { shuffled, key } = quantShuffle32(uint32View, allChar);
       
         self.postMessage({

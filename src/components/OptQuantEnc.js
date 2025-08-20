@@ -230,7 +230,7 @@ const OptQuantEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
             <button className="encode" onClick={() => handleEncryption()}>Encrypt</button>
         </section>
 
-        <section id="qr">
+        <section className={`${dataOutputBytes === 0 ? 'hidden' : ''}`}>
             <h2>Download</h2>
 
             <h3>Data</h3>
@@ -240,23 +240,21 @@ const OptQuantEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
             <p>
                 Error Correction Level: {dataCorrection}
             </p>
-            <div className={`${dataOutputBytes === 0 ? 'hidden' : ''}`}>
-                <button onClick={() => handleSaveFile("data")}> Download .ec </button>
 
-                <button
-                    onClick={() => handleGenerate("data", dataOutput)}
-                    className={`${dataOutputBytes === 0 || dataOutputBytes > 2900 ? 'hidden' : ''}`}>
-                    Generate QR
-                </button>
+            <button onClick={() => handleSaveFile("data")}>Download .ec</button>
+            <button
+                onClick={() => handleGenerate("data", dataOutput)}
+                className={`${dataOutputBytes === 0 || dataOutputBytes > 2900 ? 'hidden' : ''}`}>
+                Generate QR
+            </button>
 
-                <div id="qr-data" className='qr-code' ref={dataContainerRef}></div>
+            <div id="qr-data" className='qr-code' ref={dataContainerRef}></div>
 
-                <button 
-                    onClick={() => handleQrDownload("data")} 
-                    className={`${!showDownloadData ? 'hidden' : ''}`}>
-                    Download QR
-                </button>
-            </div>
+            <button 
+                onClick={() => handleQrDownload("data")} 
+                className={`${!showDownloadData ? 'hidden' : ''}`}>
+                Download QR
+            </button>
 
             <h3>Key</h3>
             <p>
@@ -266,22 +264,20 @@ const OptQuantEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
                 Error Correction Level: {keyCorrection}
             </p>
 
-            <div className={`${keyOutputBytes === 0 ? 'hidden' : ''}`}>
-                <button onClick={() => handleSaveFile("key")}> Download .ec </button>
+            <button onClick={() => handleSaveFile("key")}>Download .ec</button>
+            <button
+                onClick={() => handleGenerate("key", keyOutput)}
+                className={`${keyOutputBytes === 0 || keyOutputBytes > 2900 ? 'hidden' : ''}`}>
+                Generate QR
+            </button>
 
-                <button
-                    onClick={() => handleGenerate("key", keyOutput)}
-                    className={`${keyOutputBytes === 0 || keyOutputBytes > 2900 ? 'hidden' : ''}`}>
-                    Generate QR
-                </button>
+            <div id="qr-key" className='qr-code' ref={keyContainerRef}></div>
 
-                <div id="qr-key" className='qr-code' ref={keyContainerRef}></div>
-                <button 
-                    onClick={() => handleQrDownload("key")} 
-                    className={`${!showDownloadKey ? 'hidden' : ''}`}>
-                    Download QR
-                </button>
-            </div>
+            <button 
+                onClick={() => handleQrDownload("key")} 
+                className={`${!showDownloadKey ? 'hidden' : ''}`}>
+                Download QR
+            </button>
         </section>
     </main>
   );

@@ -161,7 +161,7 @@ const XorDec = ({ showMsg, theme, onToggleTheme }) => {
                 <p>
                     Detected file type: {detectedExt ? `${detectedExt}` : "(none)"}
                 </p>
-                <button onClick={handleSaveFile}>Save as {detectedExt}</button>
+                <button onClick={handleSaveFile}>Download .{detectedExt}</button>
             </section>
         </main>
     );
