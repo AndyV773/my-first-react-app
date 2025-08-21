@@ -5,20 +5,20 @@ export const aboutInfo = [
     description:
         "This data transformation and encryption toolkit is designed for educational and demonstration purposes to showcase a variety of shuffle and cryptographic techniques. It is a static JavaScript app that handles encryption entirely on the front end, within the browser. Therefore, no backend is needed. However, this means there are limitations due to browser memory or device speed, so large images or files can cause the browser to crash. I have not implemented any restrictions on file sizes - this app is completely experimental, explore the features and learn how each component works. The libraries used in this app consist of:",
     libs: [
-        "crypto-js - Providing AES (CBC & GCM) encryption and hashing algorithms like SHA-256.",
-        "pako - Zlib-compatible compression and decompression of data.",
-        "qrcode - For generating customizable QR codes.",
-        "jsQR - For reading and decoding QR codes from images.",
-        "html5-qrcode - Used for scanning and reading QR codes from a device camera.",
-        "secrets.js-grempe - JavaScript library for Shamir's Secret Sharing.",
-        "jszip - For detecting file types though binary data such as word .doxc.",
+      "crypto-js - Providing AES (CBC & GCM) encryption and hashing algorithms like SHA-256. (https://github.com/brix/crypto-js)",
+      "pako - Zlib-compatible compression and decompression of data. (https://github.com/nodeca/pako)",
+      "qrcode - For generating customizable QR codes. (https://github.com/soldair/node-qrcode)",
+      "jsQR - For reading and decoding QR codes from images. (https://github.com/cozmo/jsQR)",
+      "html5-qrcode - Used for scanning and reading QR codes from a device camera. (https://github.com/mebjas/html5-qrcode)",
+      "secrets.js-grempe - JavaScript library for Shamir's Secret Sharing. (https://github.com/grempe/secrets.js)",
+      "jszip - For creating, reading, and editing .zip files in JavaScript. (https://stuk.github.io/jszip/)"
     ],
   },
   {
     id: "about-obfuscation-tools",
     title: "About Obfuscation Tools",
     description:
-    "Obfuscation tools modify and encode text to make it harder to read or analyze, adding a layer of security through obscurity. This section shows you some basic methods of data transformation, also useful for testing.",
+      "Obfuscation tools modify and encode text to make it harder to read or analyse, adding a layer of security through obscurity. This section shows you some basic methods of data transformation, also useful for testing.",
     steps: [
       "Reverse: Reverse the characters of the input text.",
       "ROT13 / ROT18 / ROTN: Apply letter/number rotation to obfuscate the text.",
@@ -95,7 +95,7 @@ export const aboutInfo = [
     id: "about-quant-shuffle",
     title: "About Quantum Shuffle",
     description:
-      "Quantum Shuffle applies a high-load randomization process to files or text, using rotation with Unicode code points. You can choose to further encrypt the data using AES-GCM. The process is broken down into stages, allowing you to view the transformation at each stage.",
+      "Quantum Shuffle applies a high-load randomisation process to files or text, using rotation with Unicode code points. You can choose to further encrypt the data using AES-GCM. The process is broken down into stages, allowing you to view the transformation at each stage.",
     steps: [
       "Upload a file or input text. Files are Base64 encoded to handle the binary as text format.",
       "The character range is kept between 10000 to reduce computation. You can check the box to use all characters in the range of 1,114,112 (0x10FFFF) Unicode characters.",
@@ -113,7 +113,7 @@ export const aboutInfo = [
     id: "about-opt-quant",
     title: "About Optimised Quantum Shuffle",
     description:
-      "An all-in-one optimized variant of the Quantum Shuffle, combining efficient randomization with AES-GCM encryption for enhanced performance and security.",
+      "An all-in-one optimised variant of the Quantum Shuffle, combining efficient randomization with AES-GCM encryption for enhanced performance and security.",
     steps: [
       "Upload a file or enter text.",
       "Choose all characters (1,114,112 possibilities) or keep the default 10,000, and enter the AES key for both data and key.",
@@ -128,7 +128,7 @@ export const aboutInfo = [
     id: "about-quant-shuffle-32",
     title: "About Quantum Shuffle Uint32",
     description:
-      "High-load Uint32 array randomized shuffle method with variable length, an improved version of the Quantum Shuffle that originally used Unicode characters.",
+      "High-load Uint32 array randomised shuffle method with variable length, a variation of the Quantum Shuffle that originally used Unicode characters.",
     steps: [
       "Upload a file or enter text, then choose to include all characters (over 4 billion possibilities) or stick with the default (~1 million).",
       "Once you click 'Shuffle', the data is first handled as a Uint8 array. Two random numbers (0-99) are generated, and that amount of random Uint8 values is appended to the front and back of the data.",
@@ -177,12 +177,15 @@ export const aboutInfo = [
     id: "about-xor-enc",
     title: "About XOR Uint32",
     description:
-      "Explore how XOR-based encoding combines with hashing to provide a lightweight method of obscuring data and adding security.",
-    steps: [
-      "Apply XOR operation on input data with a key.",
-      "Hash the XORed data for additional security.",
-      "Reverse XOR operation for decoding."
+      "XOR encoding with a Uint32 array using bitwise shuffling for each 32-bit chunk.",
+    steps:[
+      "Upload a file or input text.",
+      "Select the numeric range using the slider (from 1,000,000 to 10,000,000,000) and enter the amount you would like to generate. A good rule of thumb is to generate 1 key block per 4 characters and add an additional one for the length. For instance, 'hello world' is 11 bytes, so generate 3 plus 1 for length, making 4 in total.",
+      "Click 'Generate' to create a random key, or experiment with different values by entering them manually. You can then download the key as a .txt file by clicking 'Download Key'.",
+      "Click 'Encode' to reveal the XOR-shuffled message. This will show you the returned UTF-8 preview. You can then click 'Download' to save as a .ec32 file.",
+      "To decode, upload the data and either upload or enter the key, then click 'Decode' to reveal the original data.",
     ],
+    additional: "This method works best if each key, separated by commas, is 10 digits long (32-bits) or negative numbers. For example, if the word is 'hello' (Uint8: 104,101,108,108,111), the original length is appended to the Uint32 array and will become [5,1819043176,111]. If XOR is done using a small key, only the first few bytes of the Uint32 array will change, leaving some original characters intact. This is still experimental, and improvements are being explored.",
     originalPage: "/xor-enc",
     linkText: "Go to XOR Uint32"
   },
@@ -205,12 +208,14 @@ export const aboutInfo = [
     id: "about-qr-enc",
     title: "About Encrypted QR Codes",
     description:
-      "Generate QR codes with encrypted data to securely share sensitive information while protecting it from unauthorized scanning or interception.",
+      "Generate QR codes with encrypted data to securely share sensitive information while protecting it from unauthorised scanning or interception.",
     steps: [
-      "Encrypt the data to be embedded in the QR code.",
-      "Generate QR code with encrypted payload.",
-      "Scan and decrypt QR code on the receiving end."
+      "Enter any text or information into the input box and provide a strong key. The encryption uses AES-GCM.",
+      "Click 'Generate Encrypted QR' and a QR code will be created. The encoded data (Base64) will also be displayed for safe use within the QR code.",
+      "Click 'Download QR Code' to save it as a .png file.",
+      "To decode, upload the QR code image and enter the correct password. Then click 'Decrypt'—if the password is correct, the original data will be displayed."
     ],
+    additional: "A QR scanner using HTML5-QRcode is still in development. The QR codes are generated with the qrcode library, and AES-GCM encryption is provided by crypto-js.",
     originalPage: "/qr-enc",
     linkText: "Go to Encrypted QR Code"
   },
@@ -218,12 +223,14 @@ export const aboutInfo = [
     id: "about-qr-gen",
     title: "About QR Code Generator",
     description:
-      "Create QR codes easily for URLs, text, or other data. This section covers how QR codes are generated and their practical uses within the app.",
+      "Create QR codes easily for URLs, text, or other data.",
     steps: [
-      "Input URL, text, or data.",
-      "Generate QR code based on input.",
-      "Use QR codes for sharing or quick access."
+      "Enter any text or information into the input box.",
+      "QR codes are generated instantly as you type, so you can see the code update in real time.",
+      "You can customise the QR code by changing the foreground and background colours.",
+      "Click the 'Download QR' button to save the QR code as a .png file."
     ],
+    additional: "This application uses the qrcode library across all interfaces.",
     originalPage: "/qr-generator",
     linkText: "Go to QR Code Generator"
   },
@@ -248,7 +255,7 @@ export const aboutInfo = [
     id: "about-file-integrity",
     title: "About File Integrity Check",
     description:
-      "Ensure your files remain unaltered by using common hashing algorithms to verify data integrity and detect any unauthorized changes.",
+      "Ensure your files remain unaltered by using common hashing algorithms to verify data integrity and detect any unauthorised changes.",
     steps: [
       "Upload a file to quickly view its name, type, and size.",
       "Generate common hashing algorithms to check integrity. MD5 and SHA-1 are still used, but collisions are possible. SHA-256 and SHA-512 are highly secure and collision-resistant.",
@@ -279,11 +286,10 @@ export const aboutInfo = [
     id: "about-totp-sim",
     title: "About TOTP & Captcha Simulator",
     description:
-      "This tool simulates Time-Based One-Time Passwords (TOTP) and bot-detection captchas to demonstrate multifactor authentication and security against automated attacks.",
+  "This tool simulates Time-Based One-Time Passwords (TOTP) and bot-detection captchas to demonstrate multifactor authentication and protection against automated attacks.",
     steps: [
-      "Generate TOTP codes based on shared secret and current time.",
-      "Validate TOTP codes for authentication.",
-      "Use Captcha to prevent automated bot access."
+      "TOTP is a simple method where a hash value is generated every 30 seconds from a 6-digit PIN. The user enters the PIN, and the hash values are compared. If they match, a success message is shown; if not, a new code is generated. In real cases, the 6-digit PIN is shared through an authentication app like Google Authenticator.",
+      "The bot captcha is another simple method using randomly generated math equations. Solving them correctly proves you are human. There is also a honeypot trap to detect bots if a hidden input is filled. Additionally, answering the equations too quickly can indicate bot activity. This is a basic method; advanced bots can be designed to bypass it."
     ],
     originalPage: "/totp-sim",
     linkText: "Go to TOTP & Captcha Simulator"
@@ -292,11 +298,11 @@ export const aboutInfo = [
     id: "about-password-gen",
     title: "About Password Generator",
     description:
-      "Learn how the password generator creates strong, random, and secure passwords to help protect your accounts and data from unauthorized access.",
+      "Generator strong passwords, random, and secure passwords to help protect your accounts and data from unauthorised access.",
     steps: [
-      "Select password length and complexity options.",
-      "Generate random password using secure randomization.",
-      "Use generated password for account or data protection."
+      "You can create a password of any length and split it into chunks using hyphens for readability.",
+      "By default, the full ASCII character range is used, including special characters. You can uncheck the box to limit the set to standard characters (a-z, A-Z, 0-9).",
+      "Each time you click 'Generate Password,' six new randomly generated passwords are created, which you can easily copy to the clipboard by clicking the icon in the top-right corner."
     ],
     originalPage: "/password-gen",
     linkText: "Go to Password Generator"

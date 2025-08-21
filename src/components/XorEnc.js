@@ -20,7 +20,7 @@ const XorEnc = ({ showMsg, theme, onToggleTheme }) => {
     useByteCounter(textInputVal, setInputBytes);
 
     const [index, setIndex] = useState(0);
-    const RANGE_VALUES = [10000, 100000, 1000000, 1000000000, 4294967295];
+    const RANGE_VALUES = [1000000, 1000000000, 5000000000, 10000000000];
     const displayValue = RANGE_VALUES[index].toLocaleString();
 
     const handleSlider = (e) => {
@@ -103,6 +103,7 @@ const XorEnc = ({ showMsg, theme, onToggleTheme }) => {
         return;
         }
         try {
+            console.log('uint8 input',dataInput)
             const uint32View = uint8ToUint32(dataInput)
             const rotated = xorUint32(uint32View, keyArray);
 

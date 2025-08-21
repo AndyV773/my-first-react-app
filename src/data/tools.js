@@ -33,7 +33,7 @@ export const tools = [
       id: "quant-shuffle-enc",
       title: "Quantum Shuffle",
       description:
-        "High load randomize file or text shuffle using Unicode points with added AES-GCM encryption.",
+        "High load randomised file or text shuffle using Unicode points with added AES-GCM encryption.",
     },
     {
       id: "opt-quant-enc",
@@ -45,7 +45,7 @@ export const tools = [
       id: "quant-shuffle-enc-32",
       title: "Quantum Shuffle Uint32",
       description:
-        "High load randomization of file or text data using Uint32Array and an Int32Array key.",
+        "High load randomisation of file or text data using Uint32Array and an Int32Array key.",
     },
     {
       id: "rot-encoder",

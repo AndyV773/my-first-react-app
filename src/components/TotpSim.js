@@ -1,13 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ThemeToggle } from "../utils/uiHelpers";
+import { sha256, textEncoder } from "../utils/cryptoUtils";
 
-
-// Generate a new 6-digit code
-const generateRandomTotp = () => {
-    const random = Math.floor(100000 + Math.random() * 900000);
-    return random.toString();
-};
 
 const operators = [
     { symbol: '+', func: (a, b) => a + b },
@@ -40,12 +35,25 @@ const TotpSim = ({ showMsg, theme, onToggleTheme }) => {
     const [timeLeft, setTimeLeft] = useState(30);
     const [inputCode, setInputCode] = useState('');
     const [status, setStatus] = useState('');
+    const [hash, setHash] = useState("");
 
     const [challenge, setChallenge] = useState(() => generateChallenge());
     const [answer, setAnswer] = useState('');
     const [result, setResult] = useState('');
     const [honeypot, setHoneypot] = useState('');
     const startTime = useRef(Date.now());
+
+    // Generate a new 6-digit code
+    const generateRandomTotp = async () => {
+        const random = Math.floor(100000 + Math.random() * 900000);
+        const string = random.toString();
+
+        const hash = await sha256(textEncoder(string));
+
+        setHash(hash);
+
+        return string;
+    };
 
     useEffect(() => {
         // Generate initial values
@@ -77,9 +85,11 @@ const TotpSim = ({ showMsg, theme, onToggleTheme }) => {
     }, []);
 
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if (inputCode === code) {
+        const inputHash = await sha256(textEncoder(inputCode));
+
+        if (inputHash === hash) {
             setStatus("Success.");
             showMsg("Success: Correct input!", false);
         } else {
@@ -179,12 +189,12 @@ const TotpSim = ({ showMsg, theme, onToggleTheme }) => {
                 What is {challenge.a} {challenge.op.symbol} {challenge.b}?
             </p>
             <input
-            type="text"
-            placeholder="Your answer"
-            value={answer}
-            onChange={(e) => setAnswer(e.target.value)}
-            maxLength={5}
-            autoComplete="off"
+                type="text"
+                placeholder="Your answer"
+                value={answer}
+                onChange={(e) => setAnswer(e.target.value)}
+                maxLength={5}
+                autoComplete="off"
             />
             <button onClick={handleCaptcha} className='encode'>Submit</button>
 

@@ -84,7 +84,7 @@ const QrGenerator = ({ showMsg, theme, onToggleTheme }) => {
 
 				<div className="options">
 					<label>
-						QR Color:
+						QR Colour:
 						<input onChange={(e) => setFgColor(e.target.value)} type="color" value={fgColor} />
 					</label>
 					<label>

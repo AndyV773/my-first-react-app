@@ -97,7 +97,7 @@ const Hashing = ({ showMsg, theme, onToggleTheme }) => {
 			setHashKey(hashResult);
 
 		} catch (err) {
-			showMsg("Hashing failed." + err, true);
+			showMsg("Hashing failed." + err.message, true);
 		}
 	};
 
