@@ -85,7 +85,7 @@ export const tools = [
     },
     {
       id: "hashing",
-      title: "SHA & Argon2 hashing",
+      title: "SHA & Argon2 Hashing",
       description:
         "Implement multiple SHA or Argon2 hashing for files or text.",
     },

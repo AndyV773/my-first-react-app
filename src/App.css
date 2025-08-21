@@ -126,6 +126,10 @@ button.decode {
     display: flex;
 }
 
+.space-between {
+    justify-content: space-between;
+}
+
 .wrap {
     flex-wrap: wrap;
 }
@@ -156,6 +160,10 @@ button.decode {
 
 .ml-1 {
     margin-left: 1rem;
+}
+
+.text-centre {
+    text-align: center;
 }
 
 /* -------------------------------------- day night theme and toggler */
@@ -630,6 +638,11 @@ pre {
     image-rendering: pixelated;
 }
 
+.qr-scan-btn {
+    width: 100px;
+}
+
+
 .overlay {
     position: fixed;
     top: 0;
@@ -645,9 +658,8 @@ pre {
 }
 
 .qr-region {
-    width: 100%;
-    max-width: 400px;
-    height: 400px;
+    width: 80%;  
+    height: 80%;     
 }
 
 button.close-button {

@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from 'react-router-dom';
 import { aboutInfo } from "../data/aboutInfo.js"; // import your tools array
+import emailjs from "emailjs-com";
+emailjs.init("OV7TuaOdwTQ7yrWjx");
+
 
 export const About = ({ showMsg }) => {
     const { hash } = useLocation();
@@ -12,7 +15,6 @@ export const About = ({ showMsg }) => {
         }
     }, [hash]);
 
-
     const [contactForm, setContactForm] = useState({
         name: "",
         email: "",
@@ -23,104 +25,136 @@ export const About = ({ showMsg }) => {
         setContactForm({ ...contactForm, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // TODO: add your contact form submission logic here (email/send API/etc)
-        showMsg("Message sent!", false);
-        setContactForm({ name: "", email: "", message: "" });
+
+        // Basic HTML5 form validation
+        const form = e.target;
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
+        // Disable button while sending
+        const submitButton = form.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+
+        try {
+            await emailjs.send(
+                "service_a5ubnxa", // service ID
+                "template_xb2zlxg", // template ID
+                {
+                    from_web: "React Encryption App",
+                    from_name: contactForm.name,
+                    from_email: contactForm.email,
+                    from_message: contactForm.message,
+                }
+            );
+            showMsg("Your message has been sent!", false);
+            setContactForm({ name: "", email: "", message: "" });
+        } catch (err) {
+            console.error(err);
+            showMsg("Oops! Something went wrong. Please try again.", true);
+        } finally {
+            submitButton.disabled = false;
+        }
     };
 
     // Separate out the "About" description from the rest
     const appDescription = aboutInfo.find((item) => item.id === "about-app");
     const otherTools = aboutInfo.filter((item) => item.id !== "about-app");
 
-
-  return (
-    <main className="about-page">
-        <nav>
-            <div className="flex g1">
+    return (
+        <main className="about-page">
+            <nav className="flex space-between">
                 <Link to="/">Home</Link>
-            </div>
-        </nav>
+                <Link to="/about#get-in-touch"
+                    onClick={(e) => {
+                        const el = document.querySelector("#get-in-touch");
+                        if (el) {
+                            e.preventDefault(); // prevent router from re-navigating to same URL
+                            el.scrollIntoView({ behavior: "smooth" });
+                        }
+                    }}
+                >Get In Touch</Link>
+            </nav>
+                
+            <p>{appDescription.description}</p>
+            {appDescription.libs && (
+                <ol className="about-list">
+                    {appDescription.libs.map((lib, idx) => (
+                        <li key={idx}>{lib}</li>
+                    ))}
+                </ol>
+            )}
+
+            <h2>Features and Tools</h2>
+            {otherTools.map(({ id, title, description, steps, additional, originalPage, linkText }) => (
+                <section key={id} id={id} className="about-box">
+                    <h2>{title}</h2>
+                    <p>{description}</p>
+
+                    {steps && (
+                        <ol className="about-list">
+                            {steps.map((step, idx) => (
+                                <li key={idx}>{step}</li>
+                            ))}
+                        </ol>
+                    )}
+
+                    <p>{additional}</p>
+
+                    {originalPage && (
+                        <p className="about-link">
+                            <Link className="toolbox-link" to={originalPage}>{linkText}</Link>
+                        </p>
+                    )}
+                </section>
+            ))}
             
-        <p>{appDescription.description}</p>
-        {appDescription.libs && (
-            <ol className="about-list">
-                {appDescription.libs.map((lib, idx) => (
-                    <li key={idx}>{lib}</li>
-                ))}
-            </ol>
-        )}
+            <section id="get-in-touch" className="contact-form">
+                <h2>Get In Touch</h2>
+                <form onSubmit={handleSubmit}>
+                    <label>
+                        Name
+                        <input
+                            type="text"
+                            name="name"
+                            value={contactForm.name}
+                            onChange={handleChange}
+                            required
+                        />
+                    </label>
 
+                    <label>
+                        Email
+                        <input
+                            type="email"
+                            name="email"
+                            value={contactForm.email}
+                            onChange={handleChange}
+                            required
+                        />
+                    </label>
 
-        
-        <h2>Features and Tools</h2>
-        {otherTools.map(({ id, title, description, steps, additional, originalPage, linkText }) => (
-            <section key={id} id={id} className="about-box">
-                <h2>{title}</h2>
-                <p>{description}</p>
+                    <label>
+                        Message
+                        <textarea
+                            name="message"
+                            rows={5}
+                            value={contactForm.message}
+                            onChange={handleChange}
+                            required
+                            minLength="20"
+                            maxLength="500"
+                        />
+                    </label>
 
-                {steps && (
-                    <ol className="about-list">
-                        {steps.map((step, idx) => (
-                            <li key={idx}>{step}</li>
-                        ))}
-                    </ol>
-                )}
-
-                <p>{additional}</p>
-
-                {originalPage && (
-                    <p className="about-link">
-                        <Link className="toolbox-link" to={originalPage}>{linkText}</Link>
-                    </p>
-                )}
+                    <button type="submit" className="decode">Send Message</button>
+                </form>
             </section>
-        ))}
-        
-
-
-        <section className="contact-form">
-            <h2>Contact Us</h2>
-            <form onSubmit={handleSubmit}>
-            <label>
-                Name
-                <input
-                type="text"
-                name="name"
-                value={contactForm.name}
-                onChange={handleChange}
-                required
-                />
-            </label>
-
-            <label>
-                Email
-                <input
-                type="email"
-                name="email"
-                value={contactForm.email}
-                onChange={handleChange}
-                required
-                />
-            </label>
-
-            <label>
-                Message
-                <textarea
-                name="message"
-                rows={5}
-                value={contactForm.message}
-                onChange={handleChange}
-                required
-                />
-            </label>
-
-            <button type="submit" className="decode">Send Message</button>
-            </form>
-        </section>
-    </main>
-  );
+        </main>
+    );
 };
 
 export default About;

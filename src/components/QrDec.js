@@ -94,18 +94,18 @@ const QrDec = ({ showMsg, theme, onToggleTheme }) => {
             </div>
 
             <section>
-                <h2>Decode</h2>
-                <div>
-                    <button onClick={handleScannerOpen}>Open QR Scanner</button>
-
-                    {showScanner && (
-                        <QrScanner
-                            onScan={handleScan}
-                            onClose={handleScannerClose}
-                            onError={handleError}
-                        />
-                    )}
+                <div className='flex space-between'>
+                    <h2>Decode</h2>
+                    <button className='qr-scan-btn' onClick={handleScannerOpen}>Scan QR</button>
                 </div>
+
+                {showScanner && (
+                    <QrScanner
+                        onScan={handleScan}
+                        onClose={handleScannerClose}
+                        onError={handleError}
+                    />
+                )}
 
                 <p>Upload QR code image</p>
                 <input type="file" onChange={handleUpload} />

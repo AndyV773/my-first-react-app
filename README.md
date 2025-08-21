@@ -1,70 +1,66 @@
-# Getting Started with Create React App
+# React Encryption App
 
+## Data Transformation and Encryption Toolkit
+
+This is a static JavaScript app designed for educational and demonstration purposes. It showcases a variety of shuffle and cryptographic techniques and performs all encryption entirely in the browser - no backend is required.
+
+This project is hosted on github pages and can be found here: [https://andyv773.github.io/my-first-react-app/](https://andyv773.github.io/my-first-react-app/)
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+## Deployment
 
-In the project directory, you can run:
+### Deployment to GitHub Pages
 
-### `npm start`
+This React app was deployed using GitHub Pages as a static front-end application.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### 1. Install `gh-pages`
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```bash
+npm install --save-dev gh-pages
+```
 
-### `npm test`
+### 2. Add a homepage field to your `package.json`:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```json
+"homepage": "https://<your-username>.github.io/<repository-name>"
+```
 
-### `npm run build`
+### 3. Add deployment scripts to package.json:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```json
+"scripts": {
+  "predeploy": "npm run build",
+  "deploy": "gh-pages -d build"
+}
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 4. Build and deploy the app:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+Build and deploy the app:
+```
 
-### `npm run eject`
+This will create a production build in the build folder and push it to the gh-pages branch of your repository.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### 5. Access your app:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Open the URL you specified in the homepage field https://<your-username>.github.io/<repository-name>.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### 6. Optional: Local testing of the production build:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```bash
+npx serve -s build
+```
 
-## Learn More
+## Libraries Used
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- **[crypto-js](https://github.com/brix/crypto-js)** – Provides AES (CBC & GCM) encryption and hashing algorithms like SHA-256.
+- **[pako](https://github.com/nodeca/pako)** – Zlib-compatible compression and decompression of data.
+- **[qrcode](https://github.com/soldair/node-qrcode)** – Generates customizable QR codes.
+- **[jsQR](https://github.com/cozmo/jsQR)** – Reads and decodes QR codes from images.
+- **[html5-qrcode](https://github.com/mebjas/html5-qrcode)** – Scans and reads QR codes from a device camera.
+- **[secrets.js-grempe](https://github.com/grempe/secrets.js)** – JavaScript library for Shamir's Secret Sharing.
+- **[JSZip](https://stuk.github.io/jszip/)** – Creates, reads, and edits `.zip` files in JavaScript.
+- **[Argon2](https://github.com/antelle/argon2-browser)** – Browser implementation of the Argon2 password hashing algorithm.
+- **[Font Awesome](https://fontawesome.com/)** – Icon toolkit for web projects.
+- **[gh-pages](https://www.npmjs.com/package/gh-pages)** – Utility to publish to GitHub Pages from npm scripts.

@@ -70,6 +70,16 @@ function App() {
 		[]
 	);
 
+	const NotFound = () => {
+		return (
+			<div className="text-centre">
+				<h1>404 - Page Not Found</h1>
+				<p>Sorry, the page you are looking for does not exist.</p>
+				<a href="/">Go back home</a>
+			</div>
+		);
+	};
+
 	return (
 		<div className="app-wrapper">
 			<ScrollToTop />
@@ -142,6 +152,7 @@ function App() {
 				<Route path="/totp-sim" element={<TotpSim showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
 				<Route path="/password-gen" element={<PasswordGen showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
 				<Route path="/test" element={<Test showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} handleTest={handleTest} test={test} />} />
+				<Route path="*" element={<NotFound />} />
 			</Routes>
 			<footer className="footer">
 				<p>

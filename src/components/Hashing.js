@@ -136,7 +136,7 @@ const Hashing = ({ showMsg, theme, onToggleTheme }) => {
 			</nav>
 
 			<div className="learn-more">
-				<h2>Hashing</h2>
+				<h2>SHA & Argon2 Hashing</h2>
 				<Link to="/about#about-hashing">Learn more</Link>
 			</div>
 
