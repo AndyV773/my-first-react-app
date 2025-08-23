@@ -73,9 +73,9 @@ export const tools = [
     },
     {
       id: "key-stretcher",
-      title: "Key Stretcher",
+      title: "Chaotic Key Stretcher",
       description:
-        "Derive a large output from a short key and increase computational effort using hash algorithms and exponentiation.",
+        "Derive a large output from a short key and increase computational effort using algorithms and chaotic mathmatics.",
     },
     {
       id: "qr-enc",

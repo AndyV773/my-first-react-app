@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useRef, useCallback} from 'react';
 import { Link } from 'react-router-dom';
-import { ThemeToggle } from '../utils/uiHelpers';
+import { ThemeToggle, PreCopyOutputBlock } from '../utils/uiHelpers';
 import { textEncoder } from '../utils/cryptoUtils';
 import { saveFileAsExt } from '../utils/fileUtils';
 
@@ -11,14 +11,16 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
     const [byteOutput, setByteOutput] = useState("");
     const [hash1Iterations, setHash1Iterations] = useState(1);
     const [hash2Iterations, setHash2Iterations] = useState(1);
-    const [iterations, setIterations] = useState(1);
+    const [depth, setDepth] = useState(1);
+    const [phase, setPhase] = useState(1);
+    const [sizeIterations, setSizeIterations] = useState(1);
     const [hash1Output, setHash1Output] = useState("");
     const [hash2Output, setHash2Output] = useState("");
-    const [length, setLength] = useState("");
+    const [chunks, setChunks] = useState("");
+    const [keyJoined, setKeyJoined] = useState("");
 
     const [elapsedTime, setElapsedTime] = useState(null);
     const timerRef = useRef(0);
-
 
     // Refs
     const workerRef = useRef(null);
@@ -31,16 +33,8 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
             showMsg("Input key.", true);
             return;
         }
-        if (!iterations) {
-            showMsg("Input Iterations.", true);
-            return;
-        }
-        if (!hash1Iterations) {
-            showMsg("Input Hash 1 Iterations.", true);
-            return;
-        }
-        if (!hash2Iterations) {
-            showMsg("Input Hash 2 Iterations.", true);
+        if (!hash1Iterations || !hash2Iterations || !depth|| !phase || !sizeIterations) {
+            showMsg("Please enter valid inputs.", true);
             return;
         }
 
@@ -51,14 +45,18 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
         // Record start time
         timerRef.current = performance.now();
 
+        setKeyJoined(`${keyInput}$#=${hash1Iterations}$#=${hash2Iterations}$d=${depth}$p=${phase}$l=${sizeIterations}`)
+
         workerRef.current.postMessage({
             type: "stretch",
             load: { keyInput },  
             hash1Iterations,  
-            hash2Iterations,  
-            iterations,  
+            hash2Iterations,
+            depth,
+            phase,
+            sizeIterations,  
         });
-    }, [keyInput, showMsg, showLoader, hash1Iterations, hash2Iterations, iterations]);
+    }, [keyInput, hash1Iterations, hash2Iterations, depth, phase, sizeIterations, showMsg, showLoader]);
 
 
     useEffect(() => {
@@ -75,16 +73,19 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
                 const endTime = performance.now();
                 const timeMs = endTime - timerRef.current; // elapsed time in milliseconds
 
-                const seconds = Math.floor(timeMs / 1000);
+                const minutes = Math.floor(timeMs / 60000);
+                const seconds = Math.floor((timeMs % 60000) / 1000);
                 const milliseconds = Math.floor(timeMs % 1000);
 
-                setElapsedTime({ seconds, milliseconds });
+                setElapsedTime({ minutes, seconds, milliseconds });
             
                 // Set state and UI
                 setKeyOutput(key);
                 setHash1Output(hash1);
                 setHash2Output(hash2);
-                setLength(key.length);
+
+                const keyChunks = key.split(",");
+                setChunks(keyChunks.length);
                 
                 showMsg('Stretch Complete!', false);
                 setTimeout(() => showLoader({ show: false }), 2000);
@@ -102,20 +103,10 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
         };
     }, [showMsg, showLoader]);
 
-    const handleDownloadKey = () => {
-        if (!keyOutput) return showMsg("Nothing to save.", true);
-
-        const key = keyInput + "-" + hash1Iterations + "-" + hash2Iterations + "-" + iterations;
-
-        saveFileAsExt(key, "txt", "key");
-    }
-
     const handleDownloadOutput = () => {
         if (!keyOutput) return showMsg("Nothing to save.", true);
-
         saveFileAsExt(keyOutput, "txt", "key-output");
     }
-
 
     return (
         <main className="container">
@@ -127,7 +118,7 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
             </nav>
         
             <div className="learn-more">
-                <h2>Key Stretcher</h2>
+                <h2>Chaotic Key Stretcher</h2>
                 <Link to="/about#about-key-stretcher">Learn more</Link>
             </div>
             <section>
@@ -155,23 +146,40 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
                     placeholder="Enter sha3-515 iterations" 
                     autoComplete="off"
                 />
-                <p>Number of iterations 0-inf. Over 10 can cause it to crach - js is limit to around ~1 billion characters in V8.</p>
+                <p>Adjust the chaotic logistic map to icrease computation without increasing the size, while still varying the values.</p>
+                <p>Depth 0-inf. Set between 500-1000 for good depth.</p>
                 <input 
                     type="number" 
-                    value={iterations || ""} 
-                    onChange={(e) => setIterations(Number(e.target.value))} 
-                    placeholder="Enter key iterations" 
+                    value={depth || ""} 
+                    onChange={(e) => setDepth(Number(e.target.value))} 
+                    placeholder="Enter depth" 
+                    autoComplete="off"
+                />
+                <p>Phase 0-inf. I find around 100000 works well.</p>
+                <input 
+                    type="number" 
+                    value={phase || ""} 
+                    onChange={(e) => setPhase(Number(e.target.value))} 
+                    placeholder="Enter phase" 
+                    autoComplete="off"
+                />
+                <p>Size iterations 0-inf. Over 10 can cause it to crach - js is limit to around ~1 billion characters in V8. Increase the size based on data to encode.</p>
+                <input 
+                    type="number" 
+                    value={sizeIterations || ""} 
+                    onChange={(e) => setSizeIterations(Number(e.target.value))} 
+                    placeholder="Enter size iterations" 
                     autoComplete="off"
                 />
                 <button className="encode" onClick={handleStretch}>Stretch key</button>
-                <div className={`${keyOutput ? '' : 'hidden'}`}>
-					<button onClick={() => handleDownloadKey()}>Download key</button>
+                <div className={`${keyJoined ? '' : 'hidden'}`}>
+					<PreCopyOutputBlock outputId={"key-joined"} text={keyJoined} />
 				</div>
             </section>
             <section>
                 <h3>Output</h3>
                 {elapsedTime && (
-                    <p>Time taken: {elapsedTime.seconds}s {elapsedTime.milliseconds}ms</p>
+                    <p>Time taken: {elapsedTime.minutes}m {elapsedTime.seconds}s {elapsedTime.milliseconds}ms</p>
                 )}
                 <textarea
                     rows="2"
@@ -192,7 +200,7 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
                     readOnly
                 />
 
-                <p>Key length: {`${length? length : "0"}`}</p>
+                <p>Key chunks: {`${chunks? chunks : "0"}`}</p>
                 <textarea
                     rows="10"
                     value={keyOutput}

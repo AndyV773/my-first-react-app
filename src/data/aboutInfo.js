@@ -206,7 +206,7 @@ export const aboutInfo = [
 	},
 	{
 		id: "about-key-stretcher",
-		title: "About Key Stretcher",
+		title: "About Chaotic Key Stretcher",
 		description:
 			"Key Stretcher uses multiple hashing algorithms (SHA-512 and SHA3-512), exponentiation, and custom mathematical operations to derive a long, secure key from a short, manageable key. This process increases computational complexity, making brute-force attacks more difficult.",
 		steps: [
@@ -218,7 +218,7 @@ export const aboutInfo = [
 		],
 		additional: "",
 		originalPage: "/key-stretcher",
-		linkText: "Go to Key Stretcher"
+		linkText: "Go to Chaotic Key Stretcher"
 	},
 	{
 		id: "about-qr-enc",
