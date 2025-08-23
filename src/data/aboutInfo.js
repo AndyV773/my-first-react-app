@@ -205,6 +205,22 @@ export const aboutInfo = [
 		linkText: "Go to Secret Sharing"
 	},
 	{
+		id: "about-key-stretcher",
+		title: "About Key Stretcher",
+		description:
+			"Key Stretcher uses multiple hashing algorithms (SHA-512 and SHA3-512), exponentiation, and custom mathematical operations to derive a long, secure key from a short, manageable key. This process increases computational complexity, making brute-force attacks more difficult.",
+		steps: [
+			"Enter a key. The longer, the better - anything 16 bytes or over is fine. Include special characters and numbers for extra complexity.",
+			"Input the number of hashing iterations for both SHA-512 and SHA3-512. The more iterations, the better. Anything between 100,000 and 1,000,000 is good; over 1,000,000 is excessive.",
+			"Enter the number of iterations for key stretching. This determines how many times the key is processed to increase its size. A value of 10 or under works well; higher values may cause the browser to crash or exceed JavaScript string limits.",
+			"Once you click 'Stretch Key', the key is converted into bytes. These bytes are then transformed into two hash keys based on the iterations. The hash keys are converted to hex, which is then increased using exponentiation and densified to remove trailing zeros. The result is split into 2-digit chunks and further increased using exponentiation. This process repeats for the specified iteration range. Finally, it is split into 3-digit chunks to be used in a Uint8 256-byte rotation or XOR encoder.",
+			"You can view the original bytes, the hash keys used, and the output data. Both the key and the key output can be downloaded for easy storage."
+		],
+		additional: "",
+		originalPage: "/key-stretcher",
+		linkText: "Go to Key Stretcher"
+	},
+	{
 		id: "about-qr-enc",
 		title: "About Encrypted QR Codes",
 		description:

@@ -37,7 +37,7 @@ npm install --save-dev gh-pages
 ### 4. Build and deploy the app:
 
 ```bash
-Build and deploy the app:
+npm run deploy
 ```
 
 This will create a production build in the build folder and push it to the gh-pages branch of your repository.

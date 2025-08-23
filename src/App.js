@@ -23,12 +23,13 @@ import XorEnc from "./components/XorEnc.js";
 import XorDec from "./components/XorDec.js";
 import SecretsEnc from "./components/SecretsEnc.js";
 import SecretsDec from "./components/SecretsDec.js";
-import Hashing from "./components/Hashing.js";
-import FileIntegrity from "./components/FileIntegrity.js";
-import IpAddy from "./components/IpAddy.js";
+import KeyStretcher from "./components/KeyStretcher.js";
 import QrEnc from "./components/QrEnc.js";
 import QrDec from "./components/QrDec.js";
 import QrGenerator from "./components/QrGenerator.js";
+import Hashing from "./components/Hashing.js";
+import FileIntegrity from "./components/FileIntegrity.js";
+import IpAddy from "./components/IpAddy.js";
 import TotpSim from "./components/TotpSim.js";
 import PasswordGen from "./components/PasswordGen.js";
 import Test from "./components/test.js";
@@ -143,12 +144,13 @@ function App() {
 				<Route path="/xor-dec" element={<XorDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
 				<Route path="/sss-enc" element={<SecretsEnc showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
 				<Route path="/sss-dec" element={<SecretsDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
-				<Route path="/hashing" element={<Hashing showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
-				<Route path="/file-integrity" element={<FileIntegrity showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
-				<Route path="/ip-addy" element={<IpAddy showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
+				<Route path="/key-stretcher" element={<KeyStretcher showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} showLoader={showLoader} />} />
 				<Route path="/qr-enc" element={<QrEnc showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
 				<Route path="/qr-dec" element={<QrDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
 				<Route path="/qr-generator" element={<QrGenerator showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
+				<Route path="/hashing" element={<Hashing showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
+				<Route path="/file-integrity" element={<FileIntegrity showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
+				<Route path="/ip-addy" element={<IpAddy showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
 				<Route path="/totp-sim" element={<TotpSim showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
 				<Route path="/password-gen" element={<PasswordGen showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
 				<Route path="/test" element={<Test showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} handleTest={handleTest} test={test} />} />
