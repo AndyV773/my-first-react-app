@@ -24,6 +24,8 @@ import XorDec from "./components/XorDec.js";
 import SecretsEnc from "./components/SecretsEnc.js";
 import SecretsDec from "./components/SecretsDec.js";
 import KeyStretcher from "./components/KeyStretcher.js";
+import ChaoticEnc from "./components/ChaoticEnc.js";
+import ChaoticDec from "./components/ChaocticDec.js";
 import QrEnc from "./components/QrEnc.js";
 import QrDec from "./components/QrDec.js";
 import QrGenerator from "./components/QrGenerator.js";
@@ -145,6 +147,8 @@ function App() {
 				<Route path="/sss-enc" element={<SecretsEnc showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
 				<Route path="/sss-dec" element={<SecretsDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
 				<Route path="/key-stretcher" element={<KeyStretcher showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} showLoader={showLoader} />} />
+				<Route path="/chaotic-enc" element={<ChaoticEnc showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} showLoader={showLoader} />} />
+				<Route path="/chaotic-dec" element={<ChaoticDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} showLoader={showLoader} />} />
 				<Route path="/qr-enc" element={<QrEnc showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
 				<Route path="/qr-dec" element={<QrDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
 				<Route path="/qr-generator" element={<QrGenerator showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />

@@ -75,7 +75,13 @@ export const tools = [
       id: "key-stretcher",
       title: "Chaotic Key Stretcher",
       description:
-        "Derive a large output from a short key and increase computational effort using algorithms and chaotic mathmatics.",
+      "Derive a large output from a short key and increase computational effort using algorithms and chaotic mathmatics.",
+    },
+    {
+      id: "chaotic-enc",
+      title: "Chaotic Encoder",
+      description:
+      "Chaotic encoder utilises both key stretching and a choice of either Uint8 rotation or Xor.",
     },
     {
       id: "qr-enc",

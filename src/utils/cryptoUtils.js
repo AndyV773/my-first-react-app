@@ -44,6 +44,7 @@ function mulberry32(seed) {
 }
 
 // Shuffle/unshuffle using deterministic PRNG
+// Fisher-Yates shuffle algorithm
 function seededShuffle(array, key, reverse = false) {
     const prng = mulberry32(
         [...key].reduce((a, c) => a + c.charCodeAt(0), 0)
@@ -232,6 +233,7 @@ export function randomizer(allChar) {
     return value;
 }
 
+// convert uint8 to base64 in chunks to avoid call stack
 export function uint8ToBase64(uint8) {
 	let binary = "";
 	const chunkSize = 0x8000; // Avoid call stack overflow
@@ -342,7 +344,7 @@ export const hashArgon2 = async (input, iterations = 3, hashToVerify = null, ver
 		});
 		return result;
 		} catch (err) {
-		console.error("Argon2 verification error:", err);
+			console.error("Argon2 verification error:", err);
 		return false;
 		}
 	}

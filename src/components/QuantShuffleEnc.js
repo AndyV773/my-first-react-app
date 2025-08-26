@@ -146,7 +146,6 @@ const QuantShuffleEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
 	}, [skipAES, storeBase64, shuffleVal, keyVal, dataEncVal, keyEncVal, dataEnc, keyEnc]);
 
 
-
 	useEffect(() => {
 		workerRef.current = new Worker(
 			new URL('../workers/cryptoWorker.worker.js', import.meta.url),
@@ -330,8 +329,8 @@ const QuantShuffleEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
 				)}
 
 				<label>
-				Include all characters
-				<input type="checkbox" id="all-char" ref={allCharRef} />
+					Include all characters
+					<input type="checkbox" id="all-char" ref={allCharRef} />
 				</label>
 
 				<textarea

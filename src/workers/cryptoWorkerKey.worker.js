@@ -3,14 +3,14 @@ import CryptoJS from "crypto-js";
 /* eslint-disable no-restricted-globals */
 
 self.addEventListener("message", async (e) => {
-    const { type, load, hash1Iterations, hash2Iterations, depth, phase, sizeIterations } = e.data;
+    const { type, load, reverse, hash1Iterations, hash2Iterations, depth, phase, sizeIterations, chunkSize } = e.data;
 
     if (type === "stretch") {
         const { keyInput } = load;
 
         let hash1, hash2;
         let current = keyInput;
-        let key;
+        let arr = [];
 
         try {
 
@@ -21,26 +21,25 @@ self.addEventListener("message", async (e) => {
 
             hash1 = current
 
-            const str1 = await powerHex(hash1, depth, phase, sizeIterations);
+            const arr1 = powerHex(hash1, depth, phase, sizeIterations, chunkSize);
 
             for (let i = 0; i < hash2Iterations; i++) {
-                const wordArray = CryptoJS.enc.Utf8.parse(current);
-                current = CryptoJS.SHA3(wordArray, { outputLength: 512 });
+                current = CryptoJS.SHA3(current, { outputLength: 512 }).toString(CryptoJS.enc.Hex);
             }
 
             hash2 = current
        
-            const str2  = await powerHex(hash2, depth, phase, sizeIterations);
+            const arr2  = powerHex(hash2, depth, phase, sizeIterations, chunkSize);
 
-            const shuffled = seededShuffle(str1, str2, keyInput);
+            arr = reverse ? [...arr2, ...arr1] : [...arr1, ...arr2];
 
-            key = shuffled.join(',');
+            const key = seededShuffle(arr, keyInput);
 
             self.postMessage({
                 type: "stretch-done",
                 result: { key },
                 hash1: hash1,
-                hash2: hash2.toString(CryptoJS.enc.Hex),
+                hash2: hash2,
             });
         } catch (err) {
             self.postMessage({ type: "error", error: err?.message ?? String(err) });
@@ -48,33 +47,86 @@ self.addEventListener("message", async (e) => {
     } 
 });
 
-let n = 1;
-
-function densifyNumber(num) {
-    const numStr = num.toString();
-
-    // Count trailing zeros
-    const match = numStr.match(/0+$/);
-    if (!match) return numStr; // no trailing zeros, return as-is
-
-    n++
-    if (n > 9) n = 1;
-    // Generate replacement digits
-    const replacement = (7 ** n).toString();
-
-    // Replace trailing zeros with replacement digits
-    return numStr.replace(/0+$/, replacement);
+// Convert number -> array of digits
+function digitsFromNumber(num) {
+    if (num === 0) return [0];
+    const digits = [];
+    while (num > 0) {
+        digits.unshift(num % 10);
+        num = Math.floor(num / 10);
+    }
+    return digits;
 }
 
+// Convert array of digits -> number
+function numberFromDigits(digits) {
+    return digits.reduce((acc, d) => acc * 10 + d, 0);
+}
 
-// Split a string into chunks of a given size
-function chunkString(str, size) {
+// Split digit array into chunks of given size
+function chunkArray(digits, size) {
     const chunks = [];
-    for (let i = 0; i < str.length; i += size) {
-        chunks.push(str.slice(i, i + size));
+    for (let i = 0; i < digits.length; i += size) {
+        chunks.push(digits.slice(i, i + size));
     }
     return chunks;
 }
+
+let n;
+let k;
+let m;
+let p = 1;
+let j = 2;
+
+function densifyNumberx(num) {
+    p++
+    m = m * p
+
+    if (m.toString().length > 10) {
+        m = parseInt(m.toString().slice(0, 3), 10); // first 3 digits
+    }
+
+    if (num === 0) return n * m;
+
+    // If no trailing zero, just return digits
+    if (num % 10 !== 0) return num;
+
+    // strip trailing zeros
+    while (num % 10 === 0) {
+        num = Math.floor(num / 10);
+    }
+
+    // Generate replacement sequence
+    n++;
+    j++
+    if (n > 14) n = 2;
+    if (j > 9) j = 2;
+    const replacement = j ** n;
+
+    return num + replacement;
+}
+
+function densifyNumber(num) {
+
+    p++;
+    k = (k << 1) ^ p; // shift
+
+    if (num === 0) return n ^ k;
+
+    if (num % 10 !== 0) return num;
+
+    while (num % 10 === 0) {
+        num = num >>> 1; // right shift
+    }
+
+    n++;
+    j++;
+    
+    const replacement = (j << n) ^ (n << j); // shift-based pseudo-mix
+
+    return (num ^ replacement) >>> 0; // XOR in replacement
+}
+
 
 function normalizeToFloat(num, max = 1e6) {
     return (num % max) / max;
@@ -95,69 +147,97 @@ function chaoticLogisticMap(x, r, depth, phase) {
     return x;
 }
 
+
+// Float → fixed digits (returns digit array)
 function floatToFixedDigits(x, digits = 16) {
-    return Math.floor(x * Math.pow(10, digits)).toString().padStart(digits, '0');
+    const scaled = Math.floor(x * 10 ** digits);
+    const result = new Array(digits).fill(0);
+    let n = scaled;
+    for (let i = digits - 1; i >= 0; i--) {
+        result[i] = n % 10;
+        n = Math.floor(n / 10);
+    }
+    return result;
 }
 
-
-async function powerHex(hex, depth, phase, sizeIterations) {
+function powerHex(hex, depth, phase, sizeIterations, chunkSize) {
     const length = hex.length / 2;
-    let combined = '';
-    let chunks;
+    let combined = []; // keep as array of digits
 
-    const rMin = 3.53;
+    const rMin = 3.77;
     const rMax = 3.99;
-    const rStep = 0.01;   // step size
-
-    // number of steps in one full cycle
+    const rStep = 0.01;
     const stepCount = Math.floor((rMax - rMin) / rStep) + 1;
 
+    let dense;
+
     for (let i = 0; i < length; i++) {
-        
-        chunks = parseInt(hex.substr(i * 2, 2), 16) ** 4;
+        let num = parseInt(hex.substr(i * 2, 2), 16) ** 4;
 
-        console.log('chunk',chunks)
+        console.log('num',num)
 
-        let dense = densifyNumber(chunks);
+        n = (num % 1000); // get last 3 digits
+        m = (num % 1000); // get last 3 digits
+        k = Math.floor(num / 1000) % 1000; // get next 3 digits
 
-        console.log('dense 1',dense)
+        dense = densifyNumber(num);
+        console.log('dence',dense)
 
-        // pick step based on i (wrap with modulo)
+        const digits = digitsFromNumber(dense);
+
+        console.log('digits',digits)
+
         const stepIndex = i % stepCount;
         const r = rMin + stepIndex * rStep;
 
         // Split into 2-digit chunks
-        const str = chunkString(dense, 2);
+        const chunks = chunkArray(digits, 3);
 
-        console.log('str',str)
-        for (const c of str) {
-            let x = normalizeToFloat(parseInt(c, 10));
+        console.log('chunks',chunks)
+
+        let block1 = [];
+
+        for (const c of chunks) {
+            const num = numberFromDigits(c);
+            console.log('val',num)
+
+            let x = normalizeToFloat(num);
             console.log('x',x)
+
             let chaotic = chaoticLogisticMap(x, r, depth, phase);
             console.log('chaotic',chaotic)
-            dense += floatToFixedDigits(chaotic);
+
+            block1.push(...floatToFixedDigits(chaotic));
+            console.log('block1',block1)
         }
 
-        console.log('dense 2',dense)
-        console.log('--------------------')
+        let block2 = [];
 
-
+        // loop for increasing the length using power to 3
         for (let j = 0; j < sizeIterations; j++) {
-            // Split into 2-digit chunks
-            const chunks = chunkString(dense, 2);
+            const chunks = chunkArray(block1, 2)
+                .map(c => numberFromDigits(c) ** 3);
 
-            // Raise each chunk to power of 3 and densify
-            dense = chunks
-                .map(c => densifyNumber((parseInt(c, 10) ** 3)))
-                .join('');
+            console.log('chunks2',chunks)
+
+            for (const c of chunks) {
+                console.log('c',c)
+
+                block2.push(...digitsFromNumber(densifyNumber(c)));
+                console.log('block2',block2)
+            }
         }
 
-        combined += dense;
+        combined.push(...block2);
+
+        combined = seededShuffle(combined, hex);
+
+        console.log('combined',combined)
     }
 
-    // Split combined string into 3-digit chunks
-    const result = chunkString(combined, 3);
-
+    // Split into chunks
+    const result = chunkArray(combined, chunkSize).map(numberFromDigits);
+    
     return result;
 }
 
@@ -172,19 +252,12 @@ function mulberry32(seed) {
     }
 }
 
-// Shuffle using deterministic PRNG
-function seededShuffle(str1, str2, key) {
-    // Combine strings
-    let combined = str1 + ',' + str2;
 
-    // Convert to array of numbers
-    let arr = combined.split(',').map(Number);
+function seededShuffle(arr, key) {
 
-    // Create seeded PRNG
     const seed = [...key].reduce((a, c) => a + c.charCodeAt(0), 0);
     const prng = mulberry32(seed);
 
-    // Fisher-Yates shuffle
     for (let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(prng() * (i + 1));
         [arr[i], arr[j]] = [arr[j], arr[i]];
@@ -192,4 +265,3 @@ function seededShuffle(str1, str2, key) {
 
     return arr;
 }
-

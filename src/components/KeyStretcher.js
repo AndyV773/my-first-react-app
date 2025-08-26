@@ -14,16 +14,21 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
     const [depth, setDepth] = useState(1);
     const [phase, setPhase] = useState(1);
     const [sizeIterations, setSizeIterations] = useState(1);
+    const [chunkSize, setChunkSize] = useState(3);
     const [hash1Output, setHash1Output] = useState("");
     const [hash2Output, setHash2Output] = useState("");
-    const [chunks, setChunks] = useState("");
     const [keyJoined, setKeyJoined] = useState("");
+
+    const [counts, setCounts] = useState({});
+    const [sortByFreq, setSortByFreq] = useState(false);
 
     const [elapsedTime, setElapsedTime] = useState(null);
     const timerRef = useRef(0);
 
     // Refs
     const workerRef = useRef(null);
+    const reverseKeyRef = useRef(null);
+    
 
     const handleStretch = useCallback(() => {
         setByteOutput("");
@@ -33,30 +38,34 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
             showMsg("Input key.", true);
             return;
         }
-        if (!hash1Iterations || !hash2Iterations || !depth|| !phase || !sizeIterations) {
+        if (!hash1Iterations || !hash2Iterations || !depth || !phase || !sizeIterations) {
             showMsg("Please enter valid inputs.", true);
             return;
         }
 
         setByteOutput(textEncoder(keyInput));
 
-        showLoader({ show: true, mode: 'Stretching', type: "loader encode", emoji: '🛡️', bytes: 500000 });
-
         // Record start time
         timerRef.current = performance.now();
 
-        setKeyJoined(`${keyInput}$#=${hash1Iterations}$#=${hash2Iterations}$d=${depth}$p=${phase}$l=${sizeIterations}`)
+        const reverse = reverseKeyRef.current?.checked || false;
+
+        showLoader({ show: true, mode: `Stretching`, type: "loader encode", emoji: '🛡️', bytes: 500000 });
+
+        setKeyJoined(`${keyInput},#1=${hash1Iterations},#2=${hash2Iterations},d=${depth},p=${phase},l=${sizeIterations},x=${false},r=${reverse},c=${chunkSize}`)
 
         workerRef.current.postMessage({
             type: "stretch",
-            load: { keyInput },  
+            load: { keyInput },
+            reverse,
             hash1Iterations,  
             hash2Iterations,
             depth,
             phase,
             sizeIterations,  
+            chunkSize,  
         });
-    }, [keyInput, hash1Iterations, hash2Iterations, depth, phase, sizeIterations, showMsg, showLoader]);
+    }, [keyInput, hash1Iterations, hash2Iterations, depth, phase, sizeIterations, chunkSize, showMsg, showLoader]);
 
 
     useEffect(() => {
@@ -83,14 +92,12 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
                 setKeyOutput(key);
                 setHash1Output(hash1);
                 setHash2Output(hash2);
-
-                const keyChunks = key.split(",");
-                setChunks(keyChunks.length);
                 
                 showMsg('Stretch Complete!', false);
                 setTimeout(() => showLoader({ show: false }), 2000);
             } else if (type === 'error') {
                 showMsg('Stretch failed: ' + error, true);
+                console.log('err:',error)
                 showLoader({ show: false });
             }
         };
@@ -107,6 +114,55 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
         if (!keyOutput) return showMsg("Nothing to save.", true);
         saveFileAsExt(keyOutput, "txt", "key-output");
     }
+    
+    const handleProcess = () => {
+        if (!keyOutput) return showMsg("Nothing to check.", true);
+
+        const tempCounts = {};
+
+        keyOutput.forEach(num => {
+            if (!tempCounts[num]) {
+                tempCounts[num] = 0;
+            }
+            tempCounts[num]++;
+        });
+
+        setCounts(tempCounts);
+    };
+    
+    const handleSortToggle = () => {
+        setSortByFreq(!sortByFreq);
+    };
+    
+    // Prepare table entries
+    const tableEntries = Object.entries(counts);
+    if (sortByFreq) {
+        tableEntries.sort((a, b) => b[1] - a[1]); // sort by frequency
+    } else {
+        tableEntries.sort((a, b) => Number(a[0]) - Number(b[0])); // sort numerically
+    }
+
+    const totalNumbers = Object.values(counts).reduce((sum, c) => sum + c, 0);
+
+    const [numbers, setNumbers] = useState([]);
+        const [showGrid, setShowGrid] = useState(false);
+
+    const handleGenerateGrid = () => {
+        if (!keyOutput) return showMsg("Nothing to check.", true);
+
+        const nums = keyOutput;
+        console.log('num',nums)
+        setNumbers(nums);
+        setShowGrid(true);
+    };
+
+    const numberToColor = (num) => {
+        const hue = (num * 137.5) % 360;      
+        const saturation = 60 + (num * 37) % 40; 
+        const lightness = 45 + (num * 29) % 35;  
+        const alpha = 0.8 + ((num * 17) % 20) / 100; 
+        return `hsla(${hue}, ${saturation}%, ${lightness}%, ${alpha})`;
+    };
 
     return (
         <main className="container">
@@ -122,6 +178,7 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
                 <Link to="/about#about-key-stretcher">Learn more</Link>
             </div>
             <section>
+                <p><strong>The more unique the input, the more unique the key should be. You can check number frequencies at the bottom to help spot patterns. Use a larger chunk size for best results. Note: the longer the key takes to process, the more resilient it may be to brute-force attacks.</strong></p>
                 <p>The higher the iterations the higher the computational effort. Increase the hash iterations to over 100000 for best results.</p>
                 <input 
                     type="text" 
@@ -163,7 +220,7 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
                     placeholder="Enter phase" 
                     autoComplete="off"
                 />
-                <p>Size iterations 0-inf. Over 10 can cause it to crach - js is limit to around ~1 billion characters in V8. Increase the size based on data to encode.</p>
+                <p>Size iterations 0-inf. Too high can exceed call stack. Increase the for larger data.</p>
                 <input 
                     type="number" 
                     value={sizeIterations || ""} 
@@ -171,6 +228,29 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
                     placeholder="Enter size iterations" 
                     autoComplete="off"
                 />
+                <label>
+                    Reverse key:
+                    <input type="checkbox" id="reverse-key" ref={reverseKeyRef} />
+                </label>
+                <br/>
+                <br/>
+                <label htmlFor="digitOption">Select chunk size: </label>
+                <select
+                    id="digitOption"
+                    value={chunkSize}
+                    onChange={(e) => setChunkSize(Number(e.target.value))}
+                >
+                    <option value={3}>3</option>
+                    <option value={4}>4</option>
+                    <option value={5}>5</option>
+                    <option value={6}>6</option>
+                    <option value={7}>7</option>
+                    <option value={8}>8</option>
+                    <option value={9}>9</option>
+                    <option value={10}>10</option>
+                    <option value={11}>11</option>
+                </select>
+                <p>Chunk size: {chunkSize}</p>
                 <button className="encode" onClick={handleStretch}>Stretch key</button>
                 <div className={`${keyJoined ? '' : 'hidden'}`}>
 					<PreCopyOutputBlock outputId={"key-joined"} text={keyJoined} />
@@ -199,17 +279,56 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
                     placeholder="Sha3-512"
                     readOnly
                 />
-
-                <p>Key chunks: {`${chunks? chunks : "0"}`}</p>
                 <textarea
-                    rows="10"
+                    rows={10}
                     value={keyOutput}
-                    placeholder="Encrypted Data"
+                    placeholder="Key output"
                     readOnly
                 />
                 <div className={`${keyOutput ? '' : 'hidden'}`}>
 					<button onClick={() => handleDownloadOutput()}>Download key output</button>
 				</div>
+            </section>
+            <section>
+                <h3>Number Frequency Counter (uint8 - uint32)</h3>
+                <button onClick={handleProcess}>Process</button>
+                <button onClick={handleSortToggle}>
+                    {sortByFreq ? 'Sort by Number' : 'Sort by Frequency'}
+                </button>
+                {Object.keys(counts).length > 0 && (
+                    <>
+                        <p>Total number of chunks: {totalNumbers}</p>
+                        <table className="tbl">
+                            <thead>
+                                <tr>
+                                    <th>Number</th>
+                                    <th>Count</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {tableEntries.map(([num, count]) => (
+                                    <tr key={num}>
+                                        <td>{num}</td>
+                                        <td>{count}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </>
+                )}
+            </section>
+            <section>
+                <h2>Visualization Grid</h2>
+                <button onClick={handleGenerateGrid}>Generate Grid</button>
+                {showGrid && numbers.length > 0 && (
+                    <div className="num grid">
+                        {numbers.map((num, idx) => (
+                            <div key={idx} className='num cell' style={{ backgroundColor: numberToColor(num) }}>
+                                {num}
+                            </div>
+                        ))}
+                    </div>
+                )}
             </section>
         </main>
     );
