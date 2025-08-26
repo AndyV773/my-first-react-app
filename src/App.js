@@ -7,8 +7,8 @@ import AesCbcEnc from "./components/AesCbcEnc.js";
 import AesCbcDec from "./components/AesCbcDec.js";
 import AesGcmEnc from "./components/AesGcmEnc.js";
 import AesGcmDec from "./components/AesGcmDec.js";
-import MulberryShuffleEnc from "./components/MulberryShuffleEnc.js";
-import MulberryShuffleDec from "./components/MulberryShuffleDec.js";
+import FishersAlgoEnc from "./components/FishersAlgoEnc.js";
+import FishersAlgoDec from "./components/FishersAlgoDec.js";
 import QuantShuffleEnc from "./components/QuantShuffleEnc.js";
 import QuantShuffleDec from "./components/QuantShuffleDec.js";
 import OptQuantEnc from "./components/OptQuantEnc.js";
@@ -130,8 +130,8 @@ function App() {
 				<Route path="/aes-cbc-dec" element={<AesCbcDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
 				<Route path="/aes-gcm-enc" element={<AesGcmEnc showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
 				<Route path="/aes-gcm-dec" element={<AesGcmDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
-				<Route path="/mulberry-shuffle-enc" element={<MulberryShuffleEnc showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
-				<Route path="/mulberry-shuffle-dec" element={<MulberryShuffleDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
+				<Route path="/fishers-algo-enc" element={<FishersAlgoEnc showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
+				<Route path="/fishers-algo-dec" element={<FishersAlgoDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} />} />
 				<Route path="/quant-shuffle-enc" element={<QuantShuffleEnc showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} showLoader={showLoader} />} />
 				<Route path="/quant-shuffle-dec" element={<QuantShuffleDec showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} showLoader={showLoader} />} />
 				<Route path="/opt-quant-enc" element={<OptQuantEnc showMsg={showMsg} theme={theme} onToggleTheme={toggleTheme} showLoader={showLoader} />} />

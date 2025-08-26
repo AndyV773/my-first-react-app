@@ -43,7 +43,6 @@ const Test = ({ theme, onToggleTheme }) => {
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
             />
-
             
             <button onClick={handleGenerateGrid}>Generate Grid</button>
 

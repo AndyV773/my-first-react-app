@@ -20,7 +20,6 @@ self.addEventListener("message", async (e) => {
             }
 
             hash1 = current
-
             const arr1 = powerHex(hash1, depth, phase, sizeIterations, chunkSize);
 
             for (let i = 0; i < hash2Iterations; i++) {
@@ -28,11 +27,8 @@ self.addEventListener("message", async (e) => {
             }
 
             hash2 = current
-       
             const arr2  = powerHex(hash2, depth, phase, sizeIterations, chunkSize);
-
             arr = reverse ? [...arr2, ...arr1] : [...arr1, ...arr2];
-
             const key = seededShuffle(arr, keyInput);
 
             self.postMessage({
@@ -74,54 +70,50 @@ function chunkArray(digits, size) {
 
 let n;
 let k;
-let m;
+// let m;
 let p = 1;
 let j = 2;
 
-function densifyNumberx(num) {
-    p++
-    m = m * p
+// function densifyNumberx(num) {
+//     p++
+//     m = m * p
 
-    if (m.toString().length > 10) {
-        m = parseInt(m.toString().slice(0, 3), 10); // first 3 digits
-    }
+//     if (m.toString().length > 10) {
+//         m = parseInt(m.toString().slice(0, 3), 10); // first 3 digits
+//     }
 
-    if (num === 0) return n * m;
+//     if (num === 0) return n * m;
 
-    // If no trailing zero, just return digits
-    if (num % 10 !== 0) return num;
+//     // If no trailing zero, just return digits
+//     if (num % 10 !== 0) return num;
 
-    // strip trailing zeros
-    while (num % 10 === 0) {
-        num = Math.floor(num / 10);
-    }
+//     // strip trailing zeros
+//     while (num % 10 === 0) {
+//         num = Math.floor(num / 10);
+//     }
 
-    // Generate replacement sequence
-    n++;
-    j++
-    if (n > 14) n = 2;
-    if (j > 9) j = 2;
-    const replacement = j ** n;
+//     // Generate replacement sequence
+//     n++;
+//     j++
+//     if (n > 14) n = 2;
+//     if (j > 9) j = 2;
+//     const replacement = j ** n;
 
-    return num + replacement;
-}
+//     return num + replacement;
+// }
 
 function densifyNumber(num) {
-
     p++;
     k = (k << 1) ^ p; // shift
 
     if (num === 0) return n ^ k;
-
     if (num % 10 !== 0) return num;
-
     while (num % 10 === 0) {
         num = num >>> 1; // right shift
     }
 
     n++;
     j++;
-    
     const replacement = (j << n) ^ (n << j); // shift-based pseudo-mix
 
     return (num ^ replacement) >>> 0; // XOR in replacement
@@ -168,47 +160,30 @@ function powerHex(hex, depth, phase, sizeIterations, chunkSize) {
     const rMax = 3.99;
     const rStep = 0.01;
     const stepCount = Math.floor((rMax - rMin) / rStep) + 1;
-
     let dense;
 
     for (let i = 0; i < length; i++) {
         let num = parseInt(hex.substr(i * 2, 2), 16) ** 4;
 
-        console.log('num',num)
-
         n = (num % 1000); // get last 3 digits
-        m = (num % 1000); // get last 3 digits
+        // m = (num % 1000); // get last 3 digits
         k = Math.floor(num / 1000) % 1000; // get next 3 digits
-
         dense = densifyNumber(num);
-        console.log('dence',dense)
 
         const digits = digitsFromNumber(dense);
-
-        console.log('digits',digits)
-
         const stepIndex = i % stepCount;
         const r = rMin + stepIndex * rStep;
 
         // Split into 2-digit chunks
         const chunks = chunkArray(digits, 3);
 
-        console.log('chunks',chunks)
-
         let block1 = [];
 
         for (const c of chunks) {
             const num = numberFromDigits(c);
-            console.log('val',num)
-
             let x = normalizeToFloat(num);
-            console.log('x',x)
-
             let chaotic = chaoticLogisticMap(x, r, depth, phase);
-            console.log('chaotic',chaotic)
-
             block1.push(...floatToFixedDigits(chaotic));
-            console.log('block1',block1)
         }
 
         let block2 = [];
@@ -218,26 +193,17 @@ function powerHex(hex, depth, phase, sizeIterations, chunkSize) {
             const chunks = chunkArray(block1, 2)
                 .map(c => numberFromDigits(c) ** 3);
 
-            console.log('chunks2',chunks)
-
             for (const c of chunks) {
-                console.log('c',c)
-
                 block2.push(...digitsFromNumber(densifyNumber(c)));
-                console.log('block2',block2)
             }
         }
 
         combined.push(...block2);
-
         combined = seededShuffle(combined, hex);
-
-        console.log('combined',combined)
     }
 
     // Split into chunks
     const result = chunkArray(combined, chunkSize).map(numberFromDigits);
-    
     return result;
 }
 
@@ -254,7 +220,6 @@ function mulberry32(seed) {
 
 
 function seededShuffle(arr, key) {
-
     const seed = [...key].reduce((a, c) => a + c.charCodeAt(0), 0);
     const prng = mulberry32(seed);
 

@@ -56,33 +56,41 @@ const TotpSim = ({ showMsg, theme, onToggleTheme }) => {
     };
 
     useEffect(() => {
-        // Generate initial values
-        setCode(generateRandomTotp());
-        setChallenge(generateChallenge());
-        startTime.current = Date.now();
+        const init = async () => {
+            const initialCode = await generateRandomTotp();
+            setCode(initialCode);
+            setChallenge(generateChallenge());
+            startTime.current = Date.now();
+        };
+
+        init();
 
         const interval = setInterval(() => {
-            const now = Math.floor(Date.now() / 1000);
-            const remaining = 30 - (now % 30);
-            setTimeLeft(remaining);
+            const update = async () => {
+                const now = Math.floor(Date.now() / 1000);
+                const remaining = 30 - (now % 30);
+                setTimeLeft(remaining);
 
-            if (remaining === 30) {
-                // New 30-second window started
-                setCode(generateRandomTotp());
-                setChallenge(generateChallenge());
-                startTime.current = Date.now();
+                if (remaining === 30) {
+                    const newCode = await generateRandomTotp();
+                    setCode(newCode);
+                    setChallenge(generateChallenge());
+                    startTime.current = Date.now();
 
-                // Reset inputs and results for both challenges
-                setInputCode('');
-                setStatus('');
-                setAnswer('');
-                setResult('');
-                setHoneypot('');
-            }
+                    setInputCode('');
+                    setStatus('');
+                    setAnswer('');
+                    setResult('');
+                    setHoneypot('');
+                }
+            };
+
+            update();
         }, 1000);
 
         return () => clearInterval(interval);
     }, []);
+
 
 
     const handleSubmit = async (e) => {

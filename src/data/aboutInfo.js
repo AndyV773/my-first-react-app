@@ -73,10 +73,10 @@ export const aboutInfo = [
 		linkText: "Go to AES-GCM Encryption"
 	},
 	{
-		id: "about-mulberry-shuffle",
-		title: "About Mulberry Shuffle",
+		id: "about-fishers-algo",
+		title: "About Fishers Algorithm",
 		description:
-			"Mulberry Shuffle is a deterministic algorithm that rearranges data using a seeded pseudo-random number generator (PRNG) before encrypting it with AES-CBC, increasing complexity and security.",
+			"Fishers algorithm is a deterministic algorithm that rearranges data using a seeded pseudo-random number generator (PRNG) before encrypting it with AES-CBC, increasing complexity and security.",
 		steps: [
 			"You can upload a file or type text directly, and the content is displayed in both Base64 and UTF-8 formats so you can view the transformation.",
 			"Enter a key and click 'Shuffle'. For text input, the data is encoded into a Uint8Array, while file uploads use the raw binary data as-is.",
@@ -87,9 +87,9 @@ export const aboutInfo = [
 			"The final output can be saved and downloaded as an encrypted file.",
 			"To decode, go to the Decode section, upload the correct file, and enter the correct shuffle key and AES key (if used). If you have shuffled multiple times, you must repeat the steps in the correct reverse order or the data may be lost.",
 		],
-		additional: "The Mulberry Shuffle is not cryptographic by itself - it is an advanced shuffling technique. Although extra precautions are taken to obscure the data, the data itself remains the same. For example, if you input 'Hello World', you can still see the original characters, just reordered and mixed with additional characters. Try it for yourself!",
-		originalPage: "/mulberry-shuffle-enc",
-		linkText: "Go to Mulberry Shuffle"
+		additional: "The Fishers algorithm is not cryptographic by itself - it is an advanced shuffling technique. Although extra precautions are taken to obscure the data, the data itself remains the same. For example, if you input 'Hello World', you can still see the original characters, just reordered and mixed with additional characters. Try it for yourself!",
+		originalPage: "/fisher-algo-enc",
+		linkText: "Go to Fishers Algorithm"
 	},
 	{
 		id: "about-quant-shuffle",

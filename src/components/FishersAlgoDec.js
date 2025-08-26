@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { Link } from 'react-router-dom';
 import { uploadEncFile, saveFileAsExt } from "../utils/fileUtils";
 import { extractViewData, ThemeToggle } from "../utils/uiHelpers";
-import { mulberryUnshuffle, aesCbcDecrypt } from "../utils/cryptoUtils";
+import { fishersUnshuffle, aesCbcDecrypt } from "../utils/cryptoUtils";
 
 
-const MulberryShuffleDec = ({ showMsg, theme, onToggleTheme }) => {
+const FishersAlgoDec = ({ showMsg, theme, onToggleTheme }) => {
   const [fileInput, setFileInput] = useState(null);
   const [fileInfo, setFileInfo] = useState(null);
   const [base64Preview, setBase64] = useState("");
@@ -48,7 +48,7 @@ const MulberryShuffleDec = ({ showMsg, theme, onToggleTheme }) => {
   const handleShuffle = async () => {
     const key = document.getElementById("shuffle-key").value;
 
-    const output = mulberryUnshuffle(fileInput, key);
+    const output = fishersUnshuffle(fileInput, key);
 
     if (output.error) {
       showMsg(output.error, true);
@@ -96,14 +96,14 @@ const MulberryShuffleDec = ({ showMsg, theme, onToggleTheme }) => {
         <nav>
           <div className="flex g1">
             <Link to="/">Home</Link>
-            <Link to="/mulberry-shuffle-enc">Encode</Link>
+            <Link to="/fishers-algo-enc">Encode</Link>
           </div>
           <ThemeToggle theme={theme} onToggle={onToggleTheme} />
         </nav>
 
         <div className="learn-more">
-          <h2>Mulberry Shuffle</h2>
-          <Link to="/about#about-mulberry-shuffle">Learn more</Link>
+          <h2>Fishers Algorithm</h2>
+          <Link to="/about#about-fishers-algo">Learn more</Link>
         </div>
 
         {/* Decode Section */}
@@ -181,4 +181,4 @@ const MulberryShuffleDec = ({ showMsg, theme, onToggleTheme }) => {
   );
 };
 
-export default MulberryShuffleDec;
+export default FishersAlgoDec;

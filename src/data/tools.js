@@ -24,10 +24,10 @@ export const tools = [
         "Authenticated encryption with AES Galois/Counter Mode providing confidentiality and integrity.",
     },
     {
-      id: "mulberry-shuffle-enc",
-      title: "Mulberry Shuffle",
+      id: "fishers-algo-enc",
+      title: "Fishers Algorithm",
       description:
-        "A deterministic Mulberry shuffle for files or text and encrypt with AES-CBC.",
+        "A deterministic Fishers shuffle for files or text and encrypt with AES-CBC.",
     },
     {
       id: "quant-shuffle-enc",
@@ -69,7 +69,7 @@ export const tools = [
       id: "sss-enc",
       title: "Shamir's Secrect Sharing",
       description:
-      "Enter a secret or private key, split it into shares, and set thresholds with this interesting concept.",
+        "Enter a secret or private key, split it into shares, and set thresholds with this interesting concept.",
     },
     {
       id: "key-stretcher",

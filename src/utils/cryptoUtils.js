@@ -74,7 +74,7 @@ function seededShuffle(array, key, reverse = false) {
  * @param {boolean} reverse - If true, unshuffles the data.
  * @returns {Uint8Array} The shuffled (or unshuffled) result.
  */
-export function mulberryShuffle(input, key) {
+export function fishersShuffle(input, key) {
     if (!input) {
         return { error: "Input data." };
     }
@@ -104,7 +104,7 @@ export function mulberryShuffle(input, key) {
     return { result: combined };
 }
 
-export function mulberryUnshuffle(fileInput, key) {
+export function fishersUnshuffle(fileInput, key) {
 	if (!fileInput) {
 		return { error: "Upload a file." };
 	}
