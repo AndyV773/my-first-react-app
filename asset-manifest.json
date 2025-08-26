@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/my-first-react-app/static/css/main.e4e37c3a.css",
-    "main.js": "/my-first-react-app/static/js/main.5609a7e8.js",
-    "static/js/587.5dd228c3.chunk.js": "/my-first-react-app/static/js/587.5dd228c3.chunk.js",
-    "static/js/301.c43880e1.chunk.js": "/my-first-react-app/static/js/301.c43880e1.chunk.js",
-    "static/js/682.4b2a6681.chunk.js": "/my-first-react-app/static/js/682.4b2a6681.chunk.js",
-    "static/js/968.5983c697.chunk.js": "/my-first-react-app/static/js/968.5983c697.chunk.js",
-    "static/js/444.7fd16606.chunk.js": "/my-first-react-app/static/js/444.7fd16606.chunk.js",
-    "static/js/63.818fffcc.chunk.js": "/my-first-react-app/static/js/63.818fffcc.chunk.js",
-    "static/js/188.2a57750f.chunk.js": "/my-first-react-app/static/js/188.2a57750f.chunk.js",
+    "main.js": "/my-first-react-app/static/js/main.3838b63e.js",
+    "static/js/587.0e662536.chunk.js": "/my-first-react-app/static/js/587.0e662536.chunk.js",
+    "static/js/301.91b012b6.chunk.js": "/my-first-react-app/static/js/301.91b012b6.chunk.js",
+    "static/js/682.87f0aa3c.chunk.js": "/my-first-react-app/static/js/682.87f0aa3c.chunk.js",
+    "static/js/968.a8e20684.chunk.js": "/my-first-react-app/static/js/968.a8e20684.chunk.js",
+    "static/js/444.a0fe52f3.chunk.js": "/my-first-react-app/static/js/444.a0fe52f3.chunk.js",
+    "static/js/63.76646b10.chunk.js": "/my-first-react-app/static/js/63.76646b10.chunk.js",
+    "static/js/188.fa11cc68.chunk.js": "/my-first-react-app/static/js/188.fa11cc68.chunk.js",
     "static/js/456.0d5a3594.chunk.js": "/my-first-react-app/static/js/456.0d5a3594.chunk.js",
     "static/js/75.0d5a3594.chunk.js": "/my-first-react-app/static/js/75.0d5a3594.chunk.js",
     "static/js/453.090319ad.chunk.js": "/my-first-react-app/static/js/453.090319ad.chunk.js",
@@ -20,14 +20,14 @@
     "static/js/980.a1b06b65.chunk.js": "/my-first-react-app/static/js/980.a1b06b65.chunk.js",
     "index.html": "/my-first-react-app/index.html",
     "main.e4e37c3a.css.map": "/my-first-react-app/static/css/main.e4e37c3a.css.map",
-    "main.5609a7e8.js.map": "/my-first-react-app/static/js/main.5609a7e8.js.map",
-    "587.5dd228c3.chunk.js.map": "/my-first-react-app/static/js/587.5dd228c3.chunk.js.map",
-    "301.c43880e1.chunk.js.map": "/my-first-react-app/static/js/301.c43880e1.chunk.js.map",
-    "682.4b2a6681.chunk.js.map": "/my-first-react-app/static/js/682.4b2a6681.chunk.js.map",
-    "968.5983c697.chunk.js.map": "/my-first-react-app/static/js/968.5983c697.chunk.js.map",
-    "444.7fd16606.chunk.js.map": "/my-first-react-app/static/js/444.7fd16606.chunk.js.map",
-    "63.818fffcc.chunk.js.map": "/my-first-react-app/static/js/63.818fffcc.chunk.js.map",
-    "188.2a57750f.chunk.js.map": "/my-first-react-app/static/js/188.2a57750f.chunk.js.map",
+    "main.3838b63e.js.map": "/my-first-react-app/static/js/main.3838b63e.js.map",
+    "587.0e662536.chunk.js.map": "/my-first-react-app/static/js/587.0e662536.chunk.js.map",
+    "301.91b012b6.chunk.js.map": "/my-first-react-app/static/js/301.91b012b6.chunk.js.map",
+    "682.87f0aa3c.chunk.js.map": "/my-first-react-app/static/js/682.87f0aa3c.chunk.js.map",
+    "968.a8e20684.chunk.js.map": "/my-first-react-app/static/js/968.a8e20684.chunk.js.map",
+    "444.a0fe52f3.chunk.js.map": "/my-first-react-app/static/js/444.a0fe52f3.chunk.js.map",
+    "63.76646b10.chunk.js.map": "/my-first-react-app/static/js/63.76646b10.chunk.js.map",
+    "188.fa11cc68.chunk.js.map": "/my-first-react-app/static/js/188.fa11cc68.chunk.js.map",
     "456.0d5a3594.chunk.js.map": "/my-first-react-app/static/js/456.0d5a3594.chunk.js.map",
     "75.0d5a3594.chunk.js.map": "/my-first-react-app/static/js/75.0d5a3594.chunk.js.map",
     "453.090319ad.chunk.js.map": "/my-first-react-app/static/js/453.090319ad.chunk.js.map",
@@ -40,6 +40,6 @@
   },
   "entrypoints": [
     "static/css/main.e4e37c3a.css",
-    "static/js/main.5609a7e8.js"
+    "static/js/main.3838b63e.js"
   ]
 }
