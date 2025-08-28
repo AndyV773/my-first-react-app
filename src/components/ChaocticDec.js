@@ -9,23 +9,14 @@ const ChaoticDec = ({ showMsg, theme, onToggleTheme, showLoader }) => {
     // Input/file state
     const [fileInfo, setFileInfo] = useState(null);
     const [fileInput, setFileInput] = useState(null);
+    const [textInput, setTextInput] = useState('');
     const [dataInput, setDataInput] = useState('');
     const [utf8Preview, setUtf8] = useState(''); // content decoded from file
     const [dataInputVal, setDataInputVal] = useState('');
     const [detectedExt, setDetectedExt] = useState("");
 
-    const [decodeBase64, setDecodeBase64] = useState("");
     const [outputData, setOutputData] = useState('');
     const [outputVal, setOutputVal] = useState('');
-
-    const [hash1Iterations, setHash1Iterations] = useState(1);
-    const [hash2Iterations, setHash2Iterations] = useState(1);
-    const [depth, setDepth] = useState(1);
-    const [phase, setPhase] = useState(1);
-    const [sizeIterations, setSizeIterations] = useState(1);
-    const [xor, setXor] = useState(false);
-    const [reverse, setReverse] = useState(false);
-    const [chunkSize, setChunkSize] = useState(3);
     
     // Byte counts
     const [inputBytes, setInputBytes] = useState('');
@@ -38,64 +29,68 @@ const ChaoticDec = ({ showMsg, theme, onToggleTheme, showLoader }) => {
     const workerRef = useRef(null);
     const keyRef = useRef(null);
 
-    const handleInput = (input) => {
-        input = input.trim();
+    const handleKey = useCallback(() => {
+        let input = keyRef.current.value.trim();
+        const str = input.split(",");
 
-        if (input.includes("#1=")) {
-            const parts = input.split(",");
-            keyRef.current = parts[0]; // first part is key
-            parts.slice(1).forEach((part) => {
-                const [k, v] = part.split("=");
-                const value = v === "true" ? true : v === "false" ? false : Number(v);
-                switch (k) {
-                    case "#1":
-                        setHash1Iterations(value);
-                        break;
-                    case "#2":
-                        setHash2Iterations(value);
-                        break;
-                    case "d":
-                        setDepth(value);
-                        break;
-                    case "p":
-                        setPhase(value);
-                        break;
-                    case "l":
-                        setSizeIterations(value);
-                        break;
-                    case "x":
-                        setXor(value);
-                        break;
-                    case "r":
-                        setReverse(value);
-                        break;
-                    case "c":
-                        setChunkSize(value);
-                        break;
-                    default:
-                        break;
-                }
-            });
-        } else {
-            const parts = input.split(",");
-            keyRef.current = parts[0];
-            setHash1Iterations(Number(parts[1]));
-            setHash2Iterations(Number(parts[2]));
-            setDepth(Number(parts[3]));
-            setPhase(Number(parts[4]));
-            setSizeIterations(Number(parts[5]));
-            setXor(parts[6] === "true");
-            setReverse(parts[7] === "true");
-            setChunkSize(Number(parts[8]));
+        // Check length
+        if (str.length < 9) {
+            showMsg(`Error: Key length ${str.length}, is too short`, true);
+            return;
+        } else if (str.length > 9) {
+            showMsg(`Error: Key length ${str.length}, is too long`, true);
+            return;
+        } 
+
+        // Validate first 5 (must be > 0)
+        for (let i = 1; i <= 5; i++) {
+            const num = Number(str[i]);
+            if (isNaN(num) || num <= 0) {
+                showMsg(`Error: Value ${i} must be a number > 0`, true);
+                return;
+            }
         }
-    };
+
+        // Validate next 2 (must be 0 or 1)
+        for (let i = 6; i <= 7; i++) {
+            const num = Number(str[i]);
+            if (num !== 0 && num !== 1) {
+                showMsg(`Error: Value ${i} must be 0 or 1`, true);
+                return;
+            }
+        }
+
+        // Validate chunks (must be 3–12)
+        const chunks = Number(str[8]);
+        if (isNaN(chunks) || chunks < 3 || chunks > 12) {
+            showMsg("Error: Last value must be between 3 and 12", true);
+            return;
+        }
+
+        const keyData = {
+            keyInput: str[0],
+            hash1Iterations: Number(str[1]),
+            hash2Iterations: Number(str[2]),
+            depth: Number(str[3]),
+            phase: Number(str[4]),
+            sizeIterations: Number(str[5]),
+            xor: Number(str[6]),
+            reverse: Number(str[7]),
+            chunkSize: Number(str[8]),
+        };
+
+        return keyData;
+    }, [showMsg] );
+
     
     const handleUpload = async (type, e) => {
         const file = e.target.files?.[0];
         // reset
         setFileInput("");
         setFileInfo(null);
+        setTextInput("");
         setDataInput("");
+        setDataInputVal("");
         setUtf8("");
         e.target.value = ""; // Clear file input
 
@@ -113,6 +108,7 @@ const ChaoticDec = ({ showMsg, theme, onToggleTheme, showLoader }) => {
             setFileInput("");
             setFileInfo(null);
             setDataInput("");
+            setDataInputVal("");
             setUtf8("");
             return;
         }
@@ -120,64 +116,69 @@ const ChaoticDec = ({ showMsg, theme, onToggleTheme, showLoader }) => {
 
     const handleInputChange = (e) => {
         const value = e.target.value;
-
-        setDecodeBase64(false);
-        setFileInput("");
-        setFileInfo(null);
-        setDataInput("");
-        setDataInput(value);
-        setDataInputVal(value);
+        setTextInput(value);
     };
     
-    // Sync file content into dataInput once when file loads
     useEffect(() => {
+        // If a file is loaded
         if (fileInput) {
-            setDataInputVal(utf8Preview)
             setDataInput(fileInput);
-        } else {
-            setDataInputVal("");
+            setDataInputVal(utf8Preview);
+        } else if (textInput) {
+            setDataInput(textInput);
+            setDataInputVal(textInput);
         }
-    }, [fileInput, utf8Preview]);
+    }, [fileInput, textInput, utf8Preview, showMsg]);
 
-    useEffect(() => {
-        if (!dataInput) return;
 
-        if (decodeBase64) {
-            try {
-                const decoded = base64ToUint8(utf8Preview);
-                setDataInputVal(textDecoder(decoded));
-                setDataInput(decoded);
-            } catch (err) {
-                showMsg("Error: Invalid Base64 input", true);
-            }
-        }
-    }, [decodeBase64, dataInput, utf8Preview, showMsg]);
+    function isBase64(str) {
+        if (typeof str !== "string") return false;
+        // Base64 regex pattern
+        const base64Regex = /^(?:[A-Za-z0-9+/]{4})*?(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
+        return base64Regex.test(str);
+    }
 
     const handleDecryption = useCallback(() => {
+        let input;
+        const keyData = handleKey();
+        if (!keyData) return;
         if (!workerRef.current) return;
-        if (!dataInput || !keyRef.current) {
-            showMsg("No data.", true);
+        if (!dataInput) {
+            showMsg("Error: No data.", true);
             return;
-        }  
+        }
+
         setOutputData("");
+        setOutputVal("");
         setDetectedExt(null);
+    
+        if (!textInput) {
+            input = dataInput;
+            if (isBase64(utf8Preview)) {
+                try {
+                    input = base64ToUint8(utf8Preview);
+                } catch (err) {
+                    showMsg("Error Base64 input invalid: " + err, true);
+                    return;
+                }
+            }
+        } else {
+            try {
+                input = base64ToUint8(textInput);
+            } catch (err) {
+                showMsg("Error Base64 input invalid: " + err, true);
+                return;
+            }
+        }
 
         showLoader({ show: true, mode: 'Decoding', type: "radar decode", emoji: '🧩', bytes: 500000 });
 
-        const keyInput = keyRef.current.value;
-
         workerRef.current.postMessage({
             type: "decode",
-            load: { dataInput, keyInput},
-            hash1Iterations,  
-            hash2Iterations,
-            depth,
-            phase,
-            sizeIterations,
-            
-            chunkSize,  
+            load: { dataInput: input, keyInput: keyData.keyInput},
+            ...keyData,
         });
-    }, [dataInput, hash1Iterations, hash2Iterations, depth, phase, sizeIterations, chunkSize, showMsg, showLoader]);
+    }, [dataInput, textInput, utf8Preview, handleKey, showMsg, showLoader]);
 
 
     useEffect(() => {
@@ -191,7 +192,11 @@ const ChaoticDec = ({ showMsg, theme, onToggleTheme, showLoader }) => {
             if (type === "done-decode") {
                 const { dataOutput } = result;
 
-                if (dataOutput.length === 0) return showMsg("Error decoding", true);
+                if (dataOutput.length === 0) {
+                    showLoader({ show: false });
+                    showMsg("Error: Decoding failed", true);
+                    return
+                }
 
                 const ext = await detectFileExtension(dataOutput);
                 
@@ -203,7 +208,7 @@ const ChaoticDec = ({ showMsg, theme, onToggleTheme, showLoader }) => {
                 showMsg('Decryption Complete!', false);
                 setTimeout(() => showLoader({ show: false }), 2000);
             } else if (type === 'error') {
-                showMsg('Decryption failed: ' + error, true);
+                showMsg('Error decryption failed: ' + error, true);
                 showLoader({ show: false });
             }
         };
@@ -238,7 +243,7 @@ const ChaoticDec = ({ showMsg, theme, onToggleTheme, showLoader }) => {
 
             <section>
                 <h2>Decode</h2>
-                <p>Upload .ec file or input text</p>
+                <p>Upload .ec file or input Base64</p>
 
                 <label htmlFor="data-upload">Upload data:</label>
                 <input type="file" id="data-upload" onChange={(e) => handleUpload("data", e)} />
@@ -247,130 +252,26 @@ const ChaoticDec = ({ showMsg, theme, onToggleTheme, showLoader }) => {
                         File: {fileInfo.name}, Type: {fileInfo.type}, Size: {fileInfo.size}
                     </p>
                 )}
-                <label>
-                    Decode Base64
-                    <input
-                        type="checkbox"
-                        checked={decodeBase64}
-                        onChange={(e) => setDecodeBase64(e.target.checked)}
-                    />
-                </label>
                 <textarea
                     rows="5"
                     value={dataInputVal}
                     onChange={handleInputChange}
-                    placeholder="Enter text..."
+                    placeholder="Enter Base64..."
                 />
                 <p>
                     Byte size: <span>{inputBytes}</span> bytes
                 </p>
-            
-                <textarea
-                    rows={4}
-                    placeholder='hello,#1=1,#2=1,d=1,p=1,l=1,x=false,r=false,c=3'
-                    onBlur={(e) => handleInput(e.target.value)}
-                />
-
-                <div className='key grid'>
-                    <label>
-                        Key:
-                        <input 
-                            ref={keyRef} 
-                            placeholder="Enter key"
-                            autoComplete='off'
-                        />
-                    </label>
-                    <label>
-                        Hash #1=:
-                        <input 
-                            type="number" 
-                            value={hash1Iterations || ""} 
-                            onChange={(e) => setHash1Iterations(Number(e.target.value))} 
-                            placeholder="Enter hash 1" 
-                            autoComplete="off"
-                        />
-                    </label>
-                    <label>
-                        Hash #2=:
-                        <input 
-                            type="number" 
-                            value={hash2Iterations || ""} 
-                            onChange={(e) => setHash2Iterations(Number(e.target.value))} 
-                            placeholder="Enter hash 2" 
-                            autoComplete="off"
-                        />
-                    </label>
-                    <label>
-                        Depth d=:
-                        <input 
-                            type="number" 
-                            value={depth || ""} 
-                            onChange={(e) => setDepth(Number(e.target.value))} 
-                            placeholder="Enter depth" 
-                            autoComplete="off"
-                        />
-                    </label>
-                    <label>
-                        Phase p=:
-                        <input 
-                            type="number" 
-                            value={phase || ""} 
-                            onChange={(e) => setPhase(Number(e.target.value))} 
-                            placeholder="Enter phase" 
-                            autoComplete="off"
-                        />
-                    </label>
-                    <label>
-                        Length l=:
-                        <input 
-                            type="number" 
-                            value={sizeIterations || ""} 
-                            onChange={(e) => setSizeIterations(Number(e.target.value))} 
-                            placeholder="Enter size iterations" 
-                            autoComplete="off"
-                        />
-                    </label>
-                </div>
                 <label>
-                    Use XOR:
+                    Enter 9 comma seperated values:
                     <input
-                        type="checkbox"
-                        checked={xor}
-                        onChange={(e) => setXor(e.target.checked)}
+                        ref={keyRef}
+                        placeholder='key,1,1,1,1,1,0,0,3'
+                        required
                     />
                 </label>
-                <label>
-                    Reverse key:
-                    <input
-                        type="checkbox"
-                        checked={reverse}
-                        onChange={(e) => setReverse(e.target.checked)}
-                    />
-                </label>
-                <br/>
-                <br/>
-                <label htmlFor="digitOption">Chunk size: </label>
-                <select
-                    id="digitOption"
-                    value={chunkSize}
-                    onChange={(e) => setChunkSize(Number(e.target.value))}
-                >
-                    <option value={3}>3</option>
-                    <option value={4}>4</option>
-                    <option value={5}>5</option>
-                    <option value={6}>6</option>
-                    <option value={7}>7</option>
-                    <option value={8}>8</option>
-                    <option value={9}>9</option>
-                    <option value={10}>10</option>
-                    <option value={11}>11</option>
-                </select>
-                <button className="decode" onClick={() => handleDecryption()}>
-                    Decrypt
-                </button>
+                <button className="decode" onClick={() => handleDecryption()}>Decrypt</button>
             </section>
-                {/* className={`${outputBytes === 0 ? 'hidden' : ''}`} */}
-            <section > 
+            <section className={`${outputBytes === 0 ? 'hidden' : ''}`}> 
                 <textarea
                     rows="5"
                     value={outputVal}
@@ -383,7 +284,6 @@ const ChaoticDec = ({ showMsg, theme, onToggleTheme, showLoader }) => {
                 <p>
                     Detected file type: {detectedExt ? `${detectedExt}` : "(none)"}
                 </p>
-            
                 <button onClick={() => handleSaveFile()}>Download .{detectedExt}</button>
             </section>
         </main>

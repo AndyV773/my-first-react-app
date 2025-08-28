@@ -7,10 +7,13 @@ const generatePassword = (length = 16, chunkSize = 4, useSpecialChars = true) =>
 	const letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	const specials = "!@#$%^&*()_+[]{}<>?|";
 	const characters = useSpecialChars ? letters + specials : letters;
+	const passwordArray = new Uint8Array(length);
+  	crypto.getRandomValues(passwordArray);
 
 	let password = "";
 	for (let i = 0; i < length; i++) {
-		const randomIndex = Math.floor(Math.random() * characters.length);
+		// Map each random byte to a character in our character set
+		const randomIndex = passwordArray[i] % characters.length;
 		password += characters[randomIndex];
 	}
 

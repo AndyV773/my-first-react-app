@@ -51,7 +51,7 @@ export const tools = [
       id: "rot-encoder",
       title: "Rotation Encoder Uint8",
       description:
-        "Encode using byte-wise modular addition/subtraction on a Uint8Array, with wrap-around at 256.",
+        "Encode using byte-wise modular addition/subtraction on a Uint8Array, with wrap around at 256.",
     },
     {
       id: "xor-based-enc",
@@ -75,13 +75,13 @@ export const tools = [
       id: "key-stretcher",
       title: "Chaotic Key Stretcher",
       description:
-      "Derive a large output from a short key and increase computational effort using algorithms and chaotic mathmatics.",
+        "Derive a large output from a short key and increase computational effort using algorithms and chaotic mathmatics.",
     },
     {
       id: "chaotic-enc",
       title: "Chaotic Encoder",
       description:
-      "Chaotic encoder utilises both key stretching and a choice of either Uint8 rotation or Xor.",
+        "Chaotic encoder utilises both key stretching and a choice of either Uint8 rotation or Xor.",
     },
     {
       id: "qr-enc",
@@ -99,25 +99,25 @@ export const tools = [
       id: "hashing",
       title: "SHA & Argon2 Hashing",
       description:
-      "Implement multiple SHA or Argon2 hashing for files or text.",
+        "Implement multiple SHA or Argon2 hashing for files or text.",
     },
     {
       id: "file-integrity",
       title: "File Integrity Check",
       description:
-      "Use common hashing algorithms on data for security and integrity checks.",
+        "Use common hashing algorithms on data for security and integrity checks.",
     },
     {
       id: "ip-addy",
       title: "IP Information",
       description:
-      "Quick tool for obtaining your IP address and information.",
+        "Quick tool for obtaining your IP address and information.",
     },
     {
       id: "totp-sim",
       title: "TOTP & Captcha",
       description:
-        "Try out Time-Based One-Time Password simulator and Bot Captcha.",
+        "Try out Time Based One Time Password simulator and Bot Captcha.",
     },
     {
       id: "password-gen",

@@ -1,4 +1,4 @@
-import { randomizerUint32, expandUint8, uint8ToUint32, uint32ToUint8, reduceUint8 } from '../utils/cryptoUtils';
+import { randomizer, expandUint8, uint8ToUint32, uint32ToUint8, reduceUint8 } from '../utils/cryptoUtils';
 import { detectFileExtension } from '../utils/fileUtils';
 /* eslint-env worker */
 /* eslint-disable no-restricted-globals */
@@ -55,7 +55,7 @@ export function quantShuffle32(input, allChar = false) {
     const key = new Int32Array(input.length);
 
     for (let i = 0; i < input.length; i++) {
-        const rotation = randomizerUint32(allChar);
+        const rotation = randomizer(allChar, true);
         key[i] = rotation;
         shuffled[i] = input[i] + rotation;
     }

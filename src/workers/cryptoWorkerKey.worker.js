@@ -3,7 +3,7 @@ import CryptoJS from "crypto-js";
 /* eslint-disable no-restricted-globals */
 
 self.addEventListener("message", async (e) => {
-    const { type, load, reverse, hash1Iterations, hash2Iterations, depth, phase, sizeIterations, chunkSize } = e.data;
+    const { type, load, hash1Iterations, hash2Iterations, depth, phase, sizeIterations, reverse, chunkSize } = e.data;
 
     if (type === "stretch") {
         const { keyInput } = load;
@@ -28,7 +28,8 @@ self.addEventListener("message", async (e) => {
 
             hash2 = current
             const arr2  = powerHex(hash2, depth, phase, sizeIterations, chunkSize);
-            arr = reverse ? [...arr2, ...arr1] : [...arr1, ...arr2];
+            
+            arr = reverse === 1 ? [...arr2, ...arr1] : [...arr1, ...arr2];
             const key = seededShuffle(arr, keyInput);
 
             self.postMessage({
@@ -68,13 +69,9 @@ function chunkArray(digits, size) {
     return chunks;
 }
 
-let n;
-let k;
 // let m;
-let p = 1;
-let j = 2;
 
-// function densifyNumberx(num) {
+// function densifyNumber(num) {
 //     p++
 //     m = m * p
 
@@ -101,6 +98,11 @@ let j = 2;
 
 //     return num + replacement;
 // }
+
+let n;
+let k;
+let p = 1;
+let j = 2;
 
 function densifyNumber(num) {
     p++;
@@ -154,7 +156,7 @@ function floatToFixedDigits(x, digits = 16) {
 
 function powerHex(hex, depth, phase, sizeIterations, chunkSize) {
     const length = hex.length / 2;
-    let combined = []; // keep as array of digits
+    let combined = []; 
 
     const rMin = 3.77;
     const rMax = 3.99;
@@ -165,8 +167,8 @@ function powerHex(hex, depth, phase, sizeIterations, chunkSize) {
     for (let i = 0; i < length; i++) {
         let num = parseInt(hex.substr(i * 2, 2), 16) ** 4;
 
-        n = (num % 1000); // get last 3 digits
         // m = (num % 1000); // get last 3 digits
+        n = (num % 1000); // get last 3 digits
         k = Math.floor(num / 1000) % 1000; // get next 3 digits
         dense = densifyNumber(num);
 

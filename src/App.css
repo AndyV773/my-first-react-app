@@ -760,7 +760,7 @@ ul.file li {
 }
 
 .num.cell {
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 0.5rem;
     color: #fff;
     font-weight: bold;
     display: flex;
@@ -768,7 +768,6 @@ ul.file li {
     align-items: center;
     text-align: center;
     line-break: anywhere;
-    border: 1px solid #222;
 }
 
 

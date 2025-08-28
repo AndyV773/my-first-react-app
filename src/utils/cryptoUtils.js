@@ -2,6 +2,26 @@ import CryptoJS from "crypto-js";
 import pako from "pako";
 
 
+// text encoder helper
+export function textEncoder(input) {
+  	return new TextEncoder().encode(input);
+}
+
+// text decoder helper
+export function textDecoder(input) {
+  	return new TextDecoder().decode(input);
+}
+
+// pako compression helper
+export function compress(input) {
+  	return pako.deflate(input);
+}
+
+// pako decompression help
+export function decompress(input) {
+  	return pako.inflate(input);
+}
+
 export const sha256 = async (data) => {
 	const buffer = await crypto.subtle.digest("SHA-256", data);
 	return Array.from(new Uint8Array(buffer))
@@ -87,12 +107,9 @@ export function fishersShuffle(input, key) {
     const salt = bytesToHex(saltBytesKey);
     const newKey = key + salt;
 
-
     const newInput = new Uint8Array(input.length + saltBytesInput.length);
     newInput.set(saltBytesInput, 0);                 
     newInput.set(input, saltBytesInput.length); 
-
-    
 
     const shuffled = seededShuffle(newInput, newKey);
 
@@ -220,17 +237,62 @@ export function aesCbcDecrypt(encryptedBytes, password) {
 	}
 }
 
-export function randomizer(allChar) {
-    const rand = Math.random() * Math.random(); // bias toward lower numbers
+// export function randomizer(allChar) {
+//     const rand = Math.random() * Math.random(); // bias toward lower numbers
 
-    let value = allChar
-        ? Math.floor(rand * (0x10ffff + 1))
-        : Math.floor(rand * 10000) + 1;
+//     let value = allChar
+//         ? Math.floor(rand * (0x10ffff + 1))
+//         : Math.floor(rand * 10000) + 1;
 
-    // allow negative by randomly flipping sign
-    if (Math.random() < 0.5) value = -value;
+//     // allow negative by randomly flipping sign
+//     if (Math.random() < 0.5) value = -value;
 
-    return value;
+//     return value;
+// }
+
+// Random rotation generator fo uint32
+// export function randomizerUint32(allChar = false) {
+// 	const rand = Math.random() * Math.random(); // bias toward lower numbers
+// 	let value = allChar
+// 		? Math.floor(rand * 4294967295) // full 32-bit range
+// 		: Math.floor(rand * 1000000) - 1000000; 
+// 	if (Math.random() < 0.5) value = -value; // allow negative
+// 	return value;
+// }
+
+export function randomizer(allChar, uint32 = false) {
+	// Helper to generate a random 32-bit unsigned integer
+	const randUint32 = () => {
+		const arr = new Uint32Array(1);
+		crypto.getRandomValues(arr);
+		return arr[0];
+	};
+
+	let value;
+
+	if (uint32) {
+		if (allChar) {
+			// Full 32-bit range: 0 to 0xFFFFFFFF
+			value = randUint32();
+		} else {
+			// Range: 0 to 999,999
+			value = randUint32() % 1_000_000;
+		}
+		// Randomly flip sign
+		const flipSign = (crypto.getRandomValues(new Uint8Array(1))[0] % 2) === 0;
+		if (flipSign) value = -value;
+
+	} else {
+		if (allChar) {
+			// Full Unicode range between 0 and 0x10FFFF
+			value = randUint32() % (0x10FFFF + 1);
+		} else {
+			// range between 1 and 10000
+			value = (randUint32() % 10000) + 1;
+		}
+	}
+
+	return value;
 }
 
 // convert uint8 to base64 in chunks to avoid call stack
@@ -253,26 +315,6 @@ export function base64ToUint8(base64) {
 	return bytes;
 }
 
-
-// text encoder helper
-export function textEncoder(input) {
-  	return new TextEncoder().encode(input);
-}
-
-// text decoder helper
-export function textDecoder(input) {
-  	return new TextDecoder().decode(input);
-}
-
-// pako compression helper
-export function compress(input) {
-  	return pako.deflate(input);
-}
-
-// pako decompression help
-export function decompress(input) {
-  	return pako.inflate(input);
-}
 
 // AES-GCM encrypt data with password, returns base64 string
 export async function aesGcmEncrypt(data, password) {
@@ -397,70 +439,16 @@ export function xorUint8(inputBytes, hashHex) {
 }
 
 export const xorUint32 = (data, keyArray) => {
-
-	console.log('key arry',keyArray)
-	console.log('data in',data)
-
     const result = new Uint32Array(data.length);
 
     for (let i = 0; i < data.length; i++) {
 
         result[i] = data[i] ^ keyArray[i % keyArray.length];
     }
-	console.log('data out',result)
 
     return result;
 };
 
-// 32-bit rotate left
-function rol32(x, n) {
-  	return ((x << n) | (x >>> (32 - n))) >>> 0;
-}
-
-// 32-bit rotate right
-function ror32(x, n) {
-  	return ((x >>> n) | (x << (32 - n))) >>> 0;
-}
-
-// Encrypt: XOR + rotation
-export function encryptXorRotate32(data, key) {
-	const result = new Uint32Array(data.length);
-	for (let i = 0; i < data.length; i++) {
-		const k = key[i % key.length] >>> 0;
-		const shift = k & 31; // use lower 5 bits (0–31) as rotation
-		let x = data[i] ^ k;
-		// alternate left/right per index
-		x = (i % 2 === 0) ? rol32(x, shift) : ror32(x, shift);
-		result[i] = x >>> 0;
-	}
-	return result;
-}
-
-// Decrypt: reverse order (undo rotation first, then XOR)
-export function decryptXorRotate32(data, key) {
-	const result = new Uint32Array(data.length);
-	for (let i = 0; i < data.length; i++) {
-		const k = key[i % key.length] >>> 0;
-		const shift = k & 31;
-		let x = data[i];
-		// reverse the rotation (note opposite direction)
-		x = (i % 2 === 0) ? ror32(x, shift) : rol32(x, shift);
-		x = x ^ k;
-		result[i] = x >>> 0;
-	}
-	return result;
-}
-
-
-// Random rotation generator fo uint32
-export function randomizerUint32(allChar = false) {
-	const rand = Math.random() * Math.random(); // bias toward lower numbers
-	let value = allChar
-		? Math.floor(rand * 4294967295) // full 32-bit range
-		: Math.floor(rand * 1000000) - 1000000; 
-	if (Math.random() < 0.5) value = -value; // allow negative
-	return value;
-}
 
 // Add random padding and length markers
 export function expandUint8(uint8) {

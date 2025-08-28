@@ -14,6 +14,8 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
     const [depth, setDepth] = useState(1);
     const [phase, setPhase] = useState(1);
     const [sizeIterations, setSizeIterations] = useState(1);
+    const [xor, setXor] = useState(0);
+    const [reverse, setReverse] = useState(0);
     const [chunkSize, setChunkSize] = useState(3);
     const [hash1Output, setHash1Output] = useState("");
     const [hash2Output, setHash2Output] = useState("");
@@ -22,12 +24,14 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
     const [counts, setCounts] = useState({});
     const [sortByFreq, setSortByFreq] = useState(false);
 
+    const [numbers, setNumbers] = useState([]);
+    const [showGrid, setShowGrid] = useState(false);
+
     const [elapsedTime, setElapsedTime] = useState(null);
     const timerRef = useRef(0);
 
     // Refs
     const workerRef = useRef(null);
-    const reverseKeyRef = useRef(null);
     
 
     const handleStretch = useCallback(() => {
@@ -48,24 +52,22 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
         // Record start time
         timerRef.current = performance.now();
 
-        const reverse = reverseKeyRef.current?.checked || false;
-
         showLoader({ show: true, mode: `Stretching`, type: "loader encode", emoji: '🛡️', bytes: 500000 });
 
-        setKeyJoined(`${keyInput},#1=${hash1Iterations},#2=${hash2Iterations},d=${depth},p=${phase},l=${sizeIterations},x=${false},r=${reverse},c=${chunkSize}`)
+        setKeyJoined(`${keyInput},${hash1Iterations},${hash2Iterations},${depth},${phase},${sizeIterations},${xor},${reverse},${chunkSize}`)
 
         workerRef.current.postMessage({
             type: "stretch",
             load: { keyInput },
-            reverse,
             hash1Iterations,  
             hash2Iterations,
             depth,
             phase,
             sizeIterations,  
+            reverse,
             chunkSize,  
         });
-    }, [keyInput, hash1Iterations, hash2Iterations, depth, phase, sizeIterations, chunkSize, showMsg, showLoader]);
+    }, [keyInput, hash1Iterations, hash2Iterations, depth, phase, sizeIterations, reverse, xor, chunkSize, showMsg, showLoader]);
 
 
     useEffect(() => {
@@ -81,7 +83,6 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
 
                 const endTime = performance.now();
                 const timeMs = endTime - timerRef.current; // elapsed time in milliseconds
-
                 const minutes = Math.floor(timeMs / 60000);
                 const seconds = Math.floor((timeMs % 60000) / 1000);
                 const milliseconds = Math.floor(timeMs % 1000);
@@ -133,6 +134,10 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
     const handleSortToggle = () => {
         setSortByFreq(!sortByFreq);
     };
+
+    const handleClear = () => {
+        setCounts({}); // clear the numbers
+    };
     
     // Prepare table entries
     const tableEntries = Object.entries(counts);
@@ -144,16 +149,17 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
 
     const totalNumbers = Object.values(counts).reduce((sum, c) => sum + c, 0);
 
-    const [numbers, setNumbers] = useState([]);
-        const [showGrid, setShowGrid] = useState(false);
-
     const handleGenerateGrid = () => {
         if (!keyOutput) return showMsg("Nothing to check.", true);
 
         const nums = keyOutput;
-        console.log('num',nums)
         setNumbers(nums);
         setShowGrid(true);
+    };
+
+    const handleClearGrid = () => {
+        setNumbers([]); // clear the numbers
+        setShowGrid(false); // hide the grid
     };
 
     const numberToColor = (num) => {
@@ -178,8 +184,9 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
                 <Link to="/about#about-key-stretcher">Learn more</Link>
             </div>
             <section>
-                <p><strong>The more unique the input, the more unique the key should be. You can check number frequencies at the bottom to help spot patterns. Use a larger chunk size for best results. Note: the longer the key takes to process, the more resilient it may be to brute-force attacks.</strong></p>
-                <p>The higher the iterations the higher the computational effort. Increase the hash iterations to over 100000 for best results.</p>
+                <h2>Generate Key</h2>
+                <p><strong>The process for deriving the key is the same as in <Link to="/chaotic-enc">Chaotic Encoder</Link>. Here, you can experiment with different possibilities. The more unique the input, the more unique the key should be. You can check number frequencies and spot patterns using the table and grid generator below. Use a larger chunk size for best results. Note: the longer a key takes to process, the more resilient it may be to brute-force attacks.</strong></p>
+                <p>The key is for basic protection and uses the standerd ASCII character range.</p>
                 <input 
                     type="text" 
                     value={keyInput} 
@@ -187,6 +194,8 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
                     placeholder="Enter key" 
                     autoComplete="off"
                 />
+                <h3>Hash Algorithms</h3>
+                <p>The higher the iterations the higher the computational effort. Increase the hash iterations to over 100000 for the best results.</p>
                 <p>Number of sha-512 iterations 0-inf</p>
                 <input 
                     type="number" 
@@ -203,6 +212,7 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
                     placeholder="Enter sha3-515 iterations" 
                     autoComplete="off"
                 />
+                <h3>Logistics Map</h3>
                 <p>Adjust the chaotic logistic map to icrease computation without increasing the size, while still varying the values.</p>
                 <p>Depth 0-inf. Set between 500-1000 for good depth.</p>
                 <input 
@@ -220,7 +230,8 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
                     placeholder="Enter phase" 
                     autoComplete="off"
                 />
-                <p>Size iterations 0-inf. Too high can exceed call stack. Increase the for larger data.</p>
+                <h3>Additional Parameters</h3>
+                <p>Size iterations 0-inf. Too high can exceed call stack. Increase for larger data inputs.</p>
                 <input 
                     type="number" 
                     value={sizeIterations || ""} 
@@ -229,8 +240,20 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
                     autoComplete="off"
                 />
                 <label>
+                    Use XOR:
+                    <input 
+                        type="checkbox"
+                        checked={xor === 1} 
+                        onChange={(e) => setXor(e.target.checked ? 1 : 0)}
+                    />
+                </label>
+                <label>
                     Reverse key:
-                    <input type="checkbox" id="reverse-key" ref={reverseKeyRef} />
+                    <input 
+                        type="checkbox"
+                        checked={reverse === 1} 
+                        onChange={(e) => setReverse(e.target.checked ? 1 : 0)}
+                    />
                 </label>
                 <br/>
                 <br/>
@@ -249,12 +272,12 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
                     <option value={9}>9</option>
                     <option value={10}>10</option>
                     <option value={11}>11</option>
+                    <option value={12}>12</option>
                 </select>
                 <p>Chunk size: {chunkSize}</p>
                 <button className="encode" onClick={handleStretch}>Stretch key</button>
-                <div className={`${keyJoined ? '' : 'hidden'}`}>
-					<PreCopyOutputBlock outputId={"key-joined"} text={keyJoined} />
-				</div>
+                <p>Copy the key or write it down.</p>
+                <PreCopyOutputBlock outputId={"key-joined"} text={keyJoined} />
             </section>
             <section>
                 <h3>Output</h3>
@@ -291,7 +314,10 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
             </section>
             <section>
                 <h3>Number Frequency Counter (uint8 - uint32)</h3>
-                <button onClick={handleProcess}>Process</button>
+                <div className='flex g1'>
+                    <button className='encode' onClick={handleProcess}>Generate Table</button>
+                    <button className='decode' onClick={handleClear}>Clear Table</button>
+                </div>
                 <button onClick={handleSortToggle}>
                     {sortByFreq ? 'Sort by Number' : 'Sort by Frequency'}
                 </button>
@@ -319,11 +345,22 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
             </section>
             <section>
                 <h2>Visualization Grid</h2>
-                <button onClick={handleGenerateGrid}>Generate Grid</button>
+                <p>Use a coloured grid to identify patterns or groupings.</p>
+                <div className='flex g1'>
+                    <button className='encode' onClick={handleGenerateGrid}>Generate Grid</button>
+                    <button className='decode' onClick={handleClearGrid}>Clear Grid</button>
+                </div>
                 {showGrid && numbers.length > 0 && (
                     <div className="num grid">
                         {numbers.map((num, idx) => (
-                            <div key={idx} className='num cell' style={{ backgroundColor: numberToColor(num) }}>
+                            <div 
+                                key={idx} 
+                                className='num cell' 
+                                style={{ 
+                                    backgroundColor: numberToColor(num),
+                                    fontSize: chunkSize > 5 ? '11px' : '18px',
+                                }}
+                            >
                                 {num}
                             </div>
                         ))}

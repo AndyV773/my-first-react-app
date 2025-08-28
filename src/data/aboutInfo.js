@@ -3,15 +3,15 @@ export const aboutInfo = [
 		id: "about-app",
 		title: "About This App",
 		description:
-			"This data transformation and encryption toolkit is designed for educational and demonstration purposes to showcase a variety of shuffle and cryptographic techniques. It is a static JavaScript app that handles encryption entirely on the front end, within the browser. Therefore, no backend is needed. However, this means there are limitations due to browser memory or device speed, so large images or files can cause the browser to crash. I have not implemented any restrictions on file sizes - this app is completely experimental, explore the features and learn how each component works. The libraries used in this app consist of:",
+			"This data transformation and encryption toolkit is designed for educational and demonstration purposes to showcase a variety of shuffle and cryptographic techniques. It is a static JavaScript app that handles encryption entirely on the front end, within the browser. Therefore, no backend is needed. However, this means there are limitations due to browser memory or device speed, so large images or files can cause the browser to crash. I have not implemented any restrictions on file sizes. This app is completely experimental, explore the features and learn how each component works. The libraries used in this app consist of:",
 		libs: [
-			"crypto-js - Providing AES (CBC & GCM) encryption and hashing algorithms like SHA-256. (https://github.com/brix/crypto-js)",
-			"pako - Zlib-compatible compression and decompression of data. (https://github.com/nodeca/pako)",
-			"qrcode - For generating customizable QR codes. (https://github.com/soldair/node-qrcode)",
-			"jsQR - For reading and decoding QR codes from images. (https://github.com/cozmo/jsQR)",
-			"html5-qrcode - Used for scanning and reading QR codes from a device camera. (https://github.com/mebjas/html5-qrcode)",
-			"secrets.js-grempe - JavaScript library for Shamir's Secret Sharing. (https://github.com/grempe/secrets.js)",
-			"jszip - For creating, reading, and editing .zip files in JavaScript. (https://stuk.github.io/jszip/)"
+			"crypto-js - Providing AES (CBC & GCM) encryption and hashing algorithms like SHA-256: (https://github.com/brix/crypto-js)",
+			"pako - Zlib compatible compression and decompression of data: (https://github.com/nodeca/pako)",
+			"qrcode - For generating customizable QR codes: (https://github.com/soldair/node-qrcode)",
+			"jsQR - For reading and decoding QR codes from images: (https://github.com/cozmo/jsQR)",
+			"html5-qrcode - Used for scanning and reading QR codes from a device camera: (https://github.com/mebjas/html5-qrcode)",
+			"secrets.js-grempe - JavaScript library for Shamir's Secret Sharing: (https://github.com/grempe/secrets.js)",
+			"jszip - For creating, reading, and editing .zip files in JavaScript: (https://stuk.github.io/jszip/)"
 		],
 	},
 	{
@@ -50,7 +50,7 @@ export const aboutInfo = [
 			"The salt, IV, and ciphertext are combined into a single output for storage or transmission.",
 			"During decryption, the salt and IV are extracted to regenerate the key and decrypt the data."
 		],
-		additional: "If your password is weak, an attacker who obtains the encrypted data (including the salt and IV) can attempt to brute force the password using the same key derivation and encryption methods. The salt and IV do not protect against guessing the password - they only ensure unique encryption and key derivation. Therefore, using a strong, password is essential to maintain security.",
+		additional: "If your password is weak, an attacker who obtains the encrypted data (including the salt and IV) can attempt to brute force the password using the same key derivation and encryption methods. The salt and IV do not protect against guessing the password, they only ensure unique encryption and key derivation. Therefore, using a strong, password is essential to maintain security.",
 		originalPage: "/aes-cbc-enc",
 		linkText: "Go to AES-CBC Encryption"
 	},
@@ -68,7 +68,7 @@ export const aboutInfo = [
 			"The salt, IV, and ciphertext (including authentication tag) are combined into a single output for storage or transmission.",
 			"During decryption, the salt and IV are extracted to regenerate the key and verify the authentication tag before decrypting the data."
 		],
-		additional: "Similar to AES-CBC, if your password is weak, the encryption is vulnerable to brute force attacks - where an attacker tries hundreds of thousands of password combinations using computational methods. AES-GCM provides confidentiality and integrity via an authentication tag (also called a MAC - Message Authentication Code), which helps detect if the data has been tampered with. However, using a strong, high-entropy password is essential to ensure your data remains secure.",
+		additional: "Similar to AES-CBC, if your password is weak, the encryption is vulnerable to brute force attacks, where an attacker tries hundreds of thousands of password combinations using computational methods. AES-GCM provides confidentiality and integrity via an authentication tag (also called a MAC - Message Authentication Code), which helps detect if the data has been tampered with. However, using a strong, high entropy password is essential to ensure your data remains secure.",
 		originalPage: "/aes-gcm-enc",
 		linkText: "Go to AES-GCM Encryption"
 	},
@@ -76,26 +76,26 @@ export const aboutInfo = [
 		id: "about-fishers-algo",
 		title: "About Fishers Algorithm",
 		description:
-			"Fishers algorithm is a deterministic algorithm that rearranges data using a seeded pseudo-random number generator (PRNG) before encrypting it with AES-CBC, increasing complexity and security.",
+			"Fishers algorithm is a deterministic algorithm that rearranges data using a seeded pseudo random number generator (PRNG) before encrypting it with AES-CBC, increasing complexity and security.",
 		steps: [
 			"You can upload a file or type text directly, and the content is displayed in both Base64 and UTF-8 formats so you can view the transformation.",
 			"Enter a key and click 'Shuffle'. For text input, the data is encoded into a Uint8Array, while file uploads use the raw binary data as-is.",
-			"A random salt (16 bytes) is added to the key to make it unique, and another random salt (16 bytes) is added to the input data for additional obscurity.",
+			"A random salt (16-bytes) is added to the key to make it unique, and another random salt (16-bytes) is added to the input data for additional obscurity.",
 			"The data and key are passed through a seeded shuffle, where the key is processed using the mulberry32 pseudo-random number generator (PRNG) to create a reversible shuffle pattern based on the key.",
 			"The process can be repeated to increase complexity and security, with transformations viewable at each stage.",
 			"AES-CBC encryption can optionally be applied after shuffling for stronger security.",
 			"The final output can be saved and downloaded as an encrypted file.",
 			"To decode, go to the Decode section, upload the correct file, and enter the correct shuffle key and AES key (if used). If you have shuffled multiple times, you must repeat the steps in the correct reverse order or the data may be lost.",
 		],
-		additional: "The Fishers algorithm is not cryptographic by itself - it is an advanced shuffling technique. Although extra precautions are taken to obscure the data, the data itself remains the same. For example, if you input 'Hello World', you can still see the original characters, just reordered and mixed with additional characters. Try it for yourself!",
-		originalPage: "/fisher-algo-enc",
+		additional: "The Fishers algorithm is not cryptographically secure, it is an advanced shuffling technique. Although extra precautions are taken to obscure the data, the data itself remains the same. For example, if you input 'Hello World', you can still see the original characters, just reordered and mixed with additional characters. Try it for yourself!",
+		originalPage: "/fishers-algo-enc",
 		linkText: "Go to Fishers Algorithm"
 	},
 	{
 		id: "about-quant-shuffle",
 		title: "About Quantum Shuffle",
 		description:
-			"Quantum Shuffle applies a high-load randomisation process to files or text, using rotation with Unicode code points. You can choose to further encrypt the data using AES-GCM. The process is broken down into stages, allowing you to view the transformation at each stage.",
+			"Quantum Shuffle applies a high load randomisation process to files or text, using rotation with Unicode code points. You can choose to further encrypt the data using AES-GCM. The process is broken down into stages, allowing you to view the transformation at each stage.",
 		steps: [
 			"Upload a file or input text. Files are Base64 encoded to handle the binary as text format.",
 			"The character range is kept between 10000 to reduce computation. You can check the box to use all characters in the range of 1,114,112 (0x10FFFF) Unicode characters.",
@@ -105,7 +105,7 @@ export const aboutInfo = [
 			"You can then choose to generate and save a QR code. If the data or key is below 2,900 bytes, it will display the error correction level of the QR code based on its size. Alternatively, you can save it as an encrypted file.",
 			"Decrypt and reverse the shuffle process to recover the data."
 		],
-		additional: "This technique is not original - it has been known for many years and uses rotation with Unicode code points. I named it Quantum Shuffle, as I believe it is not possible to decode without the correct key. The key or data alone are meaningless, the key can be extremely long, based on the size of the input. Even if the user inputs 'Hello World' (11 bytes), each character is shuffled randomly so that, even with the data, attempting to brute-force the original input without the key could yield any 11-byte string, e.g., 'big red fox' or any other 11-byte word or phrase. I will be adding a technique later to disguise the character length, making it even more difficult. If you believe I am wrong and know of a way to break the encryption, I am always open for discussion - please get in touch.",
+		additional: "This technique is not original, it has been known for many years and uses rotation with Unicode code points. I named it Quantum Shuffle, as I believe it is not possible to decode without the correct key. The key or data alone are meaningless, the key can be extremely long, based on the size of the input. Even if the user inputs 'Hello World' (11-bytes), each character is shuffled randomly so that, even with the data, attempting to brute-force the original input without the key could yield any 11-byte string, e.g., 'big red fox' or any other 11-byte word or phrase. I will be adding a technique later to disguise the character length, making it even more difficult. If you believe I am wrong and know of a way to break the encryption, I am always open for discussion - please get in touch.",
 		originalPage: "/quant-shuffle-enc",
 		linkText: "Go to Quantum Shuffle"
 	},
@@ -113,7 +113,7 @@ export const aboutInfo = [
 		id: "about-opt-quant",
 		title: "About Optimised Quantum Shuffle",
 		description:
-			"An all-in-one optimised variant of the Quantum Shuffle, combining efficient randomization with AES-GCM encryption for enhanced performance and security.",
+			"An all in one optimised variant of the Quantum Shuffle, combining efficient randomization with AES-GCM encryption for enhanced performance and security.",
 		steps: [
 			"Upload a file or enter text.",
 			"Choose all characters (1,114,112 possibilities) or keep the default 10,000, and enter the AES key for both data and key.",
@@ -180,9 +180,9 @@ export const aboutInfo = [
 			"XOR encoding with a Uint32 array using bitwise shuffling for each 32-bit chunk.",
 		steps:[
 			"Upload a file or input text.",
-			"Select the numeric range using the slider (from 1,000,000 to 10,000,000,000) and enter the amount you would like to generate. A good rule of thumb is to generate 1 key block per 4 characters and add an additional one for the length. For instance, 'hello world' is 11 bytes, so generate 3 plus 1 for length, making 4 in total.",
+			"Select the numeric range using the slider (from 1,000,000 to 10,000,000,000) and enter the amount you would like to generate. A good rule of thumb is to generate 1 key block per 4 characters and add an additional one for the length. For instance, 'hello world' is 11-bytes, so generate 3 plus 1 for length, making 4 in total.",
 			"Click 'Generate' to create a random key, or experiment with different values by entering them manually. You can then download the key as a .txt file by clicking 'Download Key'.",
-			"Click 'Encode' to reveal the XOR-shuffled message. This will show you the returned UTF-8 preview. You can then click 'Download' to save as a .ec32 file.",
+			"Click 'Encode' to reveal the XOR shuffled message. This will show you the returned UTF-8 preview. You can then click 'Download' to save as a .ec32 file.",
 			"To decode, upload the data and either upload or enter the key, then click 'Decode' to reveal the original data.",
 		],
 		additional: "This method works best if each key, separated by commas, is 10 digits long (32-bits) or negative numbers. For example, if the word is 'hello' (Uint8: 104,101,108,108,111), the original length is appended to the Uint32 array and will become [5,1819043176,111]. If XOR is done using a small key, only the first few bytes of the Uint32 array will change, leaving some original characters intact. This is still experimental, and improvements are being explored.",
@@ -196,7 +196,7 @@ export const aboutInfo = [
 			"Shamir's Secret Sharing allows you to split sensitive information into multiple parts or shares, requiring a threshold number to reconstruct, enhancing secure key management.",
 		steps: [
 			"Input the secret and set the number of shares. This determines how many people can potentially split it.",
-			"Set the threshold - the number of shares required to reveal the secret. The minimum is 2. For example, if the total number of shares is 5, you could set the threshold to 3 or 4 so that if someone loses their share, the secret can still be recovered. Any fewer than the threshold and recovery is not possible.",
+			"Set the threshold, and the number of shares required to reveal the secret. The minimum is 2. For example, if the total number of shares is 5, you could set the threshold to 3 or 4 so that if someone loses their share, the secret can still be recovered. Any fewer than the threshold and recovery is not possible.",
 			"Click 'Split Secret' and the data will be divided into the selected number of shares. You can easily copy them to the clipboard or download all as a .txt file.",
 			"To recover the secret, paste the threshold number of shares into the input boxes (order does not matter), or simply upload the file for easy testing. Click 'Combine Shares' to reveal the secret."
 		],
@@ -245,7 +245,7 @@ export const aboutInfo = [
 			"Enter any text or information into the input box and provide a strong key. The encryption uses AES-GCM.",
 			"Click 'Generate Encrypted QR' and a QR code will be created. The encoded data (Base64) will also be displayed for safe use within the QR code.",
 			"Click 'Download QR Code' to save it as a .png file.",
-			"To decode, upload the QR code image and enter the correct password. Then click 'Decrypt'—if the password is correct, the original data will be displayed."
+			"To decode, upload the QR code image and enter the correct password. Then click 'Decrypt' if the password is correct, the original data will be displayed."
 		],
 		additional: "A QR scanner using HTML5-QRcode is still in development. The QR codes are generated with the qrcode library, and AES-GCM encryption is provided by crypto-js.",
 		originalPage: "/qr-enc",
@@ -305,7 +305,7 @@ export const aboutInfo = [
 			"Check your IP address and location with ease. Quickly view your current IP, ISP, and country details, with one-click copy to clipboard.",
 		steps: [
 			"Click 'Get My IP Info'.",
-			"Instantly view your up-to-date IP address.",
+			"Instantly view your up to date IP address.",
 			"Easily copy the IP address to your clipboard.",
 			"See additional details like your country and Internet Service Provider (ISP)."
 		],
@@ -318,7 +318,7 @@ export const aboutInfo = [
 		id: "about-totp-sim",
 		title: "About TOTP & Captcha Simulator",
 		description:
-			"This tool simulates Time-Based One-Time Passwords (TOTP) and bot-detection captchas to demonstrate multifactor authentication and protection against automated attacks.",
+			"This tool simulates Time Based One Time Passwords (TOTP) and bot-detection captchas to demonstrate multifactor authentication and protection against automated attacks.",
 		steps: [
 			"TOTP is a simple method where a hash value is generated every 30 seconds from a 6-digit PIN. The user enters the PIN, and the hash values are compared. If they match, a success message is shown; if not, a new code is generated. In real cases, the 6-digit PIN is shared through an authentication app like Google Authenticator.",
 			"The bot captcha is another simple method using randomly generated math equations. Solving them correctly proves you are human. There is also a honeypot trap to detect bots if a hidden input is filled. Additionally, answering the equations too quickly can indicate bot activity. This is a basic method; advanced bots can be designed to bypass it."
@@ -334,7 +334,7 @@ export const aboutInfo = [
 		steps: [
 			"You can create a password of any length and split it into chunks using hyphens for readability.",
 			"By default, the full ASCII character range is used, including special characters. You can uncheck the box to limit the set to standard characters (a-z, A-Z, 0-9).",
-			"Each time you click 'Generate Password,' six new randomly generated passwords are created, which you can easily copy to the clipboard by clicking the icon in the top-right corner."
+			"Each time you click 'Generate Password,' six new randomly generated passwords are created, which you can easily copy to the clipboard by clicking the icon in the top right corner."
 		],
 		originalPage: "/password-gen",
 		linkText: "Go to Password Generator"

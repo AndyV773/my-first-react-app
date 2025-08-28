@@ -4,26 +4,27 @@ import CryptoJS from "crypto-js";
 
 
 self.addEventListener("message", async (e) => {
-    const { type, load, hash1Iterations, hash2Iterations, depth, phase, sizeIterations, useXor, reverse, chunkSize } = e.data;
+    const { type, load, hash1Iterations, hash2Iterations, depth, phase, sizeIterations, xor, reverse, chunkSize } = e.data;
 
     if (type === "encode") {
         const { dataInput, keyInput } = load;
 
         try {
-            const { key, hash1, hash2 } = await deriveKey(keyInput, hash1Iterations, hash2Iterations, depth, phase, sizeIterations, chunkSize, reverse);
+            const { key, hash1, hash2 } = await deriveKey(keyInput, hash1Iterations, hash2Iterations, depth, phase, sizeIterations, reverse, chunkSize);
+            
             const salt = generateSaltBytes();
             const newInput = new Uint8Array(dataInput.length + salt.length);
             newInput.set(salt, 0);                 
             newInput.set(dataInput, salt.length); 
  
             const expandedData = expandUint8(newInput);
-            const xor = xorUint8(expandedData, hash1)
-            const shuffled = seededShuffleRev(xor, hash2);
-            const dataOutput = useXor ? xorUint8(shuffled, key) : rotateBytes(shuffled, key);
+            const encode = xorUint8(expandedData, hash1)
+            const shuffled = seededShuffleRev(encode, hash2);
+            const dataOutput = xor === 1 ? xorUint8(shuffled, key) : rotateBytes(shuffled, key);
 
             self.postMessage({
                 type: "done-encode",
-                result: { dataOutput, key },
+                result: { dataOutput },
             });
         } catch (err) {
             self.postMessage({ type: "error", error: err?.message ?? String(err) });
@@ -32,13 +33,13 @@ self.addEventListener("message", async (e) => {
         const { dataInput, keyInput } = load;
 
         try {
-            
-            const { key, hash1, hash2 } = await deriveKey(keyInput, hash1Iterations, hash2Iterations, depth, phase, sizeIterations, chunkSize, reverse);
-            const output = useXor ? xorUint8(dataInput, key) : unrotateBytes(dataInput, key);
+            const { key, hash1, hash2 } = await deriveKey(keyInput, hash1Iterations, hash2Iterations, depth, phase, sizeIterations, reverse, chunkSize);
+
+            const output = xor === 1 ? xorUint8(dataInput, key) : unrotateBytes(dataInput, key);
             const unshuffle = seededShuffleRev(output, hash2, true)
 
-            const xor = xorUint8(unshuffle, hash1)
-            const reduced = reduceUint8(xor);
+            const decode = xorUint8(unshuffle, hash1)
+            const reduced = reduceUint8(decode);
             const dataOutput = reduced.slice(16);
             
             self.postMessage({
@@ -52,7 +53,7 @@ self.addEventListener("message", async (e) => {
 });
 
 
-async function deriveKey(keyInput, hash1Iterations, hash2Iterations, depth, phase, sizeIterations, chunkSize, reverse) {
+async function deriveKey(keyInput, hash1Iterations, hash2Iterations, depth, phase, sizeIterations, reverse, chunkSize) {
     let current = keyInput;
     
     // SHA-512 loop
@@ -70,7 +71,7 @@ async function deriveKey(keyInput, hash1Iterations, hash2Iterations, depth, phas
     const hash2 = current;
     const arr2 = powerHex(hash2, depth, phase, sizeIterations, chunkSize);
 
-    const combined = reverse ? [...arr2, ...arr1] : [...arr1, ...arr2];
+    const combined = reverse === 1 ? [...arr2, ...arr1] : [...arr1, ...arr2];
 
     const key = seededShuffle(combined, keyInput);
 
@@ -264,8 +265,11 @@ function seededShuffleRev(arr, key, reverse = false) {
 
 // Add random padding and length markers
 function expandUint8(uint8) {
-	const frontLen = Math.floor(Math.random() * 9999);
-	const backLen = Math.floor(Math.random() * 9999);
+	// const frontLen = Math.floor(Math.random() * 9999);
+	// const backLen = Math.floor(Math.random() * 9999);
+    // Generate random lengths securely (0–9998)
+    const frontLen = crypto.getRandomValues(new Uint32Array(1))[0] % 9999;
+    const backLen = crypto.getRandomValues(new Uint32Array(1))[0] % 9999;
 
 	// generate random paddings
 	const frontPad = new Uint8Array(frontLen);
