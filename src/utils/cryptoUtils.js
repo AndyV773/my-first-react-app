@@ -7,20 +7,24 @@ export function textEncoder(input) {
   	return new TextEncoder().encode(input);
 }
 
+
 // text decoder helper
 export function textDecoder(input) {
   	return new TextDecoder().decode(input);
 }
+
 
 // pako compression helper
 export function compress(input) {
   	return pako.deflate(input);
 }
 
+
 // pako decompression help
 export function decompress(input) {
   	return pako.inflate(input);
 }
+
 
 export const sha256 = async (data) => {
 	const buffer = await crypto.subtle.digest("SHA-256", data);
@@ -29,6 +33,7 @@ export const sha256 = async (data) => {
 		.join("");
 };
 
+
 // Salt utilities
 export function generateSaltBytes(length = 16) {
     const array = new Uint8Array(length);
@@ -36,11 +41,13 @@ export function generateSaltBytes(length = 16) {
     return array;
 }
 
+
 export function bytesToHex(array) {
     return Array.from(array)
         .map(b => b.toString(16).padStart(2, '0'))
         .join('');
 }
+
 
 // Convert a hexadecimal string (e.g., from SHA-256) into a byte array
 function hexToBytes(hex) {
@@ -52,6 +59,56 @@ function hexToBytes(hex) {
     return bytes;
 }
 
+
+// convert uint8 to base64 in chunks to avoid call stack
+export function uint8ToBase64(uint8) {
+	let binary = "";
+	const chunkSize = 0x8000; // Avoid call stack overflow
+	for (let i = 0; i < uint8.length; i += chunkSize) {
+		binary += String.fromCharCode(...uint8.subarray(i, i + chunkSize));
+	}
+	return btoa(binary);
+}
+
+
+export function base64ToUint8(base64) {
+	const binary = atob(base64);
+	const len = binary.length;
+	const bytes = new Uint8Array(len);
+	for (let i = 0; i < len; i++) {
+		bytes[i] = binary.charCodeAt(i);
+	}
+	return bytes;
+}
+
+
+// Uint8 → Uint32, prepend length, pad to multiple of 4
+export function uint8ToUint32(uint8) {
+	// Prepend length (as 4 bytes)
+	const lengthArray = new Uint32Array([uint8.length]); 
+	const paddedLength = Math.ceil(uint8.length / 4) * 4; // round up to multiple of 4
+
+	// New buffer big enough for length (4 bytes) + padded data
+	const combined = new Uint8Array(4 + paddedLength);
+	combined.set(new Uint8Array(lengthArray.buffer), 0);
+	combined.set(uint8, 4);
+
+	return new Uint32Array(combined.buffer);
+}
+
+
+// Uint32 → Uint8, read length, trim padding
+export function uint32ToUint8(uint32) {
+	const view = new DataView(uint32.buffer);
+
+	// First 4 bytes = original length
+	const originalLength = view.getUint32(0, true);
+	const full = new Uint8Array(uint32.buffer, 4);
+
+	return full.slice(0, originalLength);
+}
+
+
 // PRNG based on seed string
 function mulberry32(seed) {
     return function () {
@@ -62,6 +119,7 @@ function mulberry32(seed) {
         return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
     };
 }
+
 
 // Shuffle/unshuffle using deterministic PRNG
 // Fisher-Yates shuffle algorithm
@@ -82,6 +140,7 @@ function seededShuffle(array, key, reverse = false) {
     }
     return result;
 }
+
 
 /**
  * Performs a deterministic shuffle of input data using a key-derived seed.
@@ -120,6 +179,7 @@ export function fishersShuffle(input, key) {
 
     return { result: combined };
 }
+
 
 export function fishersUnshuffle(fileInput, key) {
 	if (!fileInput) {
@@ -192,6 +252,7 @@ export function aesCbcEncrypt(inputBytes, password) {
 		return { error: "Encryption failed: " + err.message };
 	}
 }
+
 
 /**
  * Decrypts a Uint8Array encrypted using AES-CBC with a password-derived key.
@@ -295,26 +356,6 @@ export function randomizer(allChar, uint32 = false) {
 	return value;
 }
 
-// convert uint8 to base64 in chunks to avoid call stack
-export function uint8ToBase64(uint8) {
-	let binary = "";
-	const chunkSize = 0x8000; // Avoid call stack overflow
-	for (let i = 0; i < uint8.length; i += chunkSize) {
-		binary += String.fromCharCode(...uint8.subarray(i, i + chunkSize));
-	}
-	return btoa(binary);
-}
-
-export function base64ToUint8(base64) {
-	const binary = atob(base64);
-	const len = binary.length;
-	const bytes = new Uint8Array(len);
-	for (let i = 0; i < len; i++) {
-		bytes[i] = binary.charCodeAt(i);
-	}
-	return bytes;
-}
-
 
 // AES-GCM encrypt data with password, returns base64 string
 export async function aesGcmEncrypt(data, password) {
@@ -405,6 +446,7 @@ export const hashArgon2 = async (input, iterations = 3, hashToVerify = null, ver
 	return result.encoded;
 };
 
+
 export const rotateBytes = (bytes, keyArray) => {
     const result = new Uint8Array(bytes.length);
 
@@ -415,6 +457,7 @@ export const rotateBytes = (bytes, keyArray) => {
     return result;
 };
 
+
 export const unrotateBytes = (bytes, keyArray) => {
     const result = new Uint8Array(bytes.length);
 
@@ -424,6 +467,7 @@ export const unrotateBytes = (bytes, keyArray) => {
 
     return result;
 };
+
 
 // Uses XOR and a hash-based key (hex string)
 export function xorUint8(inputBytes, hashHex) {
@@ -437,6 +481,7 @@ export function xorUint8(inputBytes, hashHex) {
 
     return result; 
 }
+
 
 export const xorUint32 = (data, keyArray) => {
     const result = new Uint32Array(data.length);
@@ -474,6 +519,7 @@ export function expandUint8(uint8) {
 	return combined;
 }
 
+
 // Reverse the process and extract the original data
 export function reduceUint8(uint8) {
 	if (uint8.length < 2) throw new Error("Invalid data");
@@ -486,30 +532,4 @@ export function reduceUint8(uint8) {
 
 	return original;
 }
-
-// Uint8 → Uint32, prepend length, pad to multiple of 4
-export function uint8ToUint32(uint8) {
-	// Prepend length (as 4 bytes)
-	const lengthArray = new Uint32Array([uint8.length]); 
-	const paddedLength = Math.ceil(uint8.length / 4) * 4; // round up to multiple of 4
-
-	// New buffer big enough for length (4 bytes) + padded data
-	const combined = new Uint8Array(4 + paddedLength);
-	combined.set(new Uint8Array(lengthArray.buffer), 0);
-	combined.set(uint8, 4);
-
-	return new Uint32Array(combined.buffer);
-}
-
-// Uint32 → Uint8, read length, trim padding
-export function uint32ToUint8(uint32) {
-	const view = new DataView(uint32.buffer);
-
-	// First 4 bytes = original length
-	const originalLength = view.getUint32(0, true);
-	const full = new Uint8Array(uint32.buffer, 4);
-
-	return full.slice(0, originalLength);
-}
-
 

@@ -182,8 +182,8 @@ const OptQuantEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
     <main className="container">
         <nav>
             <div className="flex g1">
-            <Link to="/">Home</Link>
-            <Link to="/opt-quant-dec">Decode</Link>
+                <Link to="/">Home</Link>
+                <Link to="/opt-quant-dec">Decode</Link>
             </div>
             <ThemeToggle theme={theme} onToggle={onToggleTheme} />
         </nav>

@@ -15,6 +15,11 @@ export const About = ({ showMsg }) => {
         }
     }, [hash]);
 
+    const scrollToTop = (e) => {
+        e.preventDefault(); 
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
     const [contactForm, setContactForm] = useState({
         name: "",
         email: "",
@@ -88,6 +93,22 @@ export const About = ({ showMsg }) => {
                 </ol>
             )}
 
+            <p className="about-link">
+                {appDescription.additional
+                    .split('\n\n') // split into paragraphs
+                    .map((para, pIndex) => (
+                    <React.Fragment key={pIndex}>
+                        {para.split(/\[link\]|\[\/link\]/).map((part, i, arr) => (
+                        <React.Fragment key={i}>
+                            {part}
+                            {i < arr.length - 1 && <Link to="/obfuscation-tools">Obfuscation Tools</Link>}
+                        </React.Fragment>
+                        ))}
+                        {pIndex < appDescription.additional.split('\n\n').length - 1 && <><br /><br /></>}
+                    </React.Fragment>
+                ))}
+            </p>
+
             <h2>Features and Tools</h2>
             {otherTools.map(({ id, title, description, steps, additional, originalPage, linkText }) => (
                 <section key={id} id={id} className="about-box">
@@ -105,7 +126,8 @@ export const About = ({ showMsg }) => {
                     <p>{additional}</p>
 
                     {originalPage && (
-                        <p className="about-link">
+                        <p className="about-link flex space-between">
+                            <a href="#top" onClick={scrollToTop}>Top &#11014;</a>
                             <Link className="toolbox-link" to={originalPage}>{linkText}</Link>
                         </p>
                     )}

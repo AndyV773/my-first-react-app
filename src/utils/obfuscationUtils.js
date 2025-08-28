@@ -1,5 +1,5 @@
 import pako from 'pako';
-import { textDecoder, textEncoder } from './cryptoUtils';
+import { textEncoder } from './cryptoUtils';
 
 // Reverse
 export function reverseString(text) {
@@ -118,7 +118,7 @@ export function xorBase64Decode(encoded, key = 42) {
       .map(c => String.fromCharCode(c.charCodeAt(0) ^ key))
       .join('');
   } catch {
-    return 'Invalid XOR encoded input.';
+    return 'Error: Invalid XOR encoded input.';
   }
 }
 
@@ -136,7 +136,7 @@ export function hexDecode(hex) {
       .map(b => String.fromCharCode(parseInt(b, 16)))
       .join('');
   } catch {
-    return 'Invalid hex input.';
+    return 'Error: Invalid hex input.';
   }
 }
 
@@ -149,7 +149,7 @@ export function base64Decode(encoded) {
   try {
     return decodeURIComponent(escape(atob(encoded)));
   } catch {
-    return 'Invalid base64 input.';
+    return 'Error: Invalid base64 input.';
   }
 }
 
@@ -164,7 +164,7 @@ export function decompressText(text) {
     const binary = atob(text).split('').map(c => c.charCodeAt(0));
     return pako.inflate(new Uint8Array(binary), { to: 'string' });
   } catch {
-    return 'Invalid compressed text.';
+    return 'Error: Invalid compressed text.';
   }
 }
 
@@ -198,90 +198,62 @@ export function fromUint16Array(str) {
 }
 
 
+/**
+ * Convert string → Uint32Array
+ */
+export function toUint32Array(str) {
+    const bytes = textEncoder(str); // string → Uint8Array
+    const paddedLength = Math.ceil(bytes.length / 4) * 4;
+    const padded = new Uint8Array(paddedLength);
+    padded.set(bytes);
 
-
-export function toUint32Array(uint8) {
-    // Convert input to Uint8Array if it's a string
-    uint8 = typeof uint8 === "string" ? textEncoder(uint8) : uint8;
-
-    // Compute padded length (multiple of 4)
-    const paddedLength = Math.ceil(uint8.length / 4) * 4;
-
-    // Create a new Uint8Array with padding (default 0)
-    const combined = new Uint8Array(paddedLength);
-    combined.set(uint8); // copy original data
-
-    // Return as Uint32Array
-    return new Uint32Array(combined.buffer);
-}
-
-export function fromUint32Array(uint32Array) {
-    const bytes = [];
-
+    const uint32Array = new Uint32Array(paddedLength / 4);
     for (let i = 0; i < uint32Array.length; i++) {
-        const val = uint32Array[i];
-        bytes.push((val >>> 24) & 0xFF);
-        bytes.push((val >>> 16) & 0xFF);
-        bytes.push((val >>> 8) & 0xFF);
-        bytes.push(val & 0xFF);
-    }
-
-    // Remove trailing zeros from the last integer
-    while (bytes[bytes.length - 1] === 0) {
-        bytes.pop();
-    }
-
-    return textDecoder(new Uint8Array(bytes));
-}
-
-
-
-
-
-export function toUit32Array(uint8) {
-    uint8 = textEncoder(uint8); // if input is string
-    const fullWords = Math.floor(uint8.length / 4); // full 4-byte chunks
-    const leftover = uint8.length % 4;
-
-    // Create Uint32Array just big enough for full 4-byte words
-    const uint32Array = new Uint32Array(fullWords + (leftover ? 1 : 0));
-
-    // Pack 4 bytes into each 32-bit integer
-    for (let i = 0; i < fullWords; i++) {
         uint32Array[i] =
-            (uint8[i * 4] << 24) |
-            (uint8[i * 4 + 1] << 16) |
-            (uint8[i * 4 + 2] << 8) |
-            uint8[i * 4 + 3];
-    }
-
-    // Handle leftover bytes (if any)
-    if (leftover) {
-        let last = 0;
-        for (let i = 0; i < leftover; i++) {
-            last |= uint8[fullWords * 4 + i] << ((3 - i) * 8);
-        }
-        uint32Array[fullWords] = last;
+            (padded[i * 4] << 24) |
+            (padded[i * 4 + 1] << 16) |
+            (padded[i * 4 + 2] << 8) |
+            (padded[i * 4 + 3]);
     }
 
     return uint32Array;
 }
 
-
-export function fromUint32Arr(uint32Array, originalLength = 5) {
-    const uint8 = new Uint8Array(uint32Array.length * 4);
-
-    for (let i = 0; i < uint32Array.length; i++) {
-        const val = uint32Array[i];
-        uint8[i * 4]     = (val >>> 24) & 0xFF;
-        uint8[i * 4 + 1] = (val >>> 16) & 0xFF;
-        uint8[i * 4 + 2] = (val >>> 8) & 0xFF;
-        uint8[i * 4 + 3] = val & 0xFF;
+/**
+ * Convert Uint32Array (or array/CSV string input) → Uint8Array
+ */
+export function fromUint32Array(input) {
+    // normalize input to Uint32Array
+    let uint32Array;
+    if (input instanceof Uint32Array) {
+        uint32Array = input;
+    } else if (Array.isArray(input)) {
+        uint32Array = new Uint32Array(input);
+    } else if (typeof input === "string") {
+        const parts = input.split(",").map(n => parseInt(n.trim(), 10));
+        if (parts.some(isNaN)) return "Error: Invalid Uint32 input."; 
+        uint32Array = new Uint32Array(parts);
+    } else {
+        return "Error: Invalid Uint32 input.";
     }
 
-    // Trim extra padding bytes if original length is provided
-    return originalLength !== undefined ? uint8.subarray(0, originalLength) : uint8;
-}
+    const bytes = new Uint8Array(uint32Array.length * 4);
+    for (let i = 0; i < uint32Array.length; i++) {
+        const val = uint32Array[i];
+        const offset = i * 4;
+        bytes[offset]     = (val >>> 24) & 0xFF;
+        bytes[offset + 1] = (val >>> 16) & 0xFF;
+        bytes[offset + 2] = (val >>> 8)  & 0xFF;
+        bytes[offset + 3] = val & 0xFF;
+    }
 
+    // remove trailing padding zeros
+    // let end = bytes.length;
+    // while (end > 0 && bytes[end - 1] === 0) end--;
+
+    // return bytes.subarray(0, end);
+    
+    return bytes;
+}
 
 

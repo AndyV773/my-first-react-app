@@ -13,6 +13,7 @@ export const aboutInfo = [
 			"secrets.js-grempe - JavaScript library for Shamir's Secret Sharing: (https://github.com/grempe/secrets.js)",
 			"jszip - For creating, reading, and editing .zip files in JavaScript: (https://stuk.github.io/jszip/)"
 		],
+		additional:"Not all characters displayed in the text outputs are safe to copy and paste to the clipboard without losing the original data. This is because not all binary data maps directly to UTF-8 Unicode code points, which is why you will often see '�' characters. These are replacement characters that indicate invalid or unmappable bytes.\n\nIf you enter these replacement characters into the Unicode tools here [link], they will all produce the same outputs, unlike 'tofu boxes' that may display different Unicode points. This means that even if the underlying data is displayed as [3751477356, 3862270976], copying the characters directly will cause you to lose this information.\n\nTo preserve the original format, you must either save the data as a file or convert it to Base64. Base64 encoding safely maintains the original binary data while allowing you to copy it to the clipboard. Note that Base64 adds approximately 33% overhead, as each 6 bits of binary data is represented using standard ASCII characters.\n\nThere are also alternative encodings such as Base85/Base91 that can hold more characters with less overheads; these may be explored at a later date."
 	},
 	{
 		id: "about-obfuscation-tools",

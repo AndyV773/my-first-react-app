@@ -28,11 +28,11 @@ function LockScreen({ onUnlock, showMsg }) {
             {error && <p>{error}</p>}
             <form onSubmit={handleSubmit}>
                 <input
-                value={input}
-                onChange={(e) => setInput(date)}  // e.target.value
-                placeholder="DD/MM/YYYY"
-                required
-                autoFocus
+                    value={input}
+                    onChange={(e) => setInput(date)}  // e.target.value
+                    placeholder="DD/MM/YYYY"
+                    required
+                    autoFocus
                 />
                 <button id='unlock' type="submit">Unlock</button>
             </form>
