@@ -49,7 +49,6 @@ const TotpSim = ({ showMsg, theme, onToggleTheme }) => {
         const string = random.toString();
 
         const hash = await sha256(textEncoder(string));
-
         setHash(hash);
 
         return string;
@@ -91,10 +90,10 @@ const TotpSim = ({ showMsg, theme, onToggleTheme }) => {
         return () => clearInterval(interval);
     }, []);
 
-
-
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (inputCode === "") return showMsg("Error: Input invalid", true);
+        if (isNaN(inputCode)) return showMsg("Error: Input must be a number", true);
         const inputHash = await sha256(textEncoder(inputCode));
 
         if (inputHash === hash) {
@@ -108,7 +107,6 @@ const TotpSim = ({ showMsg, theme, onToggleTheme }) => {
         }
     };
 
-
     const handleCaptcha = () => {
         if (honeypot !== '') {
             setResult("Try again.");
@@ -119,21 +117,24 @@ const TotpSim = ({ showMsg, theme, onToggleTheme }) => {
             return;
         }
 
+        if (answer === "") return showMsg("Error: Input invalid", true);
+        if (isNaN(answer)) return showMsg("Error: Input must be a number", true);
+
         const timeTaken = (Date.now() - startTime.current) / 1000;
-        if (timeTaken < 2) {
-            setResult("Try again.");
-            showMsg("Too fast. Bots usually submit instantly.", true);
-            setChallenge(generateChallenge());
-            setAnswer('');
-            setHoneypot('');
-            startTime.current = Date.now();
-            return;
-        }
 
         const userAnswer = parseInt(answer.trim(), 10);
         const correctAnswer = challenge.op.func(challenge.a, challenge.b);
 
         if (userAnswer === correctAnswer) {
+            if (timeTaken < 2) {
+                setResult("Try again.");
+                showMsg("Too fast. Bots usually submit instantly.", true);
+                setChallenge(generateChallenge());
+                setAnswer('');
+                setHoneypot('');
+                startTime.current = Date.now();
+                return;
+            }
             setResult("Success!");
             showMsg("Success! You are human.", false);
         } else {

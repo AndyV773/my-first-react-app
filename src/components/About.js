@@ -99,10 +99,10 @@ export const About = ({ showMsg }) => {
                     .map((para, pIndex) => (
                     <React.Fragment key={pIndex}>
                         {para.split(/\[link\]|\[\/link\]/).map((part, i, arr) => (
-                        <React.Fragment key={i}>
-                            {part}
-                            {i < arr.length - 1 && <Link to="/obfuscation-tools">Obfuscation Tools</Link>}
-                        </React.Fragment>
+                            <React.Fragment key={i}>
+                                {part}
+                                {i < arr.length - 1 && <Link to="/obfuscation-tools">Obfuscation Tools</Link>}
+                            </React.Fragment>
                         ))}
                         {pIndex < appDescription.additional.split('\n\n').length - 1 && <><br /><br /></>}
                     </React.Fragment>
@@ -127,7 +127,7 @@ export const About = ({ showMsg }) => {
 
                     {originalPage && (
                         <p className="about-link flex space-between">
-                            <a href="#top" onClick={scrollToTop}>Top &#11014;</a>
+                            <a href="#top" onClick={scrollToTop}>Top &uarr;</a>
                             <Link className="toolbox-link" to={originalPage}>{linkText}</Link>
                         </p>
                     )}
