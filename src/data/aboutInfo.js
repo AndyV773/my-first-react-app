@@ -25,11 +25,13 @@ export const aboutInfo = [
 			"ROT13 / ROT18 / ROTN: Apply letter/number rotation to obfuscate the text.",
 			"XOR / XOR + Base64: Obfuscate text using XOR with optional Base64 encoding; can also decode.",
 			"Base64 Encode/Decode: Convert text to/from Base64 representation.",
+			"Base85 Encode/Decode: Convert text to/from Base85 representation.",
+			"Base91 Encode/Decode: Convert text to/from Base91 representation.",
 			"Compress/Decompress (Zlib): Compress text to reduce size, or decompress it back to original.",
 			"Hex Encode/Decode: Convert text to/from hexadecimal representation.",
 			"Unicode Escape/Unescape (UTF-8): Escape or unescape text to/from UTF-8 Unicode sequences.",
 			"Unicode Escape/Unescape (UTF-16): Escape or unescape text to/from UTF-16 Unicode sequences.",
-			"Unicode Escape/Unescape (Code Points): Escape or unescape text using full Unicode code points (32-bit).",
+			"Unicode Escape/Unescape (Code Points): Escape or unescape text using full Unicode code points (21-bit).",
 			"Unit 8 Array (8 bits): Convert text to/from 8-bit arrays; each element stores 0 - 255.",
 			"Unit 16 Array (16 bits): Convert text to/from 16-bit arrays; each element stores 0 - 65,535.",
 			"Uint32 Array (32 bits): Convert text to/from 32-bit arrays; each element stores 0 - 4,294,967,295."
@@ -99,7 +101,7 @@ export const aboutInfo = [
 			"Quantum Shuffle applies a high load randomisation process to files or text, using rotation with Unicode code points. You can choose to further encrypt the data using AES-GCM. The process is broken down into stages, allowing you to view the transformation at each stage.",
 		steps: [
 			"Upload a file or input text. Files are Base64 encoded to handle the binary as text format.",
-			"The character range is kept between 10000 to reduce computation. You can check the box to use all characters in the range of 1,114,112 (0x10FFFF) Unicode characters.",
+			"The character range is limited to 10,000 by default to reduce computation. You can check the box to use all 1,114,112 Unicode code points (0x10FFFF). This range excludes surrogate pairs for safer handling. Surrogate pairs are code points that require a high and low surrogate together (\\uD83D\\uDCA9) to represent a single character.",
 			"When you click Shuffle, a random number is generated for each character within the desired range. This number and the original input are used to generate a new Unicode code point representing the data. It is then split into two outputs: the shuffled data and the rotation key.",
 			"Next, you have the choice to add AES-GCM encryption using a separate key for both the data and the key. You can also choose to skip encryption.",
 			"In the final stage, you can choose to store and save the binary data as Base64. This is the preferred method for QR codes, as some QR codes will not generate correctly with binary data.",

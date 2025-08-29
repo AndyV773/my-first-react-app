@@ -20,6 +20,10 @@ import {
 	hexDecode,
 	base64Encode,
 	base64Decode,
+	base85Encode,
+	base85Decode,
+	base91Encode,
+	base91Decode,
 	compressText,
 	decompressText,
 	toUint8Array,
@@ -50,23 +54,26 @@ const ObfuscationTools = ({ theme, onToggleTheme }) => {
 
 	const doRotN = () => {
 		const text = document.getElementById('rot_input').value;
-		const n = parseInt(document.getElementById('rot_n_value').value) || 13;
+		const n = parseInt(document.getElementById('rot_n_value').value) || 7;
 		document.getElementById('rot_output').innerText = rotN(text, n);
 	};
 
 	const doXor = () => {
 		const text = document.getElementById('xor_input').value;
-		document.getElementById('xor_output').innerText = xorShuffle(text);
+		const n = parseInt(document.getElementById('xor_value').value) || 42;
+		document.getElementById('xor_output').innerText = xorShuffle(text, n);
 	};
 
 	const doXorBase64 = () => {
 		const text = document.getElementById('xor_input').value;
-		document.getElementById('xor_output').innerText = xorBase64Encode(text);
+		const n = parseInt(document.getElementById('xor_value').value) || 42;
+		document.getElementById('xor_output').innerText = xorBase64Encode(text, n);
 	};
 
 	const doXorBase64Decode = () => {
 		const text = document.getElementById('xor_input').value;
-		document.getElementById('xor_output').innerText = xorBase64Decode(text);
+		const n = parseInt(document.getElementById('xor_value').value) || 42;
+		document.getElementById('xor_output').innerText = xorBase64Decode(text, n);
 	};
 
 	const doUnicodeEscape8 = () => {
@@ -117,6 +124,25 @@ const ObfuscationTools = ({ theme, onToggleTheme }) => {
 	const doBase64Decode = () => {
 		const text = document.getElementById('base64_input').value;
 		document.getElementById('base64_output').innerText = base64Decode(text);
+	};
+	const doBase85Encode = () => {
+		const text = document.getElementById('base85_input').value;
+		document.getElementById('base85_output').innerText = base85Encode(text);
+	};
+
+	const doBase85Decode = () => {
+		const text = document.getElementById('base85_input').value;
+		document.getElementById('base85_output').innerText = base85Decode(text);
+	};
+
+	const doBase91Encode = () => {
+		const text = document.getElementById('base91_input').value;
+		document.getElementById('base91_output').innerText = base91Encode(text);
+	};
+
+	const doBase91Decode = () => {
+		const text = document.getElementById('base91_input').value;
+		document.getElementById('base91_output').innerText = base91Decode(text);
 	};
 
 	const doCompress = () => {
@@ -196,11 +222,11 @@ const ObfuscationTools = ({ theme, onToggleTheme }) => {
 				<textarea id="rot_input" placeholder="Enter text for ROT"></textarea>
 				<label htmlFor="rot_n_value">Input rotation value</label>
 				<input
-				type="number"
-				id="rot_n_value"
-				name="rot_n_value"
-				placeholder="Enter ROTN value"
-				defaultValue="7"
+					type="number"
+					id="rot_n_value"
+					name="rot_n_value"
+					placeholder="Enter ROTN value"
+					defaultValue="7"
 				/>
 				<div className="flex g1">
 					<button onClick={doRot13} className="encode">ROT13</button>
@@ -213,6 +239,13 @@ const ObfuscationTools = ({ theme, onToggleTheme }) => {
 			<section>
 				<h3>XOR / XOR + Base64</h3>
 				<textarea id="xor_input" placeholder="Enter text for XOR"></textarea>
+				<input
+					type="number"
+					id="xor_value"
+					name="xor_value"
+					placeholder="Enter XOR key"
+					defaultValue="42"
+				/>
 				<div id='xor-btn' className="flex g1 wrap">
 					<div className="flex fg2300 g1">
 						<button onClick={doXor} className="encode">XOR</button>
@@ -227,12 +260,35 @@ const ObfuscationTools = ({ theme, onToggleTheme }) => {
 
 			<section>
 				<h3>Base64 Encode/Decode</h3>
+				<p>Uses 64 characters (A-Z, a-z, 0-9, +, /). This add a overhead ~33%.</p>
 				<textarea id="base64_input" placeholder="Enter text for Base64"></textarea>
 				<div className="flex g1">
 					<button onClick={doBase64Encode} className="encode">Encode</button>
 					<button onClick={doBase64Decode} className="decode">Decode</button>   
 				</div>
 				<PreCopyOutputBlock outputId="base64_output" />
+			</section>
+
+			<section>
+				<h3>Base85 Encode/Decode</h3>
+				<p>Uses 85 characters (A-Z, a-z, 0-9, and !-u). This adds a overhead ~25%.</p>
+				<textarea id="base85_input" placeholder="Enter text for Base85"></textarea>
+				<div className="flex g1">
+					<button onClick={doBase85Encode} className="encode">Encode</button>
+					<button onClick={doBase85Decode} className="decode">Decode</button>   
+				</div>
+				<PreCopyOutputBlock outputId="base85_output" />
+			</section>
+
+			<section>
+				<h3>Base91 Encode/Decode</h3>
+				<p>Uses 91 characters (A-Z, a-z, 0-9, and ! # $ % & ( ) * + , . : / ; &lt; = &gt; ? @ [ ] ^ _ ` &#x7b; &#x7c; &#x7d; ~ &#x22;). This adds a overhead of ~23%.</p>
+				<textarea id="base91_input" placeholder="Enter text for Base91"></textarea>
+				<div className="flex g1">
+					<button onClick={doBase91Encode} className="encode">Encode</button>
+					<button onClick={doBase91Decode} className="decode">Decode</button>   
+				</div>
+				<PreCopyOutputBlock outputId="base91_output" />
 			</section>
 
 			<section>
@@ -277,7 +333,7 @@ const ObfuscationTools = ({ theme, onToggleTheme }) => {
 
 			<section>
 				<h3>Unicode Escape/Unescape (Code Points)</h3>
-				<p>Code points range from 0 to 4,294,967,295 (0xFFFFFFFF), which fits within a 32-bit unsigned integer (Uint32Array).</p>
+				<p>Code points range from 0 to 1,114,112 (0x10FFFF).</p>
 				<textarea id="input_points" placeholder="Enter text for Unicode escape"></textarea>
 				<div className="flex g1">
 					<button onClick={doStringCodePoints} className="encode">Escape</button>
