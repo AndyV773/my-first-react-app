@@ -144,26 +144,10 @@ export const aboutInfo = [
 		linkText: "Go to Quantum Shuffle Uint32"
 	},
 	{
-		id: "about-rot-encoder",
-		title: "About Rotation Encoder Uint8",
-		description:
-			"This tool applies byte-wise rotation with wrap-around (byte-wise mod 256), modifying the values of a Uint8 array across all 256 possible byte values.",
-		steps: [
-			"Upload a file or enter text.",
-			"You can randomly generate a key first, then use the slider to select the range of values from 256-1024. Any value over 256 will wrap around from 0-256.",
-			"Next, enter the number of rotations you would like. The best approach is to have a key the same length as the input for maximum randomness. If the key is shorter than the data, it will repeat to match the length of the data.",
-			"Alternatively, you can enter values manually, separated by commas. Once done, you can download the key as a .txt file.",
-			"Click 'Encode' to see the UTF-8 output. You can then download it as a .ec file.",
-			"To decode, upload the data and input the key or upload the key file. Click 'Decode' and the original output will be restored."
-		],
-		originalPage: "/rot-encoder",
-		linkText: "Go to Rotation Encoder"
-	},
-	{
 		id: "about-xor-based",
 		title: "About XOR-Based Hash Encoder",
 		description:
-			"Explore how XOR-based encoding combines with hashing to provide a lightweight method of obscuring data and adding security.",
+		"Explore how XOR-based encoding combines with hashing to provide a lightweight method of obscuring data and adding security.",
 		steps: [
 			"Upload a file or enter text.",
 			"The input box allows you to specify how many iterations you would like to apply with different hash keys.",
@@ -177,20 +161,36 @@ export const aboutInfo = [
 		linkText: "Go to XOR-Based Hash Encoder"
 	},
 	{
-		id: "about-xor-enc",
-		title: "About XOR Uint32",
+		id: "about-rot-encoder",
+		title: "About ROT/XOR Uint8",
 		description:
-			"XOR encoding with a Uint32 array using bitwise shuffling for each 32-bit chunk.",
+			"This tool applies byte-wise rotation with wrap-around (byte-wise mod 256), or XOR, modifying the values of a Uint8 array across all 256 possible byte values.",
+		steps: [
+			"Upload a file or input text. By default, ROT (rotation) is used, but you can use a checkbox to switch to XOR.",
+			"You can randomly generate a key first, then use the slider to select the range of values from 256-1024. Any value over 256 will wrap around from 0-256 for rotation, while XOR will operate directly on the bits.",
+			"Next, enter the ammount of key numbers you would like, and click 'Generate key'. The best approach is to have a key the same length as the input for maximum randomness. If the key is shorter than the data, it will repeat to match the length of the data.",
+			"Alternatively, you can enter values manually, separated by commas. Once done, you can download the key as a .txt file.",
+			"Click 'Encode' to see the UTF-8 output. You can then download it as a .ec file.",
+			"To decode, upload the data and input the key or upload the key file. Click 'Decode' and the original output will be restored."
+		],
+		originalPage: "/rot-encoder",
+		linkText: "Go to ROT/XOR Uint8"
+	},
+	{
+		id: "about-xor-enc",
+		title: "About ROT/XOR Uint32",
+		description:
+			"ROT or XOR encoding with a Uint32 array using bitwise shuffling for each 32-bit chunk.",
 		steps:[
-			"Upload a file or input text.",
+			"Upload a file or input text. By default, ROT (rotation) is used, but you can use a checkbox to switch to XOR.",
 			"Select the numeric range using the slider (from 1,000,000 to 10,000,000,000) and enter the amount you would like to generate. A good rule of thumb is to generate 1 key block per 4 characters and add an additional one for the length. For instance, 'hello world' is 11-bytes, so generate 3 plus 1 for length, making 4 in total.",
-			"Click 'Generate' to create a random key, or experiment with different values by entering them manually. You can then download the key as a .txt file by clicking 'Download Key'.",
-			"Click 'Encode' to reveal the XOR shuffled message. This will show you the returned UTF-8 preview. You can then click 'Download' to save as a .ec32 file.",
+			"Click 'Generate key' to create a random key, or experiment with different values by entering them manually. You can then download the key as a .txt file by clicking 'Download Key'.",
+			"Click 'Encode' to reveal the ROT or XOR shuffled message. This will show you the returned UTF-8 preview. You can then click 'Download' to save as a .ec32 file.",
 			"To decode, upload the data and either upload or enter the key, then click 'Decode' to reveal the original data.",
 		],
-		additional: "This method works best if each key, separated by commas, is 10 digits long (32-bits) or negative numbers. For example, if the word is 'hello' (Uint8: 104,101,108,108,111), the original length is appended to the Uint32 array and will become [5,1819043176,111]. If XOR is done using a small key, only the first few bytes of the Uint32 array will change, leaving some original characters intact. This is still experimental, and improvements are being explored.",
+		additional: "This method works best if each key, separated by commas, is 10 digits long (32-bits) or negative numbers. For example, if the word is 'hello' (Uint8: 104,101,108,108,111), the original length is appended to the Uint32 array and will become [5, 1751477356, 1862270976]. If a small key is used, only the first few bytes of the Uint32 array will change, leaving some original characters intact. This is still experimental, and improvements are being explored.",
 		originalPage: "/xor-enc",
-		linkText: "Go to XOR Uint32"
+		linkText: "Go to ROT/XOR Uint32"
 	},
 	{
 		id: "about-sss",

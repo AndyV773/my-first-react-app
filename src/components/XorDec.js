@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from 'react-router-dom';
 import { uploadFile, uploadEncFile32, saveFileAsExt, detectFileExtension } from "../utils/fileUtils";
 import { ThemeToggle, useByteCounter } from "../utils/uiHelpers";
-import { textDecoder, uint32ToUint8, xorUint32 } from "../utils/cryptoUtils";
+import { textDecoder, uint32ToUint8, xorUint32, rotUint32 } from "../utils/cryptoUtils";
 
 
 const XorDec = ({ showMsg, theme, onToggleTheme }) => {
@@ -15,6 +15,8 @@ const XorDec = ({ showMsg, theme, onToggleTheme }) => {
     const [detectedExt, setDetectedExt] = useState("");
     const [inputBytes, setInputBytes] = useState(0);
     useByteCounter(utf8Preview, setInputBytes);
+    const [useXor, setUseXor] = useState(false);
+    
 
     const handleUploadEc = async (e) => {
         const file = e.target.files?.[0];
@@ -75,13 +77,14 @@ const XorDec = ({ showMsg, theme, onToggleTheme }) => {
                 return;
             }
             try {
-                console.log('data input', dataInput)
-                const unrotated = xorUint32(dataInput, keyArray);
-                console.log('unrotated', unrotated)
+                let unrotated;
+                if (useXor === true) {
+                    unrotated = xorUint32(dataInput, keyArray);
+                } else {
+                    unrotated = rotUint32(dataInput, keyArray, false);
+                }
 
                 const uint8 = uint32ToUint8(unrotated)
-                console.log('uint8', uint8)
-
                 const ext = await detectFileExtension(uint8);
 
                 setDetectedExt(ext);
@@ -94,7 +97,6 @@ const XorDec = ({ showMsg, theme, onToggleTheme }) => {
 
         const handleSaveFile = () => {
             if (!output) return showMsg("Nothing to save.", true);
-            
             saveFileAsExt(output, detectedExt);
         };
 
@@ -109,44 +111,47 @@ const XorDec = ({ showMsg, theme, onToggleTheme }) => {
             </nav>
 
             <div className="learn-more">
-                <h2>XOR Uint32</h2>
+                <h2>ROT/XOR Uint32</h2>
                 <Link to="/about#about-xor-enc">Learn more</Link>
             </div>
 
             <section>
                 <h2>Decoder</h2>
-                <p>Upload ec32 file</p>
+                <p>Upload .ec32 file</p>
                 <input type="file" onChange={handleUploadEc} />
                 {fileInfo && (
                     <p className="file-info">
                         File: {fileInfo.name}, Type: {fileInfo.type}, Size: {fileInfo.size}
                     </p>
                 )}
-
-                <div>
-                    <textarea
-                        rows="5"
-                        value={utf8Preview}
-                        placeholder="Input"
-                        readOnly
+                <textarea
+                    rows="5"
+                    value={utf8Preview}
+                    placeholder="Utf8 preview"
+                    readOnly
+                />
+                <p>
+                    Byte size: <span>{inputBytes}</span> bytes
+                </p>
+                <label>
+                    Use XOR:
+                    <input
+                        type="checkbox"
+                        checked={useXor}
+                        onChange={(e) => setUseXor(e.target.checked)}
                     />
-                    <p>
-                        Byte size: <span>{inputBytes}</span> bytes
-                    </p>
-                </div>
-
+                </label>
                 <p>Upload key file or enter key</p>
                 <input type="file" onChange={handleUploadKey} />
 
-                <label htmlFor="keyInput">Rotation Key (comma separated numbers):</label>
+                <label htmlFor="keyInput">Key (comma separated numbers):</label>
                 <input
                     id="keyInput"
                     type="text"
                     value={keyInput}
                     onChange={(e) => setKeyInput(e.target.value)}
-                    placeholder="e.g. 125,274,12,1,2789"
+                    placeholder="125,274,12,1,2789..."
                 />
-
                 <button onClick={handleDecode} className="decode">Decode</button>
             </section>
             <section className={outputVal ? "" : "hidden"}>

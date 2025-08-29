@@ -310,7 +310,7 @@ export function toUint32Array(str) {
 }
 
 /**
- * Convert Uint32Array (or array/CSV string input) → Uint8Array
+ * Convert Uint32Array → Uint8Array
  */
 export function fromUint32Array(input) {
     // normalize input to Uint32Array
@@ -336,12 +336,6 @@ export function fromUint32Array(input) {
         bytes[offset + 2] = (val >>> 8)  & 0xFF;
         bytes[offset + 3] = val & 0xFF;
     }
-
-    // remove trailing padding zeros
-    // let end = bytes.length;
-    // while (end > 0 && bytes[end - 1] === 0) end--;
-
-    // return bytes.subarray(0, end);
     
     return bytes;
 }

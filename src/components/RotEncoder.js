@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from 'react-router-dom';
 import { uploadFile, saveFileAsExt, saveFileAsEc, detectFileExtension } from "../utils/fileUtils";
 import { ThemeToggle, useByteCounter } from "../utils/uiHelpers";
-import { rotateBytes, textDecoder, textEncoder } from "../utils/cryptoUtils";
+import { rotBytes, xorUint8, textDecoder, textEncoder } from "../utils/cryptoUtils";
 
 
 
@@ -17,6 +17,7 @@ const Encoder = ({ showMsg, theme, onToggleTheme }) => {
     const [output, setOutput] = useState("");
     const [outputVal, setOutputVal] = useState("");
     const [detectedExt, setDetectedExt] = useState("");
+    const [useXor, setUseXor] = useState(false);
 
     const [inputBytes, setInputBytes] = useState(0);
     useByteCounter(textInputVal, setInputBytes);
@@ -36,8 +37,12 @@ const Encoder = ({ showMsg, theme, onToggleTheme }) => {
             return;
         }
 
-        const keys = Array.from({ length: count }, () =>
-            Math.floor(Math.random() * RANGE_VALUES[index]) + 1);
+        // Create a Uint32Array (or Uint16/Uint8 depending on range)
+        const randomArray = new Uint32Array(count);
+        crypto.getRandomValues(randomArray);
+
+        // Map values into desired range
+        const keys = Array.from(randomArray, v => (v % RANGE_VALUES[index]) + 1);
 
         setKeyInput(keys.join(','));
     };
@@ -101,7 +106,14 @@ const Encoder = ({ showMsg, theme, onToggleTheme }) => {
         return;
         }
         try {
-            const rotated = rotateBytes(dataInput, keyArray);
+            let rotated;
+
+            if (useXor) {
+                rotated = xorUint8(dataInput, keyArray, false);
+            } else {
+                rotated = rotBytes(dataInput, keyArray);
+            }
+
             const ext = await detectFileExtension(rotated);
 
             setDetectedExt(ext);
@@ -136,7 +148,7 @@ const Encoder = ({ showMsg, theme, onToggleTheme }) => {
             </nav>
 
             <div className="learn-more">
-                <h2>Rotation Encoder Uint8</h2>
+                <h2>ROT/XOR Uint8</h2>
                 <Link to="/about#about-rot-encoder">Learn more</Link>
             </div>
             
@@ -149,19 +161,25 @@ const Encoder = ({ showMsg, theme, onToggleTheme }) => {
                         File: {fileInfo.name}, Type: {fileInfo.type}, Size: {fileInfo.size}
                     </p>
                 )}
-
-                <div>
-                    <textarea
-                        rows="5"
-                        value={textInputVal}
-                        onChange={handleTextInputChange}
-                        placeholder="Enter text..."
+                <textarea
+                    rows="5"
+                    value={textInputVal}
+                    onChange={handleTextInputChange}
+                    placeholder="Enter text..."
+                />
+                <p>
+                    Byte size: <span>{inputBytes}</span> bytes
+                </p>
+                <label>
+                    Use XOR:
+                    <input
+                        type="checkbox"
+                        checked={useXor}
+                        onChange={(e) => setUseXor(e.target.checked)}
                     />
-                    <p>
-                        Byte size: <span>{inputBytes}</span> bytes
-                    </p>
-                </div>
-
+                </label>
+                <br/>
+                <br/>
                 <div>
                     <label htmlFor="custom-slider">
                         <strong>Selected Range: </strong>
@@ -181,17 +199,17 @@ const Encoder = ({ showMsg, theme, onToggleTheme }) => {
                         type="number"
                         value={keyLength}
                         onChange={(e) => setKeyLength(e.target.value)}
-                        placeholder="Enter Rotation amount..."
+                        placeholder="Enter amount of key numbers..."
                     />
-                    <button onClick={generateRandomKeys}>Generate Random Rotation</button>
+                    <button onClick={generateRandomKeys}>Generate Key</button>
 
-                    <label htmlFor="keyInput">Rotation Key (comma separated numbers):</label>
+                    <label htmlFor="keyInput">Key (comma separated numbers):</label>
                     <input
                         id="keyInput"
                         type="text"
                         value={keyInput}
                         onChange={(e) => setKeyInput(e.target.value)}
-                        placeholder="Or enter key e.g. 125,274,2789..."
+                        placeholder="Or enter key..."
                     />
                     <button onClick={handleSaveKey}>Download key</button>
                 </div>

@@ -48,22 +48,22 @@ export const tools = [
         "High load randomisation of file or text data using Uint32Array and an Int32Array key.",
     },
     {
-      id: "rot-encoder",
-      title: "Rotation Encoder Uint8",
-      description:
-        "Encode using byte-wise modular addition/subtraction on a Uint8Array, with wrap around at 256.",
-    },
-    {
       id: "xor-based-enc",
       title: "XOR-Based Hash Encoder",
       description:
-        "Apply multiple layers of encryption using XOR with a key derived from the hash.",
+        "Apply multiple layers of encryption using XOR with a key derived from a hash.",
+    },
+    {
+      id: "rot-encoder",
+      title: "ROT/XOR Uint8",
+      description:
+        "Encode using byte-wise modular rotation or XOR on a Uint8Array.",
     },
     {
       id: "xor-enc",
-      title: "XOR Uint32",
+      title: "ROT/XOR Uint32",
       description:
-        "Explore different rotation ranges using XOR with a Uint32 array, offering 4,294,967,295 possible values.",
+        "Explore different rotation ranges using ROT or XOR with a Uint32 array, offering 4,294,967,295 possible values.",
     },
     {
       id: "sss-enc",

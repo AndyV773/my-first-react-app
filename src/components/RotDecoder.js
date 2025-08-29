@@ -2,24 +2,20 @@ import React, { useState } from "react";
 import { Link } from 'react-router-dom';
 import { uploadFile, uploadEncFile, saveFileAsExt, detectFileExtension } from "../utils/fileUtils";
 import { ThemeToggle, useByteCounter } from "../utils/uiHelpers";
-import { unrotateBytes, textDecoder } from "../utils/cryptoUtils";
+import { rotBytes, xorUint8, textDecoder } from "../utils/cryptoUtils";
 
 
 const RotDecoder = ({ showMsg, theme, onToggleTheme }) => {
     const [dataInput, setDataInput] = useState("");
     const [keyInput, setKeyInput] = useState("");
-
     const [fileInfo, setFileInfo] = useState(null);
-
     const [utf8Preview, setUtf8] = useState(''); // content decoded from file
     const [output, setOutput] = useState("");
     const [outputVal, setOutputVal] = useState("");
-
     const [detectedExt, setDetectedExt] = useState("");
-
     const [inputBytes, setInputBytes] = useState(0);
     useByteCounter(utf8Preview, setInputBytes);
-
+    const [useXor, setUseXor] = useState(false);
 
     const handleUploadEc = async (e) => {
         const file = e.target.files?.[0];
@@ -81,7 +77,14 @@ const RotDecoder = ({ showMsg, theme, onToggleTheme }) => {
             return;
             }
             try {
-                const unrotated = unrotateBytes(dataInput, keyArray);
+                let unrotated;
+
+                if (useXor) {
+                    unrotated = xorUint8(dataInput, keyArray, false);
+                } else {
+                    unrotated = rotBytes(dataInput, keyArray, false);
+                }
+
                 const ext = await detectFileExtension(unrotated);
 
                 setDetectedExt(ext);
@@ -109,42 +112,46 @@ const RotDecoder = ({ showMsg, theme, onToggleTheme }) => {
             </nav>
 
             <div className="learn-more">
-                <h2>Rotation Encoder Uint8</h2>
+                <h2>ROT/XOR Uint8</h2>
                 <Link to="/about#about-rot-encoder">Learn more</Link>
             </div>
 
             <section>
                 <h2>Decoder</h2>
-                <p>Upload ec file</p>
+                <p>Upload .ec file</p>
                 <input type="file" onChange={handleUploadEc} />
                 {fileInfo && (
                     <p className="file-info">
                         File: {fileInfo.name}, Type: {fileInfo.type}, Size: {fileInfo.size}
                     </p>
                 )}
-
-                <div>
-                    <textarea
-                        rows="5"
-                        value={utf8Preview}
-                        placeholder="Input"
-                        readOnly
+                <textarea
+                    rows="5"
+                    value={utf8Preview}
+                    placeholder="Utf8 preview"
+                    readOnly
+                />
+                <p>
+                    Byte size: <span>{inputBytes}</span> bytes
+                </p>
+                <label>
+                    Use XOR:
+                    <input
+                        type="checkbox"
+                        checked={useXor}
+                        onChange={(e) => setUseXor(e.target.checked)}
                     />
-                    <p>
-                        Byte size: <span>{inputBytes}</span> bytes
-                    </p>
-                </div>
-
+                </label>
                 <p>Upload key file or enter key</p>
                 <input type="file" onChange={handleUploadKey} />
 
-                <label htmlFor="keyInput">Rotation Key (comma separated numbers):</label>
+                <label htmlFor="keyInput">Key (comma separated numbers):</label>
                 <input
                     id="keyInput"
                     type="text"
                     value={keyInput}
                     onChange={(e) => setKeyInput(e.target.value)}
-                    placeholder="e.g. 125,274,12,1,2789"
+                    placeholder="125,274,12,1,2789..."
                 />
 
                 <button onClick={handleDecode} className="decode">Decode</button>

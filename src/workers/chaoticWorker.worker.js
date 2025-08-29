@@ -265,8 +265,6 @@ function seededShuffleRev(arr, key, reverse = false) {
 
 // Add random padding and length markers
 function expandUint8(uint8) {
-	// const frontLen = Math.floor(Math.random() * 9999);
-	// const backLen = Math.floor(Math.random() * 9999);
     // Generate random lengths securely (0–9998)
     const frontLen = crypto.getRandomValues(new Uint32Array(1))[0] % 9999;
     const backLen = crypto.getRandomValues(new Uint32Array(1))[0] % 9999;

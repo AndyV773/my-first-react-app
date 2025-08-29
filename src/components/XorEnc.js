@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from 'react-router-dom';
 import { uploadFile, saveFileAsExt, saveFileAsEc32 } from "../utils/fileUtils";
 import { ThemeToggle, useByteCounter } from "../utils/uiHelpers";
-import { textDecoder, textEncoder, uint8ToUint32, xorUint32 } from "../utils/cryptoUtils";
+import { textDecoder, textEncoder, uint8ToUint32, xorUint32, rotUint32 } from "../utils/cryptoUtils";
 
 
 const XorEnc = ({ showMsg, theme, onToggleTheme }) => {
@@ -15,6 +15,7 @@ const XorEnc = ({ showMsg, theme, onToggleTheme }) => {
     const [keyLength, setKeyLength] = useState('');
     const [output, setOutput] = useState("");
     const [outputVal, setOutputVal] = useState("");
+    const [useXor, setUseXor] = useState(false);
 
     const [inputBytes, setInputBytes] = useState(0);
     useByteCounter(textInputVal, setInputBytes);
@@ -33,13 +34,16 @@ const XorEnc = ({ showMsg, theme, onToggleTheme }) => {
             showMsg("Please enter a valid number greater than 0.", true);
             return;
         }
-        
-        const keys = Array.from({ length: count }, () =>
-            Math.floor(Math.random() * RANGE_VALUES[index]) + 1);
+
+        // Create a Uint32Array (or Uint16/Uint8 depending on range)
+        const randomArray = new Uint32Array(count);
+        crypto.getRandomValues(randomArray);
+
+        // Map values into desired range
+        const keys = Array.from(randomArray, v => (v % RANGE_VALUES[index]) + 1);
 
         setKeyInput(keys.join(','));
     };
-
 
     // Parse key string into array of integers
     const parseKey = (keyStr) =>
@@ -48,7 +52,6 @@ const XorEnc = ({ showMsg, theme, onToggleTheme }) => {
             .map(s => Number(s.trim()))
             .filter(n => Number.isInteger(n))
             .map(n => n >>> 0);
-
 
     // Handle file upload
     const handleUpload = (e) => {
@@ -78,7 +81,6 @@ const XorEnc = ({ showMsg, theme, onToggleTheme }) => {
         setTextInputVal(value);
     };
 
-
     // Sync file content into dataInput once when file loads
       useEffect(() => {
         if (fileInput) {
@@ -88,7 +90,6 @@ const XorEnc = ({ showMsg, theme, onToggleTheme }) => {
             setTextInputVal("");
         }
       }, [fileInput, utf8Preview]);
-    
 
     const handleEncode = async () => {
         if (!dataInput) {
@@ -103,13 +104,17 @@ const XorEnc = ({ showMsg, theme, onToggleTheme }) => {
         return;
         }
         try {
-            console.log('uint8 input',dataInput)
-            const uint32View = uint8ToUint32(dataInput)
-            const rotated = xorUint32(uint32View, keyArray);
+            let output;
+            const uint32View = uint8ToUint32(dataInput);
+          
+            if (useXor === true) {
+                output = xorUint32(uint32View, keyArray);
+            } else {
+                output = rotUint32(uint32View, keyArray);
+            }
 
-            setOutputVal(textDecoder(rotated));
-
-            setOutput(rotated);
+            setOutputVal(textDecoder(output));
+            setOutput(output);
         } catch (err) {
             showMsg("Error during encoding: " + err.message, true);
         }
@@ -117,13 +122,11 @@ const XorEnc = ({ showMsg, theme, onToggleTheme }) => {
 
     const handleSaveKey = () => {
         if (!keyInput) return showMsg("Nothing to save.", true);
-        
         saveFileAsExt(keyInput, "txt", "key");
     };
 
     const handleSaveEc32File = () => {
         if (!output) return showMsg("Nothing to save.", true);
-        
         saveFileAsEc32(output);
     };
 
@@ -138,7 +141,7 @@ const XorEnc = ({ showMsg, theme, onToggleTheme }) => {
             </nav>
 
             <div className="learn-more">
-                <h2>XOR Uint32</h2>
+                <h2>ROT/XOR Uint32</h2>
                 <Link to="/about#about-xor-enc">Learn more</Link>
             </div>
             
@@ -151,19 +154,25 @@ const XorEnc = ({ showMsg, theme, onToggleTheme }) => {
                         File: {fileInfo.name}, Type: {fileInfo.type}, Size: {fileInfo.size}
                     </p>
                 )}
-
-                <div>
-                    <textarea
-                        rows="5"
-                        value={textInputVal}
-                        onChange={handleTextInputChange}
-                        placeholder="Enter text..."
+                <textarea
+                    rows="5"
+                    value={textInputVal}
+                    onChange={handleTextInputChange}
+                    placeholder="Enter text..."
+                />
+                <p>
+                    Byte size: <span>{inputBytes}</span> bytes
+                </p>
+                <label>
+                    Use XOR:
+                    <input
+                        type="checkbox"
+                        checked={useXor}
+                        onChange={(e) => setUseXor(e.target.checked)}
                     />
-                    <p>
-                        Byte size: <span>{inputBytes}</span> bytes
-                    </p>
-                </div>
-
+                </label>
+                <br/>
+                <br/>
                 <div>
                     <label htmlFor="custom-slider">
                         <strong>Selected Range: </strong>
@@ -183,17 +192,18 @@ const XorEnc = ({ showMsg, theme, onToggleTheme }) => {
                         type="number"
                         value={keyLength}
                         onChange={(e) => setKeyLength(e.target.value)}
-                        placeholder="Enter Rotation amount..."
+                        placeholder="Enter amount of key numbers..."
                     />
-                    <button onClick={generateRandomKeys}>Generate Random Rotation</button>
+                    <button onClick={generateRandomKeys}>Generate Key</button>
 
-                    <label htmlFor="keyInput">Rotation Key (comma separated numbers):</label>
+                    <label htmlFor="keyInput">Key (comma separated numbers):</label>
                     <input
                         id="keyInput"
                         type="text"
                         value={keyInput}
                         onChange={(e) => setKeyInput(e.target.value)}
-                        placeholder="Or enter key e.g. 125,274,2789..."
+                        placeholder="Or enter key..."
+                        autoComplete="off"
                     />
                     <button onClick={handleSaveKey}>Download key</button>
                 </div>

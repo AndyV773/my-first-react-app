@@ -4,47 +4,48 @@ import { detectFileExtension } from '../utils/fileUtils';
 /* eslint-disable no-restricted-globals */
 
 self.addEventListener("message", async (e) => {
-  const { type, load } = e.data;
+    const { type, load } = e.data;
 
-  if (type === "shuffle") {
-    const { uint8, allChar } = load;
-    
-    if (!uint8) {
-      return self.postMessage({ type: "error", error: "No input provided." });
+    if (type === "shuffle") {
+        const { uint8, allChar } = load;
+        
+        if (!uint8) {
+            return self.postMessage({ type: "error", error: "No input provided." });
+        }
+
+        try {
+            const expanded = expandUint8(uint8);
+            const uint32View = uint8ToUint32(expanded);
+
+            const { shuffled, key } = quantShuffle32(uint32View, allChar);
+        
+            self.postMessage({
+                type: "done-shuffle",
+                result: { shuffled, key },
+            });
+        } catch (err) {
+            self.postMessage({ type: "error", error: err?.message ?? String(err) });
+        }
+
+    } else if (type === "unshuffle") {
+        let { shuffled, key } = load;
+
+        try {
+            const unshuffled = quantUnshuffle32(shuffled, key);
+            
+            const uint8 = uint32ToUint8(unshuffled);
+            const origin = reduceUint8(uint8);
+        
+            const ext = await detectFileExtension(origin);
+
+            self.postMessage({
+                type: "done-unshuffle",
+                result: { origin, ext},
+            });
+        } catch (err) {
+            self.postMessage({ type: "error", error: err?.message ?? String(err) });
+        }
     }
-
-    try {
-        const expanded = expandUint8(uint8);
-        const uint32View = uint8ToUint32(expanded);
-
-        const { shuffled, key } = quantShuffle32(uint32View, allChar);
-      
-        self.postMessage({
-            type: "done-shuffle",
-            result: { shuffled, key },
-        });
-    } catch (err) {
-        self.postMessage({ type: "error", error: err?.message ?? String(err) });
-    }
-
-  } else if (type === "unshuffle") {
-    let { shuffled, key } = load;
-
-    try {
-        const unshuffled = quantUnshuffle32(shuffled, key);
-        const uint8 = uint32ToUint8(unshuffled);
-        const origin = reduceUint8(uint8);
-
-        const ext = await detectFileExtension(origin);
-
-        self.postMessage({
-            type: "done-unshuffle",
-            result: { origin, ext},
-        });
-    } catch (err) {
-        self.postMessage({ type: "error", error: err?.message ?? String(err) });
-    }
-  }
 });
 
 

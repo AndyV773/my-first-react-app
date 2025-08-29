@@ -82,30 +82,62 @@ export function base64ToUint8(base64) {
 }
 
 
-// Uint8 → Uint32, prepend length, pad to multiple of 4
-export function uint8ToUint32(uint8) {
-	// Prepend length (as 4 bytes)
-	const lengthArray = new Uint32Array([uint8.length]); 
-	const paddedLength = Math.ceil(uint8.length / 4) * 4; // round up to multiple of 4
+/**
+ * Convert Uint8Array → Uint32Array, storing original length at the start
+ */
+export function uint8ToUint32(bytes) {
+    const paddedLength = Math.ceil(bytes.length / 4) * 4;
+    const padded = new Uint8Array(paddedLength);
+    padded.set(bytes);
 
-	// New buffer big enough for length (4 bytes) + padded data
-	const combined = new Uint8Array(4 + paddedLength);
-	combined.set(new Uint8Array(lengthArray.buffer), 0);
-	combined.set(uint8, 4);
+    const uint32Array = new Uint32Array(paddedLength / 4 + 1); // +1 for length
+    uint32Array[0] = bytes.length; // store original length
+	
+    for (let i = 0; i < paddedLength / 4; i++) {
+        uint32Array[i + 1] =
+            (padded[i * 4] << 24) |
+            (padded[i * 4 + 1] << 16) |
+            (padded[i * 4 + 2] << 8) |
+            (padded[i * 4 + 3]);
+    }
 
-	return new Uint32Array(combined.buffer);
+    return uint32Array;
 }
 
 
-// Uint32 → Uint8, read length, trim padding
-export function uint32ToUint8(uint32) {
-	const view = new DataView(uint32.buffer);
+/**
+ * Convert Uint32Array → Uint8Array, using stored length to strip padding
+ */
+export function uint32ToUint8(input) {
+    // normalize input to Uint32Array
+    let uint32Array;
+    if (input instanceof Uint32Array) {
+        uint32Array = input;
+    } else if (Array.isArray(input)) {
+        uint32Array = new Uint32Array(input);
+    } else if (typeof input === "string") {
+        const parts = input.split(",").map(n => parseInt(n.trim(), 10));
+        if (parts.some(isNaN)) return "Error: Invalid Uint32 input."; 
+        uint32Array = new Uint32Array(parts);
+    } else {
+        return "Error: Invalid Uint32 input.";
+    }
 
-	// First 4 bytes = original length
-	const originalLength = view.getUint32(0, true);
-	const full = new Uint8Array(uint32.buffer, 4);
+	if (uint32Array.length < 1) return new Uint8Array();
 
-	return full.slice(0, originalLength);
+	const originalLength = uint32Array[0]; // first element is original length
+    const bytes = new Uint8Array((uint32Array.length - 1) * 4);
+
+    for (let i = 0; i < uint32Array.length; i++) {
+        const val = uint32Array[i];
+        const offset = (i - 1) * 4;
+        bytes[offset]     = (val >>> 24) & 0xFF;
+        bytes[offset + 1] = (val >>> 16) & 0xFF;
+        bytes[offset + 2] = (val >>> 8)  & 0xFF;
+        bytes[offset + 3] = val & 0xFF;
+    } 
+
+    return bytes.subarray(0, originalLength);
 }
 
 
@@ -298,6 +330,7 @@ export function aesCbcDecrypt(encryptedBytes, password) {
 	}
 }
 
+
 // export function randomizer(allChar) {
 //     const rand = Math.random() * Math.random(); // bias toward lower numbers
 
@@ -320,6 +353,7 @@ export function aesCbcDecrypt(encryptedBytes, password) {
 // 	if (Math.random() < 0.5) value = -value; // allow negative
 // 	return value;
 // }
+
 
 export function randomizer(allChar, uint32 = false) {
 	// Helper to generate a random 32-bit unsigned integer
@@ -447,22 +481,15 @@ export const hashArgon2 = async (input, iterations = 3, hashToVerify = null, ver
 };
 
 
-export const rotateBytes = (bytes, keyArray) => {
+export const rotBytes = (bytes, keyArray, rot = true) => {
     const result = new Uint8Array(bytes.length);
 
     for (let i = 0; i < bytes.length; i++) {
-        result[i] = (bytes[i] + keyArray[i % keyArray.length]) & 0xff;
-    }
-
-    return result;
-};
-
-
-export const unrotateBytes = (bytes, keyArray) => {
-    const result = new Uint8Array(bytes.length);
-
-    for (let i = 0; i < bytes.length; i++) {
-        result[i] = (bytes[i] - keyArray[i % keyArray.length] + 256) & 0xff;
+		if (rot) {
+        	result[i] = (bytes[i] + keyArray[i % keyArray.length]) & 0xff;
+		} else {
+			 result[i] = (bytes[i] - keyArray[i % keyArray.length] + 256) & 0xff;
+		}
     }
 
     return result;
@@ -470,8 +497,10 @@ export const unrotateBytes = (bytes, keyArray) => {
 
 
 // Uses XOR and a hash-based key (hex string)
-export function xorUint8(inputBytes, hashHex) {
-    const keyBytes = hexToBytes(hashHex);
+export function xorUint8(inputBytes, keyBytes, hash = true) {
+	if (hash) {
+		keyBytes = hexToBytes(keyBytes);
+	}
    
     const result = new Uint8Array(inputBytes.length);
     for (let i = 0; i < inputBytes.length; i++) {
@@ -483,11 +512,25 @@ export function xorUint8(inputBytes, hashHex) {
 }
 
 
+export const rotUint32 = (arr, keyArray, rot = true) => {
+    const result = new Uint32Array(arr.length);
+
+    for (let i = 0; i < arr.length; i++) {
+		if (rot) {
+			result[i] = (arr[i] + keyArray[i % keyArray.length]) >>> 0; // wrap around unsigned
+		} else {
+			result[i] = (arr[i] - keyArray[i % keyArray.length]) >>> 0; 
+		}
+    }
+
+    return result;
+};
+
+
 export const xorUint32 = (data, keyArray) => {
     const result = new Uint32Array(data.length);
 
     for (let i = 0; i < data.length; i++) {
-
         result[i] = data[i] ^ keyArray[i % keyArray.length];
     }
 
@@ -498,8 +541,8 @@ export const xorUint32 = (data, keyArray) => {
 // Add random padding and length markers
 export function expandUint8(uint8) {
 	// two random numbers [0..99]
-	const frontLen = Math.floor(Math.random() * 100);
-	const backLen = Math.floor(Math.random() * 100);
+	const frontLen = crypto.getRandomValues(new Uint32Array(1))[0] % 99;
+    const backLen = crypto.getRandomValues(new Uint32Array(1))[0] % 99;
 
 	// generate random paddings
 	const frontPad = new Uint8Array(frontLen);
