@@ -17,9 +17,9 @@ export const aboutInfo = [
 	},
 	{
 		id: "about-obfuscation-tools",
-		title: "About Obfuscation Tools",
+		title: "About Transformation Tools",
 		description:
-			"Obfuscation tools modify and encode text to make it harder to read or analyse, adding a layer of security through obscurity. This section shows you some basic methods of data transformation, also useful for testing.",
+			"Transformation tools provide a variety of methods for modifying and testing text and emojis, useful for debugging and experimentation.",
 		steps: [
 			"Reverse: Reverse the characters of the input text.",
 			"ROT13 / ROT18 / ROTN: Apply letter/number rotation to obfuscate the text.",
@@ -37,7 +37,7 @@ export const aboutInfo = [
 			"Uint32 Array (32 bits): Convert text to/from 32-bit arrays; each element stores 0 - 4,294,967,295."
 		],
 		originalPage: "/obfuscation-tools",
-		linkText: "Go to Obfuscation Tools"
+		linkText: "Go to Transformation Tools"
 	},
 	{
 		id: "about-aes-cbc",

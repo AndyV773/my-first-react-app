@@ -7,9 +7,9 @@ export const tools = [
     },
     {
       id: "obfuscation-tools",
-      title: "Obfuscation Tools",
+      title: "Transformation Tools",
       description:
-        "Obfuscation Tools help transform and encode text to make it harder to read or interpret.",
+        "Transformation and modification of text and emojis for testing input and output, debugging, and experimentation.",
     },
     {
       id: "aes-cbc-enc",

@@ -161,15 +161,16 @@ function App() {
 				<Route path="*" element={<NotFound />} />
 			</Routes>
 			<footer className="footer">
+				<p><strong>BTC Donations: 1PsAC61kUMrrsWum4jDM7yEYu54uidRwPr</strong></p>
 				<p>
 					© {new Date().getFullYear()}{" "}
 					<a
-					href="https://andyv.uk"
-					target="_blank"
-					rel="noopener noreferrer"
+						href="https://andyv.uk"
+						target="_blank"
+						rel="noopener noreferrer"
 					>
 					andyv.uk
-					</a> — All rights reserved.
+					</a> - All rights reserved.
 				</p>
 			</footer>
 		</div>

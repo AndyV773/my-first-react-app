@@ -18,6 +18,8 @@ import {
 	xorBase64Decode,
 	hexEncode,
 	hexDecode,
+	base62Encode,
+	base62Decode,
 	base64Encode,
 	base64Decode,
 	base85Encode,
@@ -116,6 +118,16 @@ const ObfuscationTools = ({ theme, onToggleTheme }) => {
 		document.getElementById('hex_output').innerText = hexDecode(text);
 	};
 
+	const doBase62Encode = () => {
+		const text = document.getElementById('base62_input').value;
+		document.getElementById('base62_output').innerText = base62Encode(text);
+	};
+
+	const doBase62Decode = () => {
+		const text = document.getElementById('base62_input').value;
+		document.getElementById('base62_output').innerText = base62Decode(text);
+	};
+
 	const doBase64Encode = () => {
 		const text = document.getElementById('base64_input').value;
 		document.getElementById('base64_output').innerText = base64Encode(text);
@@ -125,6 +137,7 @@ const ObfuscationTools = ({ theme, onToggleTheme }) => {
 		const text = document.getElementById('base64_input').value;
 		document.getElementById('base64_output').innerText = base64Decode(text);
 	};
+	
 	const doBase85Encode = () => {
 		const text = document.getElementById('base85_input').value;
 		document.getElementById('base85_output').innerText = base85Encode(text);
@@ -203,11 +216,10 @@ const ObfuscationTools = ({ theme, onToggleTheme }) => {
 			</nav>
 
 			<div className="learn-more">
-				<h2>Obfuscation &amp; Encoding</h2>  
+				<h2>Transformation Tools</h2>  
 				<Link to="/about#about-obfuscation-tools">Learn more</Link>        
 			</div>
 
-			
 			<section>
 				<h3>Reverse</h3>
 				<textarea id="reverse_input" placeholder="Enter text to reverse"></textarea>
@@ -259,8 +271,19 @@ const ObfuscationTools = ({ theme, onToggleTheme }) => {
 			</section>
 
 			<section>
+				<h3>Base62 Encode/Decode</h3>
+				<p>Uses 62 characters and converts numeric values into shorter strings (123 = 1Z)</p>
+				<textarea id="base62_input" placeholder="Enter text for Base62"></textarea>
+				<div className="flex g1">
+					<button onClick={doBase62Encode} className="encode">Encode</button>
+					<button onClick={doBase62Decode} className="decode">Decode</button>   
+				</div>
+				<PreCopyOutputBlock outputId="base62_output" />
+			</section>
+
+			<section>
 				<h3>Base64 Encode/Decode</h3>
-				<p>Uses 64 characters (A-Z, a-z, 0-9, +, /). This add a overhead ~33%.</p>
+				<p>Uses 64 characters and converts 3 bytes into 4 characters. If the binary data does not align to 24-bits (8 x 3), "=" is used as padding. This adds an overhead of ~33%.</p>
 				<textarea id="base64_input" placeholder="Enter text for Base64"></textarea>
 				<div className="flex g1">
 					<button onClick={doBase64Encode} className="encode">Encode</button>
@@ -271,7 +294,7 @@ const ObfuscationTools = ({ theme, onToggleTheme }) => {
 
 			<section>
 				<h3>Base85 Encode/Decode</h3>
-				<p>Uses 85 characters (A-Z, a-z, 0-9, and !-u). This adds a overhead ~25%.</p>
+				<p>Uses 85 characters and converts 4 bytes into 5 character. This adds an overhead of ~25%.</p>
 				<textarea id="base85_input" placeholder="Enter text for Base85"></textarea>
 				<div className="flex g1">
 					<button onClick={doBase85Encode} className="encode">Encode</button>
@@ -282,7 +305,7 @@ const ObfuscationTools = ({ theme, onToggleTheme }) => {
 
 			<section>
 				<h3>Base91 Encode/Decode</h3>
-				<p>Uses 91 characters (A-Z, a-z, 0-9, and ! # $ % & ( ) * + , . : / ; &lt; = &gt; ? @ [ ] ^ _ ` &#x7b; &#x7c; &#x7d; ~ &#x22;). This adds a overhead of ~23%.</p>
+				<p>Uses 91 characters and converts 5 bytes into 6 characters. This adds an overhead of ~23%.</p>
 				<textarea id="base91_input" placeholder="Enter text for Base91"></textarea>
 				<div className="flex g1">
 					<button onClick={doBase91Encode} className="encode">Encode</button>

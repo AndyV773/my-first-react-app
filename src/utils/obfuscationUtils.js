@@ -145,6 +145,25 @@ export function xorBase64Decode(encoded, key) {
 	}
 }
 
+export function base62Encode(num) {
+  const alphabet = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let result = '';
+  while (num > 0) {
+    result = alphabet[num % 62] + result;
+    num = Math.floor(num / 62);
+  }
+  return result || '0'; // Handle case where num is 0
+}
+
+export function base62Decode(encodedString) {
+  const alphabet = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let decodedValue = 0;
+  for (let i = 0; i < encodedString.length; i++) {
+    decodedValue = decodedValue * 62 + alphabet.indexOf(encodedString[i]);
+  }
+  return decodedValue; // This example decodes to a number
+}
+
 // Base64
 export function base64Encode(text) {
   	return btoa(text);
