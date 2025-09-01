@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef, useCallback} from 'react';
 import { Link } from 'react-router-dom';
 import { ThemeToggle, PreCopyOutputBlock } from '../utils/uiHelpers';
-import { textEncoder } from '../utils/cryptoUtils';
+import { textEncoder, base62Encode } from '../utils/cryptoUtils';
 import { saveFileAsExt } from '../utils/fileUtils';
 
 
@@ -14,12 +14,13 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
     const [depth, setDepth] = useState(1);
     const [phase, setPhase] = useState(1);
     const [sizeIterations, setSizeIterations] = useState(1);
-    const [xor, setXor] = useState(0);
-    const [reverse, setReverse] = useState(0);
     const [chunkSize, setChunkSize] = useState(3);
+    const [reverse, setReverse] = useState(0);
+    const [xor, setXor] = useState(0);
     const [hash1Output, setHash1Output] = useState("");
     const [hash2Output, setHash2Output] = useState("");
     const [keyJoined, setKeyJoined] = useState("");
+    const [keyBase62, setKeyBase62] = useState("");
 
     const [counts, setCounts] = useState({});
     const [sortByFreq, setSortByFreq] = useState(false);
@@ -54,7 +55,11 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
 
         showLoader({ show: true, mode: `Stretching`, type: "loader encode", emoji: '🛡️', bytes: 500000 });
 
-        setKeyJoined(`${keyInput},${hash1Iterations},${hash2Iterations},${depth},${phase},${sizeIterations},${xor},${reverse},${chunkSize}`)
+        setKeyJoined(`${keyInput},${hash1Iterations},${hash2Iterations},${depth},${phase},${sizeIterations},${chunkSize},${reverse},${xor}`);
+
+        let endClass = `${chunkSize}${reverse}${xor}`;
+
+        setKeyBase62(`${keyInput}-${base62Encode(hash1Iterations)}-${base62Encode(hash2Iterations)}-${base62Encode(depth)}-${base62Encode(phase)}-${base62Encode(sizeIterations)}-${base62Encode(endClass)}`);
 
         workerRef.current.postMessage({
             type: "stretch",
@@ -64,10 +69,10 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
             depth,
             phase,
             sizeIterations,  
-            reverse,
             chunkSize,  
+            reverse,
         });
-    }, [keyInput, hash1Iterations, hash2Iterations, depth, phase, sizeIterations, reverse, xor, chunkSize, showMsg, showLoader]);
+    }, [keyInput, hash1Iterations, hash2Iterations, depth, phase, sizeIterations, chunkSize, reverse, xor, showMsg, showLoader]);
 
 
     useEffect(() => {
@@ -239,22 +244,6 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
                     placeholder="Enter size iterations" 
                     autoComplete="off"
                 />
-                <label>
-                    Use XOR:
-                    <input 
-                        type="checkbox"
-                        checked={xor === 1} 
-                        onChange={(e) => setXor(e.target.checked ? 1 : 0)}
-                    />
-                </label>
-                <label>
-                    Reverse key:
-                    <input 
-                        type="checkbox"
-                        checked={reverse === 1} 
-                        onChange={(e) => setReverse(e.target.checked ? 1 : 0)}
-                    />
-                </label>
                 <br/>
                 <br/>
                 <label htmlFor="digitOption">Select chunk size: </label>
@@ -274,10 +263,29 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
                     <option value={11}>11</option>
                     <option value={12}>12</option>
                 </select>
-                <p>Chunk size: {chunkSize}</p>
+                <br/>
+                <br />
+                <label>
+                    Reverse key:
+                    <input 
+                        type="checkbox"
+                        checked={reverse === 1} 
+                        onChange={(e) => setReverse(e.target.checked ? 1 : 0)}
+                    />
+                </label>
+                <label>
+                    Use XOR:
+                    <input 
+                        type="checkbox"
+                        checked={xor === 1} 
+                        onChange={(e) => setXor(e.target.checked ? 1 : 0)}
+                    />
+                </label>
                 <button className="encode" onClick={handleStretch}>Stretch key</button>
-                <p>Copy the key or write it down.</p>
+                <p>Key input before base62.</p>
                 <PreCopyOutputBlock outputId={"key-joined"} text={keyJoined} />
+                <p>Key is Base62 encoded, making it easier to copy or write it down.</p>
+                <PreCopyOutputBlock outputId={"key-base62"} text={keyBase62} />
             </section>
             <section>
                 <h3>Output</h3>

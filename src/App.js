@@ -161,7 +161,8 @@ function App() {
 				<Route path="*" element={<NotFound />} />
 			</Routes>
 			<footer className="footer">
-				<p><strong>BTC Donations: 1PsAC61kUMrrsWum4jDM7yEYu54uidRwPr</strong></p>
+				<h3>Donations</h3>
+				<p><strong>BTC: sAC61kUMrrsWum4jDM7yEYu54ui</strong></p>
 				<p>
 					© {new Date().getFullYear()}{" "}
 					<a

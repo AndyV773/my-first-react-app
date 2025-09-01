@@ -3,7 +3,7 @@ import CryptoJS from "crypto-js";
 /* eslint-disable no-restricted-globals */
 
 self.addEventListener("message", async (e) => {
-    const { type, load, hash1Iterations, hash2Iterations, depth, phase, sizeIterations, reverse, chunkSize } = e.data;
+    const { type, load, hash1Iterations, hash2Iterations, depth, phase, sizeIterations, chunkSize, reverse } = e.data;
 
     if (type === "stretch") {
         const { keyInput } = load;

@@ -4,13 +4,13 @@ import CryptoJS from "crypto-js";
 
 
 self.addEventListener("message", async (e) => {
-    const { type, load, hash1Iterations, hash2Iterations, depth, phase, sizeIterations, xor, reverse, chunkSize } = e.data;
+    const { type, load, hash1Iterations, hash2Iterations, depth, phase, sizeIterations, chunkSize, reverse, xor } = e.data;
 
     if (type === "encode") {
         const { dataInput, keyInput } = load;
 
         try {
-            const { key, hash1, hash2 } = await deriveKey(keyInput, hash1Iterations, hash2Iterations, depth, phase, sizeIterations, reverse, chunkSize);
+            const { key, hash1, hash2 } = await deriveKey(keyInput, hash1Iterations, hash2Iterations, depth, phase, sizeIterations, chunkSize, reverse);
             
             const salt = generateSaltBytes();
             const newInput = new Uint8Array(dataInput.length + salt.length);
@@ -33,7 +33,7 @@ self.addEventListener("message", async (e) => {
         const { dataInput, keyInput } = load;
 
         try {
-            const { key, hash1, hash2 } = await deriveKey(keyInput, hash1Iterations, hash2Iterations, depth, phase, sizeIterations, reverse, chunkSize);
+            const { key, hash1, hash2 } = await deriveKey(keyInput, hash1Iterations, hash2Iterations, depth, phase, sizeIterations, chunkSize, reverse);
 
             const output = xor === 1 ? xorUint8(dataInput, key) : unrotateBytes(dataInput, key);
             const unshuffle = seededShuffleRev(output, hash2, true)
@@ -53,7 +53,7 @@ self.addEventListener("message", async (e) => {
 });
 
 
-async function deriveKey(keyInput, hash1Iterations, hash2Iterations, depth, phase, sizeIterations, reverse, chunkSize) {
+async function deriveKey(keyInput, hash1Iterations, hash2Iterations, depth, phase, sizeIterations, chunkSize, reverse) {
     let current = keyInput;
     
     // SHA-512 loop
@@ -266,8 +266,8 @@ function seededShuffleRev(arr, key, reverse = false) {
 // Add random padding and length markers
 function expandUint8(uint8) {
     // Generate random lengths securely (0–9998)
-    const frontLen = crypto.getRandomValues(new Uint32Array(1))[0] % 9999;
-    const backLen = crypto.getRandomValues(new Uint32Array(1))[0] % 9999;
+    const frontLen = crypto.getRandomValues(new Uint32Array(1))[0] % 99;
+    const backLen = crypto.getRandomValues(new Uint32Array(1))[0] % 99;
 
 	// generate random paddings
 	const frontPad = new Uint8Array(frontLen);

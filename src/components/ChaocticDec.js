@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { uploadEncFile, saveFileAsExt, detectFileExtension } from '../utils/fileUtils';
 import { useByteCounter, ThemeToggle } from '../utils/uiHelpers';
-import { textDecoder, base64ToUint8 } from '../utils/cryptoUtils';
+import { textDecoder, base64ToUint8, base62Decode } from '../utils/cryptoUtils';
 
 
 const ChaoticDec = ({ showMsg, theme, onToggleTheme, showLoader }) => {
@@ -31,52 +31,85 @@ const ChaoticDec = ({ showMsg, theme, onToggleTheme, showLoader }) => {
 
     const handleKey = useCallback(() => {
         let input = keyRef.current.value.trim();
-        const str = input.split(",");
+        const str = input.split("-");
+        let arr = [];
+
+        console.log(str);
 
         // Check length
-        if (str.length < 9) {
+        if (str.length < 7) {
             showMsg(`Error: Key length ${str.length}, is too short`, true);
             return;
-        } else if (str.length > 9) {
+        } else if (str.length > 7) {
             showMsg(`Error: Key length ${str.length}, is too long`, true);
             return;
         } 
 
+        // base62 decode all the values
+        for (let i = 1; i <= 6; i++) {
+            console.log(str[i])
+            arr.push(Number(base62Decode(str[i])));
+        }
+
+        console.log(arr);
+
         // Validate first 5 (must be > 0)
-        for (let i = 1; i <= 5; i++) {
-            const num = Number(str[i]);
+        for (let i = 0; i <= 4; i++) {
+            const num = arr[i];
             if (isNaN(num) || num <= 0) {
                 showMsg(`Error: Value ${i} must be a number > 0`, true);
                 return;
             }
         }
 
+        const lastNum = String(arr[arr.length - 1]); // 1201
+        
+        // Take everything except the last 2 digits as one number
+        const first = parseInt(lastNum.slice(0, -2), 10);
+        const second = parseInt(lastNum.slice(-2, -1), 10);
+        const third = parseInt(lastNum.slice(-1), 10);
+
+        const endClass = [first, second, third];
+
+        console.log(endClass)
+
+        // Validate chunks (must be 3–12)
+        const chunks = endClass[0];
+        if (isNaN(chunks) || chunks < 3 || chunks > 12) {
+            showMsg("Error: Last value must be between 3 and 12", true);
+            return;
+        }
+
         // Validate next 2 (must be 0 or 1)
-        for (let i = 6; i <= 7; i++) {
-            const num = Number(str[i]);
+        for (let i = 1; i <= 2; i++) {
+            const num = endClass[i];
             if (num !== 0 && num !== 1) {
                 showMsg(`Error: Value ${i} must be 0 or 1`, true);
                 return;
             }
         }
 
-        // Validate chunks (must be 3–12)
-        const chunks = Number(str[8]);
-        if (isNaN(chunks) || chunks < 3 || chunks > 12) {
-            showMsg("Error: Last value must be between 3 and 12", true);
-            return;
-        }
+        console.log('1.',str[0])
+        console.log('2.',arr[0])
+        console.log('3.',arr[1])
+        console.log('4.',arr[2])
+        console.log('5.',arr[3])
+        console.log('6.',arr[4])
+        console.log('7.',endClass[0])
+        console.log('8.',endClass[1])
+        console.log('9.',endClass[2])
+
 
         const keyData = {
             keyInput: str[0],
-            hash1Iterations: Number(str[1]),
-            hash2Iterations: Number(str[2]),
-            depth: Number(str[3]),
-            phase: Number(str[4]),
-            sizeIterations: Number(str[5]),
-            xor: Number(str[6]),
-            reverse: Number(str[7]),
-            chunkSize: Number(str[8]),
+            hash1Iterations: arr[0],
+            hash2Iterations: arr[1],
+            depth: arr[2],
+            phase: arr[3],
+            sizeIterations: arr[4],
+            chunkSize: endClass[0],
+            reverse: endClass[1],
+            xor: endClass[2],
         };
 
         return keyData;
@@ -262,10 +295,10 @@ const ChaoticDec = ({ showMsg, theme, onToggleTheme, showLoader }) => {
                     Byte size: <span>{inputBytes}</span> bytes
                 </p>
                 <label>
-                    Enter 9 comma seperated values:
+                    Enter Base62 key:
                     <input
                         ref={keyRef}
-                        placeholder='key,1,1,1,1,1,0,0,3'
+                        placeholder='key-3M-B-13-j7P-1-4Q'
                         required
                     />
                 </label>

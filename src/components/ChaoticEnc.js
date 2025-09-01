@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { uploadFile, saveFileAsEc } from '../utils/fileUtils';
-import { textEncoder, textDecoder, uint8ToBase64 } from '../utils/cryptoUtils';
-import { useByteCounter, ThemeToggle } from '../utils/uiHelpers';
+import { textEncoder, textDecoder, uint8ToBase64, base62Encode } from '../utils/cryptoUtils';
+import { useByteCounter, ThemeToggle, PreCopyOutputBlock } from '../utils/uiHelpers';
 
 
 const ChaoticEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
@@ -12,6 +12,7 @@ const ChaoticEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
     const [utf8Preview, setUtf8] = useState(''); // content decoded from file
     const [dataInput, setDataInput] = useState('');
     const [dataInputVal, setDataInputVal] = useState('');
+    const [keyBase62, setKeyBase62] = useState('');
 
     const [elapsedTime, setElapsedTime] = useState(null);
     const timerRef = useRef(0);
@@ -55,20 +56,20 @@ const ChaoticEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
             }
         }
 
+         // Validate chunks (must be 3–12)
+        const chunks = Number(str[6]);
+        if (isNaN(chunks) || chunks < 3 || chunks > 12) {
+            showMsg("Error: Last value must be between 3 and 12", true);
+            return;
+        }
+
         // Validate next 2 (must be 0 or 1)
-        for (let i = 6; i <= 7; i++) {
+        for (let i = 7; i <= 8; i++) {
             const num = Number(str[i]);
             if (num !== 0 && num !== 1) {
                 showMsg(`Error: Value ${i} must be 0 or 1`, true);
                 return;
             }
-        }
-
-        // Validate chunks (must be 3–12)
-        const chunks = Number(str[8]);
-        if (isNaN(chunks) || chunks < 3 || chunks > 12) {
-            showMsg("Error: Last value must be between 3 and 12", true);
-            return;
         }
 
         const keyData = {
@@ -78,10 +79,14 @@ const ChaoticEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
             depth: Number(str[3]),
             phase: Number(str[4]),
             sizeIterations: Number(str[5]),
-            xor: Number(str[6]),
+            chunkSize: Number(str[6]),
             reverse: Number(str[7]),
-            chunkSize: Number(str[8]),
+            xor: Number(str[8]),
         };
+
+        let endClass = `${keyData.chunkSize}${keyData.reverse}${keyData.xor}`;
+                
+        setKeyBase62(`${keyData.keyInput}-${base62Encode(keyData.hash1Iterations)}-${base62Encode(keyData.hash2Iterations)}-${base62Encode(keyData.depth)}-${base62Encode(keyData.phase)}-${base62Encode(keyData.sizeIterations)}-${base62Encode(endClass)}`);
 
         return keyData;
     }, [showMsg] );
@@ -249,11 +254,13 @@ const ChaoticEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
                     Enter key params - 9 comma seperated values:
                     <input
                         ref={keyRef}
-                        placeholder='key,1,1,1,1,1,0,0,3'
+                        placeholder='key,1,1,1,1,1,3,0,0'
                         required
                     />
                 </label>
                 <button className="encode" onClick={() => handleEncryption()}>Encrypt</button>
+                <p>Base62 encoded key. Please copy or write it down.</p>
+                <PreCopyOutputBlock outputId={"key-base62"} text={keyBase62} />
             </section>
 
             <section className={`${outputBytes === 0 ? 'hidden' : ''}`}>

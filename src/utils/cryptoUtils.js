@@ -60,6 +60,27 @@ function hexToBytes(hex) {
 }
 
 
+export function base62Encode(num) {
+  const alphabet = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let result = '';
+  while (num > 0) {
+    result = alphabet[num % 62] + result;
+    num = Math.floor(num / 62);
+  }
+  return result || '0'; // Handle case where num is 0
+}
+
+
+export function base62Decode(encodedString) {
+  const alphabet = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let decodedValue = 0;
+  for (let i = 0; i < encodedString.length; i++) {
+    decodedValue = decodedValue * 62 + alphabet.indexOf(encodedString[i]);
+  }
+  return decodedValue; // This example decodes to a number
+}
+
+
 // convert uint8 to base64 in chunks to avoid call stack
 export function uint8ToBase64(uint8) {
 	let binary = "";
