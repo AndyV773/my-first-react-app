@@ -101,13 +101,31 @@ export const About = ({ showMsg }) => {
                         {para.split(/\[link\]|\[\/link\]/).map((part, i, arr) => (
                             <React.Fragment key={i}>
                                 {part}
-                                {i < arr.length - 1 && <Link to="/obfuscation-tools">Obfuscation Tools</Link>}
+                                {i < arr.length - 1 && <Link to="/obfuscation-tools">Transformation Tools</Link>}
                             </React.Fragment>
                         ))}
                         {pIndex < appDescription.additional.split('\n\n').length - 1 && <><br /><br /></>}
                     </React.Fragment>
                 ))}
             </p>
+
+            <h2>Content</h2>
+
+            <ol>
+                {otherTools.map(({ id, title }) => (
+                    <li key={id}>
+                        <Link to={`/about#${id}`} className="about-content"
+                            onClick={(e) => {
+                                const el = document.querySelector(`#${id}`);
+                                if (el) {
+                                    e.preventDefault(); // prevent router from re-navigating to same URL
+                                    el.scrollIntoView({ behavior: "auto" });
+                                }
+                            }}
+                        >{title}</Link>
+                    </li>
+                ))}
+            </ol>
 
             <h2>Features and Tools</h2>
             {otherTools.map(({ id, title, description, steps, additional, originalPage, linkText }) => (

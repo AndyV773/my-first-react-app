@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link } from 'react-router-dom';
-import { uploadFile, saveFileAsExt, saveFileAsEc, detectFileExtension } from "../utils/fileUtils";
+import { uploadFile, saveFileAsExt, saveFileAsEc32 } from "../utils/fileUtils";
 import { ThemeToggle, useByteCounter } from "../utils/uiHelpers";
-import { rotBytes, xorUint8, textDecoder, textEncoder } from "../utils/cryptoUtils";
+import { textDecoder, textEncoder, uint8ToUint32, xorUint32, rotUint32 } from "../utils/cryptoUtils";
 
 
-
-const Encoder = ({ showMsg, theme, onToggleTheme }) => {
+const Uint32Enc = ({ showMsg, theme, onToggleTheme }) => {
     const [dataInput, setDataInput] = useState("");
     const [textInputVal, setTextInputVal] = useState('');
     const [fileInput, setFileInput] = useState(""); 
@@ -16,14 +15,13 @@ const Encoder = ({ showMsg, theme, onToggleTheme }) => {
     const [keyLength, setKeyLength] = useState('');
     const [output, setOutput] = useState("");
     const [outputVal, setOutputVal] = useState("");
-    const [detectedExt, setDetectedExt] = useState("");
     const [useXor, setUseXor] = useState(false);
 
     const [inputBytes, setInputBytes] = useState(0);
     useByteCounter(textInputVal, setInputBytes);
 
     const [index, setIndex] = useState(0);
-    const RANGE_VALUES = [256, 512, 1024];
+    const RANGE_VALUES = [1000000, 1000000000, 5000000000, 10000000000];
     const displayValue = RANGE_VALUES[index].toLocaleString();
 
     const handleSlider = (e) => {
@@ -50,10 +48,10 @@ const Encoder = ({ showMsg, theme, onToggleTheme }) => {
     // Parse key string into array of integers
     const parseKey = (keyStr) =>
         keyStr
-        .split(",")
-        .map((s) => s.trim())
-        .map(Number)
-        .filter((n) => Number.isInteger(n));
+            .split(",")
+            .map(s => Number(s.trim()))
+            .filter(n => Number.isInteger(n))
+            .map(n => n >>> 0);
 
     // Handle file upload
     const handleUpload = (e) => {
@@ -92,7 +90,7 @@ const Encoder = ({ showMsg, theme, onToggleTheme }) => {
             setTextInputVal("");
         }
       }, [fileInput, utf8Preview]);
-    
+
     const handleEncode = async () => {
         if (!dataInput) {
             showMsg("Please input text or upload a file.", true);
@@ -106,20 +104,17 @@ const Encoder = ({ showMsg, theme, onToggleTheme }) => {
         return;
         }
         try {
-            let rotated;
-
-            if (useXor) {
-                rotated = xorUint8(dataInput, keyArray, false);
+            let output;
+            const uint32View = uint8ToUint32(dataInput);
+          
+            if (useXor === true) {
+                output = xorUint32(uint32View, keyArray);
             } else {
-                rotated = rotBytes(dataInput, keyArray);
+                output = rotUint32(uint32View, keyArray);
             }
 
-            const ext = await detectFileExtension(rotated);
-
-            setDetectedExt(ext);
-            setOutputVal(textDecoder(rotated));
-
-            setOutput(rotated);
+            setOutputVal(textDecoder(output));
+            setOutput(output);
         } catch (err) {
             showMsg("Error during encoding: " + err.message, true);
         }
@@ -127,14 +122,12 @@ const Encoder = ({ showMsg, theme, onToggleTheme }) => {
 
     const handleSaveKey = () => {
         if (!keyInput) return showMsg("Nothing to save.", true);
-        
         saveFileAsExt(keyInput, "txt", "key");
     };
 
-    const handleSaveEcFile = () => {
+    const handleSaveEc32File = () => {
         if (!output) return showMsg("Nothing to save.", true);
-        
-        saveFileAsEc(output);
+        saveFileAsEc32(output);
     };
 
     return (
@@ -142,14 +135,14 @@ const Encoder = ({ showMsg, theme, onToggleTheme }) => {
             <nav>
                 <div className="flex g1">
                     <Link to="/">Home</Link>
-                    <Link to="/rot-decoder">Decode</Link>
+                    <Link to="/uint32-dec">Decode</Link>
                 </div>
                 <ThemeToggle theme={theme} onToggle={onToggleTheme} />
             </nav>
 
             <div className="learn-more">
-                <h2>ROT/XOR Uint8</h2>
-                <Link to="/about#about-rot-encoder">Learn more</Link>
+                <h2>ROT/XOR Uint32</h2>
+                <Link to="/about#about-uint32-enc">Learn more</Link>
             </div>
             
             <section>
@@ -210,6 +203,7 @@ const Encoder = ({ showMsg, theme, onToggleTheme }) => {
                         value={keyInput}
                         onChange={(e) => setKeyInput(e.target.value)}
                         placeholder="Or enter key..."
+                        autoComplete="off"
                     />
                     <button onClick={handleSaveKey}>Download key</button>
                 </div>
@@ -225,13 +219,10 @@ const Encoder = ({ showMsg, theme, onToggleTheme }) => {
                     value={outputVal}
                     placeholder="Output"
                 />
-                <p>
-                    Detected file type: {detectedExt ? `${detectedExt}` : "(none)"}
-                </p>
-                <button onClick={handleSaveEcFile}>Download .ec</button>
+                <button onClick={handleSaveEc32File}>Download .ec32</button>
             </section>
         </main>
     );
 }
 
-export default Encoder;
+export default Uint32Enc;

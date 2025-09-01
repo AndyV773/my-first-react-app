@@ -1,4 +1,4 @@
-# React Encryption App
+# My First React App
 
 ## Data Transformation and Encryption Toolkit
 
@@ -6,6 +6,31 @@ This is a static JavaScript app designed for educational and demonstration purpo
 
 This project is hosted on github pages and can be found here: [https://andyv773.github.io/my-first-react-app/](https://andyv773.github.io/my-first-react-app/)
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+## Features
+
+This project includes the following tools:
+
+- Transformation Tools
+- AES-CBC Encryption
+- AES-GCM Encryption
+- Fisher-Yates Algorithm
+- Shamir's Secret Sharing
+- XOR-Based Hash Encoder
+- ROT/XOR Uint8
+- ROT/XOR Uint32
+- Quantum Shuffle
+- Optimised Quantum Shuffle
+- Quantum Shuffle Uint32
+- Chaotic Key Stretcher
+- Chaotic Encoder
+- Encrypted QR Codes
+- QR Code Generator
+- SHA & Argon2 Hashing
+- File Integrity Check
+- IP Information
+- TOTP & Captcha Simulator
+- Password Generator
 
 ## Deployment
 

@@ -6,7 +6,7 @@ export const tools = [
         "A fully functional encryption toolkit created for demonstration and educational purposes. Find out more.",
     },
     {
-      id: "obfuscation-tools",
+      id: "transformation-tools",
       title: "Transformation Tools",
       description:
         "Transformation and modification of text and emojis for testing input and output, debugging, and experimentation.",
@@ -21,19 +21,43 @@ export const tools = [
       id: "aes-gcm-enc",
       title: "AES-GCM",
       description:
-        "Authenticated encryption with AES Galois/Counter Mode providing confidentiality and integrity.",
+      "Authenticated encryption with AES Galois/Counter Mode providing confidentiality and integrity.",
     },
     {
-      id: "fishers-algo-enc",
-      title: "Fishers Algorithm",
+      id: "fisher-algo-enc",
+      title: "Fisher-Yates Algorithm",
       description:
-        "A deterministic Fishers shuffle for files or text and encrypt with AES-CBC.",
+      "A deterministic Fisher-Yates shuffle for files or text and encrypt with AES-CBC.",
+    },
+    {
+      id: "sss-enc",
+      title: "Shamir's Secrect Sharing",
+      description:
+      "Enter a secret or private key, split it into shares, and set thresholds with this interesting concept.",
+    },
+    {
+      id: "xor-based-enc",
+      title: "XOR-Based Hash Encoder",
+      description:
+        "Apply multiple layers of encryption using XOR with a key derived from a hash.",
+    },
+    {
+      id: "uint8-enc",
+      title: "ROT/XOR Uint8",
+      description:
+        "Encode using byte-wise modular rotation or XOR on a Uint8Array.",
+    },
+    {
+      id: "uint32-enc",
+      title: "ROT/XOR Uint32",
+      description:
+        "Explore different rotation ranges using ROT or XOR with a Uint32 array, offering 4,294,967,295 possible values.",
     },
     {
       id: "quant-shuffle-enc",
       title: "Quantum Shuffle",
       description:
-        "High load randomised file or text shuffle using Unicode points with added AES-GCM encryption.",
+      "High load randomised file or text shuffle using Unicode points with added AES-GCM encryption.",
     },
     {
       id: "opt-quant-enc",
@@ -46,30 +70,6 @@ export const tools = [
       title: "Quantum Shuffle Uint32",
       description:
         "High load randomisation of file or text data using Uint32Array and an Int32Array key.",
-    },
-    {
-      id: "xor-based-enc",
-      title: "XOR-Based Hash Encoder",
-      description:
-        "Apply multiple layers of encryption using XOR with a key derived from a hash.",
-    },
-    {
-      id: "rot-encoder",
-      title: "ROT/XOR Uint8",
-      description:
-        "Encode using byte-wise modular rotation or XOR on a Uint8Array.",
-    },
-    {
-      id: "xor-enc",
-      title: "ROT/XOR Uint32",
-      description:
-        "Explore different rotation ranges using ROT or XOR with a Uint32 array, offering 4,294,967,295 possible values.",
-    },
-    {
-      id: "sss-enc",
-      title: "Shamir's Secrect Sharing",
-      description:
-        "Enter a secret or private key, split it into shares, and set thresholds with this interesting concept.",
     },
     {
       id: "key-stretcher",
@@ -124,11 +124,5 @@ export const tools = [
       title: "Password Generator",
       description:
         "Securely generate strong and randomised passwords.",
-    },
-    {
-      id: "test",
-      title: "test",
-      description:
-        "Create QR codes easily for URLs, text, or other data.",
     },
 ];

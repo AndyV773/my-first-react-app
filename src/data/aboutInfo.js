@@ -13,11 +13,11 @@ export const aboutInfo = [
 			"secrets.js-grempe - JavaScript library for Shamir's Secret Sharing: (https://github.com/grempe/secrets.js)",
 			"jszip - For creating, reading, and editing .zip files in JavaScript: (https://stuk.github.io/jszip/)"
 		],
-		additional:"Not all characters displayed in the text outputs are safe to copy and paste to the clipboard without losing the original data. This is because not all binary data maps directly to UTF-8 Unicode code points, which is why you will often see '�' characters. These are replacement characters that indicate invalid or unmappable bytes.\n\nIf you enter these replacement characters into the Unicode tools here [link], they will all produce the same outputs, unlike 'tofu boxes' that may display different Unicode points. This means that even if the underlying data is displayed as [3751477356, 3862270976], copying the characters directly will cause you to lose this information.\n\nTo preserve the original format, you must either save the data as a file or convert it to Base64. Base64 encoding safely maintains the original binary data while allowing you to copy it to the clipboard. Note that Base64 adds approximately 33% overhead, as each 6 bits of binary data is represented using standard ASCII characters.\n\nThere are also alternative encodings such as Base85/Base91 that can hold more characters with less overheads; these may be explored at a later date."
+		additional:"Not all characters displayed in the text outputs are safe to copy and paste to the clipboard without losing the original data. This is because not all binary data maps directly to UTF-8 Unicode code points, which is why you will often see '�' characters. These are replacement characters that indicate invalid or unmappable bytes.\n\nIf you enter these replacement characters into the Unicode tools here [link], they will all produce the same outputs, unlike tofu boxes that may display different Unicode points. This means that even if the underlying data is displayed as [3751477356, 3862270976], copying the characters directly will cause you to lose this information.\n\nTo preserve the original format, you must either save the data as a file or convert it to Base64. Base64 encoding safely maintains the original binary data while allowing you to copy it to the clipboard. Note that Base64 adds approximately 33% overhead, as each 6 bits of binary data is represented using standard ASCII characters.\n\nThere are also alternative encodings such as Base85/Base91 that can hold more characters with less overheads; these may be explored at a later date."
 	},
 	{
-		id: "about-obfuscation-tools",
-		title: "About Transformation Tools",
+		id: "about-transformation-tools",
+		title: "Transformation Tools",
 		description:
 			"Transformation tools provide a variety of methods for modifying and testing text and emojis, useful for debugging and experimentation.",
 		steps: [
@@ -36,12 +36,12 @@ export const aboutInfo = [
 			"Unit 16 Array (16 bits): Convert text to/from 16-bit arrays; each element stores 0 - 65,535.",
 			"Uint32 Array (32 bits): Convert text to/from 32-bit arrays; each element stores 0 - 4,294,967,295."
 		],
-		originalPage: "/obfuscation-tools",
+		originalPage: "/transformation-tools",
 		linkText: "Go to Transformation Tools"
 	},
 	{
 		id: "about-aes-cbc",
-		title: "About AES-CBC Encryption",
+		title: "AES-CBC Encryption",
 		description:
 			"AES-CBC (Cipher Block Chaining) is a symmetric encryption mode that secures your data by chaining together encrypted blocks. This section explains how we implement AES-CBC for strong data encryption and decryption.",
 		steps: [
@@ -59,7 +59,7 @@ export const aboutInfo = [
 	},
 	{
 		id: "about-aes-gcm",
-		title: "About AES-GCM Encryption",
+		title: "AES-GCM Encryption",
 		description:
 			"AES-GCM provides both confidentiality and integrity through authenticated encryption. Here you can learn how AES-GCM enhances security by preventing tampering along with encrypting your data.",
 		steps: [
@@ -76,10 +76,10 @@ export const aboutInfo = [
 		linkText: "Go to AES-GCM Encryption"
 	},
 	{
-		id: "about-fishers-algo",
-		title: "About Fishers Algorithm",
+		id: "about-fisher-algo",
+		title: "Fisher-Yates Algorithm",
 		description:
-			"Fishers algorithm is a deterministic algorithm that rearranges data using a seeded pseudo random number generator (PRNG) before encrypting it with AES-CBC, increasing complexity and security.",
+			"Fisher-Yates Algorithm is a deterministic algorithm that rearranges data using a seeded pseudo random number generator (PRNG) before encrypting it with AES-CBC, increasing complexity and security.",
 		steps: [
 			"You can upload a file or type text directly, and the content is displayed in both Base64 and UTF-8 formats so you can view the transformation.",
 			"Enter a key and click 'Shuffle'. For text input, the data is encoded into a Uint8Array, while file uploads use the raw binary data as-is.",
@@ -90,13 +90,77 @@ export const aboutInfo = [
 			"The final output can be saved and downloaded as an encrypted file.",
 			"To decode, go to the Decode section, upload the correct file, and enter the correct shuffle key and AES key (if used). If you have shuffled multiple times, you must repeat the steps in the correct reverse order or the data may be lost.",
 		],
-		additional: "The Fishers algorithm is not cryptographically secure, it is an advanced shuffling technique. Although extra precautions are taken to obscure the data, the data itself remains the same. For example, if you input 'Hello World', you can still see the original characters, just reordered and mixed with additional characters. Try it for yourself!",
-		originalPage: "/fishers-algo-enc",
-		linkText: "Go to Fishers Algorithm"
+		additional: "The Fisher-Yates Algorithm is not cryptographically secure, it is an advanced shuffling technique. Although extra precautions are taken to obscure the data, the data itself remains the same. For example, if you input 'Hello World', you can still see the original characters, just reordered and mixed with additional characters. Try it for yourself!",
+		originalPage: "/fisher-algo-enc",
+		linkText: "Go to Fisher-Yates Algorithm"
+	},
+	{
+		id: "about-sss",
+		title: "Shamir's Secret Sharing",
+		description:
+			"Shamir's Secret Sharing allows you to split sensitive information into multiple parts or shares, requiring a threshold number to reconstruct, enhancing secure key management.",
+		steps: [
+			"Input the secret and set the number of shares. This determines how many people can potentially split it.",
+			"Set the threshold, and the number of shares required to reveal the secret. The minimum is 2. For example, if the total number of shares is 5, you could set the threshold to 3 or 4 so that if someone loses their share, the secret can still be recovered. Any fewer than the threshold and recovery is not possible.",
+			"Click 'Split Secret' and the data will be divided into the selected number of shares. You can easily copy them to the clipboard or download all as a .txt file.",
+			"To recover the secret, paste the threshold number of shares into the input boxes (order does not matter), or simply upload the file for easy testing. Click 'Combine Shares' to reveal the secret."
+		],
+		additional: "One of my favorite concepts, implemented via CDN due to conflicts I had with other libraries. Try it for yourself: https://cdn.jsdelivr.net/npm/secrets.js-grempe/secrets.min.js",
+		originalPage: "/sss-enc",
+		linkText: "Go to Secret Sharing"
+	},
+	{
+		id: "about-xor-based",
+		title: "XOR-Based Hash Encoder",
+		description:
+		"Explore how XOR-based encoding combines with hashing to provide a lightweight method of obscuring data and adding security.",
+		steps: [
+			"Upload a file or enter text.",
+			"The input box allows you to specify how many iterations you would like to apply with different hash keys.",
+			"Once you click 'Generate Hash and Encrypt,' the process will generate a 64-byte salt (the length of a SHA-256 hash key) and append it to the input. This helps obfuscate small inputs and ensures randomness.",
+			"A hash key will then be generated from the total input value. This is hex-encoded into numbers and used to perform XOR encoding on the data.",
+			"Depending on the number of iterations entered, this process will be repeated, but with a smaller salt (16 bytes) to reduce size, and a different hash generated each time.",
+			"You can then download all hash keys to a .txt file and download the data, which is base64-encoded into a .ec file.",
+			"To decode, upload the file or enter the base64 text. Then either upload the hash key file or input each key individually. As long as they are in the correct order, you will recover the original input."
+		],
+		originalPage: "/xor-based-enc",
+		linkText: "Go to XOR-Based Hash Encoder"
+	},
+	{
+		id: "about-uint8-enc",
+		title: "ROT/XOR Uint8",
+		description:
+			"This tool applies byte-wise rotation with wrap-around (byte-wise mod 256), or XOR, modifying the values of a Uint8 array across all 256 possible byte values.",
+		steps: [
+			"Upload a file or input text. By default, ROT (rotation) is used, but you can use a checkbox to switch to XOR.",
+			"You can randomly generate a key first, then use the slider to select the range of values from 256-1024. Any value over 256 will wrap around from 0-256 for rotation, while XOR will operate directly on the bits.",
+			"Next, enter the ammount of key numbers you would like, and click 'Generate key'. The best approach is to have a key the same length as the input for maximum randomness. If the key is shorter than the data, it will repeat to match the length of the data.",
+			"Alternatively, you can enter values manually, separated by commas. Once done, you can download the key as a .txt file.",
+			"Click 'Encode' to see the UTF-8 output. You can then download it as a .ec file.",
+			"To decode, upload the data and input the key or upload the key file. Click 'Decode' and the original output will be restored."
+		],
+		originalPage: "/uint8-enc",
+		linkText: "Go to ROT/XOR Uint8"
+	},
+	{
+		id: "about-uint32-enc",
+		title: "ROT/XOR Uint32",
+		description:
+			"ROT or XOR encoding with a Uint32 array using bitwise shuffling for each 32-bit chunk.",
+		steps:[
+			"Upload a file or input text. By default, ROT (rotation) is used, but you can use a checkbox to switch to XOR.",
+			"Select the numeric range using the slider (from 1,000,000 to 10,000,000,000) and enter the amount you would like to generate. A good rule of thumb is to generate 1 key block per 4 characters and add an additional one for the length. For instance, 'hello world' is 11-bytes, so generate 3 plus 1 for length, making 4 in total.",
+			"Click 'Generate key' to create a random key, or experiment with different values by entering them manually. You can then download the key as a .txt file by clicking 'Download Key'.",
+			"Click 'Encode' to reveal the ROT or XOR shuffled message. This will show you the returned UTF-8 preview. You can then click 'Download' to save as a .ec32 file.",
+			"To decode, upload the data and either upload or enter the key, then click 'Decode' to reveal the original data.",
+		],
+		additional: "This method works best if each key, separated by commas, is 10 digits long (32-bits) or negative numbers. For example, if the word is 'hello' (Uint8: 104,101,108,108,111), the original length is appended to the Uint32 array and will become [5, 1751477356, 1862270976]. If a small key is used, only the first few bytes of the Uint32 array will change, leaving some original characters intact. This is still experimental, and improvements are being explored.",
+		originalPage: "/uint32-enc",
+		linkText: "Go to ROT/XOR Uint32"
 	},
 	{
 		id: "about-quant-shuffle",
-		title: "About Quantum Shuffle",
+		title: "Quantum Shuffle",
 		description:
 			"Quantum Shuffle applies a high load randomisation process to files or text, using rotation with Unicode code points. You can choose to further encrypt the data using AES-GCM. The process is broken down into stages, allowing you to view the transformation at each stage.",
 		steps: [
@@ -114,7 +178,7 @@ export const aboutInfo = [
 	},
 	{
 		id: "about-opt-quant",
-		title: "About Optimised Quantum Shuffle",
+		title: "Optimised Quantum Shuffle",
 		description:
 			"An all in one optimised variant of the Quantum Shuffle, combining efficient randomization with AES-GCM encryption for enhanced performance and security.",
 		steps: [
@@ -129,7 +193,7 @@ export const aboutInfo = [
 	},
 	{
 		id: "about-quant-shuffle-32",
-		title: "About Quantum Shuffle Uint32",
+		title: "Quantum Shuffle Uint32",
 		description:
 			"High-load Uint32 array randomised shuffle method with variable length, a variation of the Quantum Shuffle that originally used Unicode characters.",
 		steps: [
@@ -144,104 +208,47 @@ export const aboutInfo = [
 		linkText: "Go to Quantum Shuffle Uint32"
 	},
 	{
-		id: "about-xor-based",
-		title: "About XOR-Based Hash Encoder",
-		description:
-		"Explore how XOR-based encoding combines with hashing to provide a lightweight method of obscuring data and adding security.",
-		steps: [
-			"Upload a file or enter text.",
-			"The input box allows you to specify how many iterations you would like to apply with different hash keys.",
-			"Once you click 'Generate Hash and Encrypt,' the process will generate a 64-byte salt (the length of a SHA-256 hash key) and append it to the input. This helps obfuscate small inputs and ensures randomness.",
-			"A hash key will then be generated from the total input value. This is hex-encoded into numbers and used to perform XOR encoding on the data.",
-			"Depending on the number of iterations entered, this process will be repeated, but with a smaller salt (16 bytes) to reduce size, and a different hash generated each time.",
-			"You can then download all hash keys to a .txt file and download the data, which is base64-encoded into a .ec file.",
-			"To decode, upload the file or enter the base64 text. Then either upload the hash key file or input each key individually. As long as they are in the correct order, you will recover the original input."
-		],
-		originalPage: "/xor-based-enc",
-		linkText: "Go to XOR-Based Hash Encoder"
-	},
-	{
-		id: "about-rot-encoder",
-		title: "About ROT/XOR Uint8",
-		description:
-			"This tool applies byte-wise rotation with wrap-around (byte-wise mod 256), or XOR, modifying the values of a Uint8 array across all 256 possible byte values.",
-		steps: [
-			"Upload a file or input text. By default, ROT (rotation) is used, but you can use a checkbox to switch to XOR.",
-			"You can randomly generate a key first, then use the slider to select the range of values from 256-1024. Any value over 256 will wrap around from 0-256 for rotation, while XOR will operate directly on the bits.",
-			"Next, enter the ammount of key numbers you would like, and click 'Generate key'. The best approach is to have a key the same length as the input for maximum randomness. If the key is shorter than the data, it will repeat to match the length of the data.",
-			"Alternatively, you can enter values manually, separated by commas. Once done, you can download the key as a .txt file.",
-			"Click 'Encode' to see the UTF-8 output. You can then download it as a .ec file.",
-			"To decode, upload the data and input the key or upload the key file. Click 'Decode' and the original output will be restored."
-		],
-		originalPage: "/rot-encoder",
-		linkText: "Go to ROT/XOR Uint8"
-	},
-	{
-		id: "about-xor-enc",
-		title: "About ROT/XOR Uint32",
-		description:
-			"ROT or XOR encoding with a Uint32 array using bitwise shuffling for each 32-bit chunk.",
-		steps:[
-			"Upload a file or input text. By default, ROT (rotation) is used, but you can use a checkbox to switch to XOR.",
-			"Select the numeric range using the slider (from 1,000,000 to 10,000,000,000) and enter the amount you would like to generate. A good rule of thumb is to generate 1 key block per 4 characters and add an additional one for the length. For instance, 'hello world' is 11-bytes, so generate 3 plus 1 for length, making 4 in total.",
-			"Click 'Generate key' to create a random key, or experiment with different values by entering them manually. You can then download the key as a .txt file by clicking 'Download Key'.",
-			"Click 'Encode' to reveal the ROT or XOR shuffled message. This will show you the returned UTF-8 preview. You can then click 'Download' to save as a .ec32 file.",
-			"To decode, upload the data and either upload or enter the key, then click 'Decode' to reveal the original data.",
-		],
-		additional: "This method works best if each key, separated by commas, is 10 digits long (32-bits) or negative numbers. For example, if the word is 'hello' (Uint8: 104,101,108,108,111), the original length is appended to the Uint32 array and will become [5, 1751477356, 1862270976]. If a small key is used, only the first few bytes of the Uint32 array will change, leaving some original characters intact. This is still experimental, and improvements are being explored.",
-		originalPage: "/xor-enc",
-		linkText: "Go to ROT/XOR Uint32"
-	},
-	{
-		id: "about-sss",
-		title: "About Shamir's Secret Sharing",
-		description:
-			"Shamir's Secret Sharing allows you to split sensitive information into multiple parts or shares, requiring a threshold number to reconstruct, enhancing secure key management.",
-		steps: [
-			"Input the secret and set the number of shares. This determines how many people can potentially split it.",
-			"Set the threshold, and the number of shares required to reveal the secret. The minimum is 2. For example, if the total number of shares is 5, you could set the threshold to 3 or 4 so that if someone loses their share, the secret can still be recovered. Any fewer than the threshold and recovery is not possible.",
-			"Click 'Split Secret' and the data will be divided into the selected number of shares. You can easily copy them to the clipboard or download all as a .txt file.",
-			"To recover the secret, paste the threshold number of shares into the input boxes (order does not matter), or simply upload the file for easy testing. Click 'Combine Shares' to reveal the secret."
-		],
-		additional: "One of my favorite concepts, implemented via CDN due to conflicts I had with other libraries. Try it for yourself: https://cdn.jsdelivr.net/npm/secrets.js-grempe/secrets.min.js",
-		originalPage: "/sss-enc",
-		linkText: "Go to Secret Sharing"
-	},
-	{
 		id: "about-key-stretcher",
-		title: "About Chaotic Key Stretcher",
+		title: "Chaotic Key Stretcher",
 		description:
 			"Key Stretcher uses multiple hashing algorithms (SHA-512 and SHA3-512), exponentiation, and custom mathematical operations to derive a long, secure key from a short, manageable key. This process increases computational complexity, making brute-force attacks more difficult.",
 		steps: [
-			"Enter a key. The longer, the better - anything 16 bytes or over is fine. Include special characters and numbers for extra complexity.",
-			"Input the number of hashing iterations for both SHA-512 and SHA3-512. The more iterations, the better. Anything between 100,000 and 1,000,000 is good; over 1,000,000 is excessive.",
-			"Enter the number of iterations for key stretching. This determines how many times the key is processed to increase its size. A value of 10 or under works well; higher values may cause the browser to crash or exceed JavaScript string limits.",
-			"Once you click 'Stretch Key', the key is converted into bytes. These bytes are then transformed into two hash keys based on the iterations. The hash keys are converted to hex, which is then increased using exponentiation and densified to remove trailing zeros. The result is split into 2-digit chunks and further increased using exponentiation. This process repeats for the specified iteration range. Finally, it is split into 3-digit chunks to be used in a Uint8 256-byte rotation or XOR encoder.",
-			"You can view the original bytes, the hash keys used, and the output data. Both the key and the key output can be downloaded for easy storage."
+			"Enter a key. The longer, the better, anything 8-bytes or over is fine. Include special characters and numbers for extra complexity.",
+			"Input the number of hashing iterations for both SHA-512 and SHA3-512. The more iterations, the better. Anything between 100,000 and 1,000,000 is good; over 1,000,000 is probably excessive.",
+			"Input the depth and phase for the logistics map. find a good balance; depth can cause longer computaion time (over 2000 if the phase is 100,000).",
+			"Enter the number of iterations for key stretching. This determines how many times the key is processed to increase its size. Higher values can exceed call stack limit; I have tested ~2000.",
+			"Lastly, you can choose the chunk size, which determines how many numbers are used per byte. Larger chunks reduce duplicate numbers. You can also choose to reverse the key to increase variability, and optionally use XOR instead of the default rotation.",
+			"Once you click 'Stretch Key', the key is converted into bytes. These bytes are then transformed into two hash keys based on the iterations. The hash keys are converted to hex, expanded using exponentiation, densified to remove trailing zeros, normalised to floats to pass through a logistic map, and then shuffled using the Fisher-Yates Algorithm. This process repeats for the specified iteration range. Finally, the result is split into desired chunks for use in the Chaotic Encoder.",
+			"Once the key is generated, it is displayed in Base62. Base62 is used to decode the data due to its reduced size and simplicity.",
+			"You can view the original bytes, the hash keys used, and the output data. Both the key and the key output can be copied, or downloaded for easy storage.",
+			"At the bottom, there are some useful tools for checking each key's output variability and patterns. The first grid provides a breakdown of each number and the amount of duplicates. The second grid displays the numbers in order and uses colours to help spot patterns or repetition.",
 		],
-		additional: "",
+		additional: "The more random the input, the better (TJ#8-s8&@,236842,138244,624,377325,6,0,0). Higher numbers increase computation time; keys can take anywhere from 30 seconds to over 10 minutes. Anything over 3 minutes is likely excessive. If a key takes too long, just restart and try lower values. The time taken is displayed afterward to keep a record.",
 		originalPage: "/key-stretcher",
 		linkText: "Go to Chaotic Key Stretcher"
 	},
 	{
 		id: "about-chaotic-enc",
-		title: "About Chaotic Encoder",
+		title: "Chaotic Encoder",
 		description:
-			"Key Stretcher uses multiple hashing algorithms (SHA-512 and SHA3-512), exponentiation, and custom mathematical operations to derive a long, secure key from a short, manageable key. This process increases computational complexity, making brute-force attacks more difficult.",
+			"Chaotic Encoder utilises the same technique as the Chaotic Key Stretcher to derive a key. This key is then used to encrypt data, creating a short, human readable key and enabling secure data storage.",
 		steps: [
-			"Enter a key. The longer, the better - anything 16 bytes or over is fine. Include special characters and numbers for extra complexity.",
-			"Input the number of hashing iterations for both SHA-512 and SHA3-512. The more iterations, the better. Anything between 100,000 and 1,000,000 is good; over 1,000,000 is excessive.",
-			"Enter the number of iterations for key stretching. This determines how many times the key is processed to increase its size. A value of 10 or under works well; higher values may cause the browser to crash or exceed JavaScript string limits.",
-			"Once you click 'Stretch Key', the key is converted into bytes. These bytes are then transformed into two hash keys based on the iterations. The hash keys are converted to hex, which is then increased using exponentiation and densified to remove trailing zeros. The result is split into 2-digit chunks and further increased using exponentiation. This process repeats for the specified iteration range. Finally, it is split into 3-digit chunks to be used in a Uint8 256-byte rotation or XOR encoder.",
-			"You can view the original bytes, the hash keys used, and the output data. Both the key and the key output can be downloaded for easy storage."
+			"Upload a file or enter text, then enter a key separated by commas. This key must consist of 9 parts: [the key, hash1, hash2, depth, phase, size, chunks, reverse, xor].",
+			"The key can be any unique value chosen by you.",
+			"Hash1 and Hash2 iterations are numbers from 1 to infinity. Values under 1,000,000 are recommended, as higher numbers can take an extremely long time to process.",
+			"Depth and phase control the logistic map. For depth, values under 2000 work well, and for phase, values in the hundreds of thousands are recommended.",
+			"Next, choose the size. A larger size increases the number of blocks, which is better for larger datasets since each byte has its own key. However, setting the size too high can exceed the call stack limit. While values over 2000 are possible, it is best to keep this under 1000.",
+			"Then select the chunk size, which ranges from 3 to 12 digit number blocks. Larger blocks provide more unique numbers. You can also choose whether to load in reverse (0 = false, 1 = true). The same applies to the final input, where 0 = ROT (default) and 1 = XOR.",
+			"Click 'Encrypt' to generate a Base62 key, which reduces the key size for easier management. The data is then encrypted, and the output is displayed, allowing you to download it as a .ec file. Alternatively, you can convert it to Base64 and copy it to the clipboard.",
+			"To decode, upload the .ec file or input the Base64 text, enter the Base62 key, and voilà."
 		],
-		additional: "",
+		additional: "I developed this method myself. It utilises multiple algorithms and processes to create a key and encrypt the data. I believe it to be very strong and extremely difficult to decode without the correct key, perhaps even impossible. Let me know your thoughts and feel free to get in touch.",
 		originalPage: "/chaotic-enc",
 		linkText: "Go to Chaotic Encoder"
 	},
 	{
 		id: "about-qr-enc",
-		title: "About Encrypted QR Codes",
+		title: "Encrypted QR Codes",
 		description:
 			"Generate QR codes with encrypted data to securely share sensitive information while protecting it from unauthorised scanning or interception.",
 		steps: [
@@ -256,7 +263,7 @@ export const aboutInfo = [
 	},
 	{
 		id: "about-qr-gen",
-		title: "About QR Code Generator",
+		title: "QR Code Generator",
 		description:
 			"Create QR codes easily for URLs, text, or other data.",
 		steps: [
@@ -271,7 +278,7 @@ export const aboutInfo = [
 	},
 	{
 		id: "about-hashing",
-		title: "About SHA & Argon2 Hashing",
+		title: "SHA & Argon2 Hashing",
 		description:
 			"Use SHA and Argon2 algorithms to securely hash text or files, providing fixed-length outputs or computationally expensive hashes for enhanced security.",
 		steps: [
@@ -288,7 +295,7 @@ export const aboutInfo = [
 	},
 	{
 		id: "about-file-integrity",
-		title: "About File Integrity Check",
+		title: "File Integrity Check",
 		description:
 			"Ensure your files remain unaltered by using common hashing algorithms to verify data integrity and detect any unauthorised changes.",
 		steps: [
@@ -303,7 +310,7 @@ export const aboutInfo = [
 	},
 	{
 		id: "about-ip-addy",
-		title: "About IP Information",
+		title: "IP Information",
 		description:
 			"Check your IP address and location with ease. Quickly view your current IP, ISP, and country details, with one-click copy to clipboard.",
 		steps: [
@@ -319,7 +326,7 @@ export const aboutInfo = [
 	},
 	{
 		id: "about-totp-sim",
-		title: "About TOTP & Captcha Simulator",
+		title: "TOTP & Captcha Simulator",
 		description:
 			"This tool simulates Time Based One Time Passwords (TOTP) and bot-detection captchas to demonstrate multifactor authentication and protection against automated attacks.",
 		steps: [
@@ -331,7 +338,7 @@ export const aboutInfo = [
 	},
 	{
 		id: "about-password-gen",
-		title: "About Password Generator",
+		title: "Password Generator",
 		description:
 			"Generator strong passwords, random, and secure passwords to help protect your accounts and data from unauthorised access.",
 		steps: [

@@ -34,10 +34,10 @@ import {
 	fromUint16Array,
 	toUint32Array,
 	fromUint32Array,
-} from '../utils/obfuscationUtils';
+} from '../utils/transformationUtils';
 
 
-const ObfuscationTools = ({ theme, onToggleTheme }) => {
+const TransformationTools = ({ theme, onToggleTheme }) => {
 
 	const doReverse = () => {
 		const text = document.getElementById('reverse_input').value;
@@ -209,7 +209,7 @@ const ObfuscationTools = ({ theme, onToggleTheme }) => {
 	};
 
 	return (
-		<main id='obfuscation' className="container">
+		<main className="container">
 			<nav>
 				<Link to="/">Home</Link>
 				<ThemeToggle theme={theme} onToggle={onToggleTheme} />
@@ -217,7 +217,7 @@ const ObfuscationTools = ({ theme, onToggleTheme }) => {
 
 			<div className="learn-more">
 				<h2>Transformation Tools</h2>  
-				<Link to="/about#about-obfuscation-tools">Learn more</Link>        
+				<Link to="/about#about-transformation-tools">Learn more</Link>        
 			</div>
 
 			<section>
@@ -404,4 +404,4 @@ const ObfuscationTools = ({ theme, onToggleTheme }) => {
 	);
 };
 
-export default ObfuscationTools;
+export default TransformationTools;

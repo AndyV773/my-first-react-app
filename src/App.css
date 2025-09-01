@@ -373,6 +373,11 @@ input[type="color"] {
     height: 100%;       
 }
 
+.about-content {
+    text-decoration: none;
+    color: #00ffd5;
+}
+
 .about-list {
     background-color: rgba(0, 0, 0, 0.1);
 }
@@ -575,7 +580,7 @@ input[type="color"] {
     user-select: none;
 }
 
-/* -------------------------------------- obfuscation page styles */
+/* -------------------------------------- transformation page styles */
 pre {
     background: #ecf0f1;
     color: var(--secondary-text);

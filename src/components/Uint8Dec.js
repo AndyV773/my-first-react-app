@@ -5,7 +5,7 @@ import { ThemeToggle, useByteCounter } from "../utils/uiHelpers";
 import { rotBytes, xorUint8, textDecoder } from "../utils/cryptoUtils";
 
 
-const RotDecoder = ({ showMsg, theme, onToggleTheme }) => {
+const Uint8Dec = ({ showMsg, theme, onToggleTheme }) => {
     const [dataInput, setDataInput] = useState("");
     const [keyInput, setKeyInput] = useState("");
     const [fileInfo, setFileInfo] = useState(null);
@@ -106,14 +106,14 @@ const RotDecoder = ({ showMsg, theme, onToggleTheme }) => {
             <nav>
                 <div className="flex g1">
                     <Link to="/">Home</Link>
-                    <Link to="/rot-encoder">Encode</Link>
+                    <Link to="/uint8-enc">Encode</Link>
                 </div>
                 <ThemeToggle theme={theme} onToggle={onToggleTheme} />
             </nav>
 
             <div className="learn-more">
                 <h2>ROT/XOR Uint8</h2>
-                <Link to="/about#about-rot-encoder">Learn more</Link>
+                <Link to="/about#about-uint8-enc">Learn more</Link>
             </div>
 
             <section>
@@ -174,4 +174,4 @@ const RotDecoder = ({ showMsg, theme, onToggleTheme }) => {
     );
 }
 
-export default RotDecoder;
+export default Uint8Dec;

@@ -102,14 +102,14 @@ const FishersAlgoEnc = ({ showMsg, theme, onToggleTheme }) => {
         <nav>
           <div className="flex g1">
             <Link to="/">Home</Link>
-            <Link to="/fishers-algo-dec">Decode</Link>
+            <Link to="/fisher-algo-dec">Decode</Link>
           </div>
           <ThemeToggle theme={theme} onToggle={onToggleTheme} />
         </nav>
 
         <div className="learn-more">
-          <h2>Fishers Algorithm</h2>
-          <Link to="/about#about-fishers-algo">Learn more</Link>
+          <h2>Fisher-Yates Algorithm</h2>
+          <Link to="/about#about-fisher-algo">Learn more</Link>
         </div>
 
         {/* Encode Section */}

@@ -31,27 +31,19 @@ const ChaoticDec = ({ showMsg, theme, onToggleTheme, showLoader }) => {
 
     const handleKey = useCallback(() => {
         let input = keyRef.current.value.trim();
-        const str = input.split("-");
+        let str = input;
         let arr = [];
 
-        console.log(str);
+        // Extract last 6 segments
+        for (let i = 0; i < 6; i++) {
+            const idx = str.lastIndexOf("-");
+            
+            arr.unshift(str.slice(idx + 1));
 
-        // Check length
-        if (str.length < 7) {
-            showMsg(`Error: Key length ${str.length}, is too short`, true);
-            return;
-        } else if (str.length > 7) {
-            showMsg(`Error: Key length ${str.length}, is too long`, true);
-            return;
-        } 
-
-        // base62 decode all the values
-        for (let i = 1; i <= 6; i++) {
-            console.log(str[i])
-            arr.push(Number(base62Decode(str[i])));
+            str = str.slice(0, idx);
         }
 
-        console.log(arr);
+        arr = arr.map(a => Number(base62Decode(a)));
 
         // Validate first 5 (must be > 0)
         for (let i = 0; i <= 4; i++) {
@@ -71,8 +63,6 @@ const ChaoticDec = ({ showMsg, theme, onToggleTheme, showLoader }) => {
 
         const endClass = [first, second, third];
 
-        console.log(endClass)
-
         // Validate chunks (must be 3–12)
         const chunks = endClass[0];
         if (isNaN(chunks) || chunks < 3 || chunks > 12) {
@@ -89,19 +79,8 @@ const ChaoticDec = ({ showMsg, theme, onToggleTheme, showLoader }) => {
             }
         }
 
-        console.log('1.',str[0])
-        console.log('2.',arr[0])
-        console.log('3.',arr[1])
-        console.log('4.',arr[2])
-        console.log('5.',arr[3])
-        console.log('6.',arr[4])
-        console.log('7.',endClass[0])
-        console.log('8.',endClass[1])
-        console.log('9.',endClass[2])
-
-
         const keyData = {
-            keyInput: str[0],
+            keyInput: str,
             hash1Iterations: arr[0],
             hash2Iterations: arr[1],
             depth: arr[2],
@@ -298,7 +277,7 @@ const ChaoticDec = ({ showMsg, theme, onToggleTheme, showLoader }) => {
                     Enter Base62 key:
                     <input
                         ref={keyRef}
-                        placeholder='key-3M-B-13-j7P-1-4Q'
+                        placeholder='key-3M-B-13-j7P-1-4Q...'
                         required
                     />
                 </label>

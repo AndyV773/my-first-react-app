@@ -5,7 +5,7 @@ import { ThemeToggle, useByteCounter } from "../utils/uiHelpers";
 import { textDecoder, uint32ToUint8, xorUint32, rotUint32 } from "../utils/cryptoUtils";
 
 
-const XorDec = ({ showMsg, theme, onToggleTheme }) => {
+const Uint32Dec = ({ showMsg, theme, onToggleTheme }) => {
     const [dataInput, setDataInput] = useState("");
     const [keyInput, setKeyInput] = useState("");
     const [fileInfo, setFileInfo] = useState(null);
@@ -105,14 +105,14 @@ const XorDec = ({ showMsg, theme, onToggleTheme }) => {
             <nav>
                 <div className="flex g1">
                     <Link to="/">Home</Link>
-                    <Link to="/xor-enc">Encode</Link>
+                    <Link to="/uint32-enc">Encode</Link>
                 </div>
                 <ThemeToggle theme={theme} onToggle={onToggleTheme} />
             </nav>
 
             <div className="learn-more">
                 <h2>ROT/XOR Uint32</h2>
-                <Link to="/about#about-xor-enc">Learn more</Link>
+                <Link to="/about#about-uint32-enc">Learn more</Link>
             </div>
 
             <section>
@@ -172,4 +172,4 @@ const XorDec = ({ showMsg, theme, onToggleTheme }) => {
     );
 }
 
-export default XorDec;
+export default Uint32Dec;
