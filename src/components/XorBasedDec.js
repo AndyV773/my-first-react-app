@@ -36,7 +36,7 @@ const XorBasedEnc = ({ showMsg, theme, onToggleTheme }) => {
         });
   
         if (result?.error) {
-            showMsg(`Upload failed: ${result.error}`, true);
+            showMsg(`Error: Upload failed. ${result.error}`, true);
             setUtf8("");
             setFileInfo(null);
             setInput("");
@@ -97,10 +97,10 @@ const XorBasedEnc = ({ showMsg, theme, onToggleTheme }) => {
     };
 
     const handleXorDecoder = async () => {
-        if (!input || !hashKeys) return showMsg("Data missing!.", true);
+        if (!input || !hashKeys) return showMsg("Error: Data missing!.", true);
 
         if (hashKeys.some((key) => !key.trim())) {
-            return showMsg("Please fill in all key inputs!", true);
+            return showMsg("Error: Please fill in all key inputs!", true);
         }
 
         const reversedKeys = [...hashKeys].reverse();
@@ -132,7 +132,7 @@ const XorBasedEnc = ({ showMsg, theme, onToggleTheme }) => {
     }
 
     const handleSaveFile = () => {
-        if (!output) return showMsg("Nothing to save.", true);
+        if (!output) return showMsg("Error: Nothing to save.", true);
         saveFileAsExt(output, detectedExt);
     }
 

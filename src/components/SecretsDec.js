@@ -56,7 +56,7 @@ const SecretsDec = ({ showMsg, theme, onToggleTheme }) => {
 
 	const combineShares = () => {
 		const validShares = inputs.map(s => s.trim()).filter(Boolean);
-		if (validShares.length < 2) return showMsg("Enter at least 2 shares.", true);
+		if (validShares.length < 2) return showMsg("Error: Enter at least 2 shares.", true);
 
 		try {
 			const sec = window.secrets; // Use global secrets from CDN
@@ -64,7 +64,7 @@ const SecretsDec = ({ showMsg, theme, onToggleTheme }) => {
 			const original = sec.hex2str(hex);
 			setReconstructed(original);
 		} catch (e) {
-			showMsg("Error combining shares. Make sure they are valid.", true);
+			showMsg("Error: Error combining shares. Make sure they are valid.", true);
 			setReconstructed("");
 		}
 	};

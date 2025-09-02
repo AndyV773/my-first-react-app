@@ -11,24 +11,24 @@ const SecretsEnc = ({ showMsg, theme, onToggleTheme }) => {
 	const splitSecret = () => {
 		const n = parseInt(numShares);
 		const k = parseInt(threshold);
-		if (isNaN(n) || isNaN(k)) return showMsg("Please enter valid numbers.", true);
+		if (isNaN(n) || isNaN(k)) return showMsg("Error: Please enter valid numbers.", true);
 
-		if (!secret) return showMsg("Please enter a secret.", true);
-		if (k > n) return showMsg("Threshold cannot exceed number of shares.", true);
+		if (!secret) return showMsg("Error: Please enter a secret.", true);
+		if (k > n) return showMsg("Error: Threshold cannot exceed number of shares.", true);
 
 		try {
-		const sec = window.secrets; // Using global secrets object from CDN
-		const hexSecret = sec.str2hex(secret);
-		const split = sec.share(hexSecret, n, k);
-		setShares(split);
+			const sec = window.secrets; // Using global secrets object from CDN
+			const hexSecret = sec.str2hex(secret);
+			const split = sec.share(hexSecret, n, k);
+			setShares(split);
 		} catch (error) {
-		showMsg("Encryption failed.", true);
+			showMsg("Error: Encryption failed.", true);
 		}
 	};
 
 	const saveShares = () => {
 		if (shares.length === 0) {
-			showMsg("No shares to download.", true);
+			showMsg("Error: No shares to download.", true);
 			return;
 		}
 
@@ -94,12 +94,12 @@ const SecretsEnc = ({ showMsg, theme, onToggleTheme }) => {
 			{shares.length > 0 && (
 				<section>
 					<h3>Generated Shares:</h3>
-					{shares.map((s, i) => (
-						<div className="sss-pre" key={i}>
-						Share {i + 1}: 
-							<PreCopyOutputBlock outputId={`share-${i}`} text={s} />
-						</div>
-					))}
+						{shares.map((s, i) => (
+							<div className="sss-pre" key={i}>
+							Share {i + 1}: 
+								<PreCopyOutputBlock outputId={`share-${i}`} text={s} />
+							</div>
+						))}
 					<button onClick={saveShares}>Download all</button>
 				</section>
 			)}

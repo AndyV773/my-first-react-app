@@ -188,7 +188,7 @@ const QuantShuffleDec = ({ showMsg, theme, onToggleTheme, showLoader }) => {
 			}
 			showMsg(`${label} Decryption Complete!`, false);
 		} catch (err) {
-			showMsg(`${label} decryption failed: ${err.message}`, true);
+			showMsg(`Error: ${label} decryption failed. ${err.message}`, true);
 		}
 	},[skipAES, dataInput, keyInput, showMsg]);
 
@@ -216,7 +216,7 @@ const QuantShuffleDec = ({ showMsg, theme, onToggleTheme, showLoader }) => {
                 showMsg('Unshuffle Complete!', false);
                 setTimeout(() => showLoader({ show: false }), 2000);
             } else if (type === 'error') {
-                showMsg('Unshuffle failed: ' + error, true);
+                showMsg('Error: Unshuffle failed. ' + error, true);
                 showLoader({ show: false });
             }
         };

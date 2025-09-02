@@ -80,9 +80,9 @@ const XorBasedEnc = ({ showMsg, theme, onToggleTheme }) => {
     }
 
     const handleSaveFileTxT = () => {
-        if (!hashKeys) return showMsg("Nothing to save.", true);
+        if (!hashKeys) return showMsg("Error: Nothing to save.", true);
         if (hashKeys.length === 0) {
-            showMsg("No shares to download.", true);
+            showMsg("Error: No shares to download.", true);
             return;
         }
 
@@ -91,7 +91,7 @@ const XorBasedEnc = ({ showMsg, theme, onToggleTheme }) => {
     }
 
     const handleSaveFile = () => {
-        if (!output) return showMsg("Nothing to save.", true);
+        if (!output) return showMsg("Error: Nothing to save.", true);
         saveFileAsEc(output, "data");
     }
 

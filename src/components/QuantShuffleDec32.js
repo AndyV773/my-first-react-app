@@ -59,7 +59,7 @@ const QuantShuffleDec32 = ({ showMsg, theme, onToggleTheme, showLoader }) => {
         });
         
         if (result?.error) {
-            showMsg(`${type} upload failed: ${result.error}`, true);
+            showMsg(`Error: ${type} upload failed. ${result.error}`, true);
             setInfo(null);
             return;
         }
@@ -69,7 +69,7 @@ const QuantShuffleDec32 = ({ showMsg, theme, onToggleTheme, showLoader }) => {
     const handleUnshuffle = useCallback(() => {
         if (!workerRef.current) return;
         if (!dataInput || !keyInput) {
-            showMsg("No data.", true);
+            showMsg("Error: No data.", true);
             return;
         }
 
@@ -103,7 +103,7 @@ const QuantShuffleDec32 = ({ showMsg, theme, onToggleTheme, showLoader }) => {
                 showMsg('Unshuffle Complete!', false);
                 setTimeout(() => showLoader({ show: false }), 2000);
             } else if (type === 'error') {
-                showMsg('Unshuffle failed: ' + error, true);
+                showMsg('Error: Unshuffle failed. ' + error, true);
                 showLoader({ show: false });
             }
         };

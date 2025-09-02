@@ -6,38 +6,38 @@ import { useByteCounter, ThemeToggle, generateQrCode, getQrCorrectionInfo } from
 
 
 const OptQuantEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
-  // Input/file state
-  const [input, setInput] = useState(""); 
-  const [fileInput, setFileInput] = useState(""); 
-  const [fileInfo, setFileInfo] = useState(null);
-  const [dataInput, setDataInput] = useState('');
+    // Input/file state
+    const [input, setInput] = useState(""); 
+    const [fileInput, setFileInput] = useState(""); 
+    const [fileInfo, setFileInfo] = useState(null);
+    const [dataInput, setDataInput] = useState('');
 
-  // Encryption state
-  const [dataOutput, setDataOutput] = useState('');
-  const [keyOutput, setKeyOutput] = useState('');
+    // Encryption state
+    const [dataOutput, setDataOutput] = useState('');
+    const [keyOutput, setKeyOutput] = useState('');
 
-  // Byte counts
-  const [inputBytes, setInputBytes] = useState(0);
-  const [dataOutputBytes, setDataOutputBytes] = useState(0);
-  const [keyOutputBytes, setKeyOutputBytes] = useState(0);
-  
-  useByteCounter(input, setInputBytes);
-  useByteCounter(dataOutput, setDataOutputBytes);
-  useByteCounter(keyOutput, setKeyOutputBytes);
-  
-  // Refs
-  const workerRef = useRef(null);
-  const allCharRef = useRef(null);
-  const pwDataRef = useRef(null);
-  const pwKeyRef = useRef(null);
-  const dataContainerRef = useRef(null);
-  const keyContainerRef = useRef(null);
+    // Byte counts
+    const [inputBytes, setInputBytes] = useState(0);
+    const [dataOutputBytes, setDataOutputBytes] = useState(0);
+    const [keyOutputBytes, setKeyOutputBytes] = useState(0);
+    
+    useByteCounter(input, setInputBytes);
+    useByteCounter(dataOutput, setDataOutputBytes);
+    useByteCounter(keyOutput, setKeyOutputBytes);
+    
+    // Refs
+    const workerRef = useRef(null);
+    const allCharRef = useRef(null);
+    const pwDataRef = useRef(null);
+    const pwKeyRef = useRef(null);
+    const dataContainerRef = useRef(null);
+    const keyContainerRef = useRef(null);
 
-  // ui helpers
-  const { level: dataLevel, label: dataCorrection } = getQrCorrectionInfo(dataOutputBytes);
-  const { level: keyLevel, label: keyCorrection } = getQrCorrectionInfo(keyOutputBytes);
-  const [showDownloadData, setShowDownloadData] = useState(false);
-  const [showDownloadKey, setShowDownloadKey] = useState(false);
+    // ui helpers
+    const { level: dataLevel, label: dataCorrection } = getQrCorrectionInfo(dataOutputBytes);
+    const { level: keyLevel, label: keyCorrection } = getQrCorrectionInfo(keyOutputBytes);
+    const [showDownloadData, setShowDownloadData] = useState(false);
+    const [showDownloadKey, setShowDownloadKey] = useState(false);
   
 
    // Handle file upload
@@ -81,34 +81,33 @@ const OptQuantEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
             setDataOutput(encryptedData);
             setKeyOutput(encryptedKey);
             
-            
             showMsg('Encryption Complete!', false);
             setTimeout(() => showLoader({ show: false }), 2000);
         } else if (type === 'error') {
-            showMsg('Encryption failed: ' + error, true);
+            showMsg('Error: Encryption failed. ' + error, true);
             showLoader({ show: false });
         }
     };
 
     workerRef.current.addEventListener('message', onMessage);
     return () => {
-      workerRef.current.removeEventListener('message', onMessage);
-      workerRef.current.terminate();
-      workerRef.current = null;
+        workerRef.current.removeEventListener('message', onMessage);
+        workerRef.current.terminate();
+        workerRef.current = null;
     };
   }, [showMsg, showLoader]);
 
 
   const handleEncryption = useCallback(() => {
     if (!workerRef.current) return;
-    console.log('input', input)
+
     if (!input) {
-        showMsg("No data.", true);
+        showMsg("Error: No data.", true);
         return;
     }
 
     if (!pwDataRef.current.value || !pwKeyRef.current.value) {
-        showMsg("Enter encryption Keys.", true);
+        showMsg("Error: Enter encryption Keys.", true);
         return;
     }
 
@@ -147,7 +146,7 @@ const OptQuantEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
           if (type === "data") setShowDownloadData(true);
           if (type === "key") setShowDownloadKey(true);
         } catch (err) {
-          showMsg("QR generation failed: " + (err?.message || "unknown error"), true);
+          showMsg("Error: QR generation failed: " + (err?.message || "unknown error"), true);
         }
     }, [dataLevel, keyLevel, showMsg]);
 
@@ -163,124 +162,124 @@ const OptQuantEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
         if (canvas) {
             downloadQrCode(canvas, type);
         } else {
-            showMsg("QR code not found.", true);
+            showMsg("Error: QR code not found.", true);
         }
     };
 
 
     const handleSaveFile = (type) => {
         if (type === "data") {
-            if (!dataOutput) return showMsg("Nothing to save.", true);
+            if (!dataOutput) return showMsg("Error: Nothing to save.", true);
             saveFileAsEc(dataOutput, type);
         } else if (type === "key") {
-            if (!keyOutput) return showMsg("Nothing to save.", true);
+            if (!keyOutput) return showMsg("Error: Nothing to save.", true);
             saveFileAsEc(keyOutput, type);
         }
     }
 
-  return (
-    <main className="container">
-        <nav>
-            <div className="flex g1">
-                <Link to="/">Home</Link>
-                <Link to="/opt-quant-dec">Decode</Link>
+    return (
+        <main className="container">
+            <nav>
+                <div className="flex g1">
+                    <Link to="/">Home</Link>
+                    <Link to="/opt-quant-dec">Decode</Link>
+                </div>
+                <ThemeToggle theme={theme} onToggle={onToggleTheme} />
+            </nav>
+
+            <div className="learn-more">
+                <h2>Optimised Quantum Shuffle</h2>
+                <Link to="/about#about-opt-quant">Learn more</Link>
             </div>
-            <ThemeToggle theme={theme} onToggle={onToggleTheme} />
-        </nav>
 
-        <div className="learn-more">
-            <h2>Optimised Quantum Shuffle</h2>
-            <Link to="/about#about-opt-quant">Learn more</Link>
-        </div>
+            <section>
+                <h2>Encode</h2>
+                <p>Upload File or Input Text</p>
 
-        <section>
-            <h2>Encode</h2>
-            <p>Upload File or Input Text</p>
+                <input type="file" onChange={handleUpload} />
+                {fileInfo && (
+                    <p className="file-info">
+                        File: {fileInfo.name}, Type: {fileInfo.type}, Size: {fileInfo.size}
+                    </p>
+                )}
 
-            <input type="file" onChange={handleUpload} />
-            {fileInfo && (
-                <p className="file-info">
-                    File: {fileInfo.name}, Type: {fileInfo.type}, Size: {fileInfo.size}
+                <label>
+                    Include all characters
+                    <input type="checkbox" id="all-char" ref={allCharRef} />
+                </label>
+
+                <textarea
+                    rows="5"
+                    value={dataInput}
+                    onChange={(e) => {
+                        setInput("");
+                        setFileInput("");
+                        setFileInfo(null);
+                        setDataInput(e.target.value);
+                    }}
+                    placeholder="Enter text..."
+                />
+                <p>
+                    Byte size: <span>{inputBytes}</span> bytes
                 </p>
-            )}
 
-            <label>
-                Include all characters
-                <input type="checkbox" id="all-char" ref={allCharRef} />
-            </label>
+                <input ref={pwDataRef} placeholder="Password for Data" />
+                <input ref={pwKeyRef} placeholder="Password for Key" />
+                
+                <button className="encode" onClick={() => handleEncryption()}>Encrypt</button>
+            </section>
 
-            <textarea
-                rows="5"
-                value={dataInput}
-                onChange={(e) => {
-                    setInput("");
-                    setFileInput("");
-                    setFileInfo(null);
-                    setDataInput(e.target.value);
-                }}
-                placeholder="Enter text..."
-            />
-            <p>
-                Byte size: <span>{inputBytes}</span> bytes
-            </p>
+            <section className={`${dataOutputBytes === 0 ? 'hidden' : ''}`}>
+                <h2>Download</h2>
 
-            <input ref={pwDataRef} placeholder="Password for Data" />
-            <input ref={pwKeyRef} placeholder="Password for Key" />
-            
-            <button className="encode" onClick={() => handleEncryption()}>Encrypt</button>
-        </section>
+                <h3>Data</h3>
+                <p>
+                    Data Byte size: <span>{dataOutputBytes}</span> bytes
+                </p>
+                <p>
+                    Error Correction Level: {dataCorrection}
+                </p>
 
-        <section className={`${dataOutputBytes === 0 ? 'hidden' : ''}`}>
-            <h2>Download</h2>
+                <button onClick={() => handleSaveFile("data")}>Download .ec</button>
+                <button
+                    onClick={() => handleGenerate("data", dataOutput)}
+                    className={`${dataOutputBytes === 0 || dataOutputBytes > 2900 ? 'hidden' : ''}`}>
+                    Generate QR
+                </button>
 
-            <h3>Data</h3>
-            <p>
-                Data Byte size: <span>{dataOutputBytes}</span> bytes
-            </p>
-            <p>
-                Error Correction Level: {dataCorrection}
-            </p>
+                <div id="qr-data" className='qr-code' ref={dataContainerRef}></div>
 
-            <button onClick={() => handleSaveFile("data")}>Download .ec</button>
-            <button
-                onClick={() => handleGenerate("data", dataOutput)}
-                className={`${dataOutputBytes === 0 || dataOutputBytes > 2900 ? 'hidden' : ''}`}>
-                Generate QR
-            </button>
+                <button 
+                    onClick={() => handleQrDownload("data")} 
+                    className={`${!showDownloadData ? 'hidden' : ''}`}>
+                    Download QR
+                </button>
 
-            <div id="qr-data" className='qr-code' ref={dataContainerRef}></div>
+                <h3>Key</h3>
+                <p>
+                    Key Byte size: <span>{keyOutputBytes}</span> bytes
+                </p>
+                <p>
+                    Error Correction Level: {keyCorrection}
+                </p>
 
-            <button 
-                onClick={() => handleQrDownload("data")} 
-                className={`${!showDownloadData ? 'hidden' : ''}`}>
-                Download QR
-            </button>
+                <button onClick={() => handleSaveFile("key")}>Download .ec</button>
+                <button
+                    onClick={() => handleGenerate("key", keyOutput)}
+                    className={`${keyOutputBytes === 0 || keyOutputBytes > 2900 ? 'hidden' : ''}`}>
+                    Generate QR
+                </button>
 
-            <h3>Key</h3>
-            <p>
-                Key Byte size: <span>{keyOutputBytes}</span> bytes
-            </p>
-            <p>
-                Error Correction Level: {keyCorrection}
-            </p>
+                <div id="qr-key" className='qr-code' ref={keyContainerRef}></div>
 
-            <button onClick={() => handleSaveFile("key")}>Download .ec</button>
-            <button
-                onClick={() => handleGenerate("key", keyOutput)}
-                className={`${keyOutputBytes === 0 || keyOutputBytes > 2900 ? 'hidden' : ''}`}>
-                Generate QR
-            </button>
-
-            <div id="qr-key" className='qr-code' ref={keyContainerRef}></div>
-
-            <button 
-                onClick={() => handleQrDownload("key")} 
-                className={`${!showDownloadKey ? 'hidden' : ''}`}>
-                Download QR
-            </button>
-        </section>
-    </main>
-  );
+                <button 
+                    onClick={() => handleQrDownload("key")} 
+                    className={`${!showDownloadKey ? 'hidden' : ''}`}>
+                    Download QR
+                </button>
+            </section>
+        </main>
+    );
 };
 
 export default OptQuantEnc;

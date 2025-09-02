@@ -31,7 +31,7 @@ const Uint32Enc = ({ showMsg, theme, onToggleTheme }) => {
     const generateRandomKeys = () => {
         const count = parseInt(keyLength, 10);
         if (isNaN(count) || count <= 0) {
-            showMsg("Please enter a valid number greater than 0.", true);
+            showMsg("Error: Please enter a valid number greater than 0.", true);
             return;
         }
 
@@ -93,14 +93,14 @@ const Uint32Enc = ({ showMsg, theme, onToggleTheme }) => {
 
     const handleEncode = async () => {
         if (!dataInput) {
-            showMsg("Please input text or upload a file.", true);
+            showMsg("Error: Please input text or upload a file.", true);
         return;
         }
 
         const keyArray = parseKey(keyInput);
 
         if (keyArray.length === 0) {
-            showMsg("Please enter a valid rotation key (comma separated numbers).", true);
+            showMsg("Error: Please enter a valid rotation key (comma separated numbers).", true);
         return;
         }
         try {
@@ -116,17 +116,17 @@ const Uint32Enc = ({ showMsg, theme, onToggleTheme }) => {
             setOutputVal(textDecoder(output));
             setOutput(output);
         } catch (err) {
-            showMsg("Error during encoding: " + err.message, true);
+            showMsg("Error: Encryption failed. " + err.message, true);
         }
     };
 
     const handleSaveKey = () => {
-        if (!keyInput) return showMsg("Nothing to save.", true);
+        if (!keyInput) return showMsg("Error: Nothing to save.", true);
         saveFileAsExt(keyInput, "txt", "key");
     };
 
     const handleSaveEc32File = () => {
-        if (!output) return showMsg("Nothing to save.", true);
+        if (!output) return showMsg("Error: Nothing to save.", true);
         saveFileAsEc32(output);
     };
 

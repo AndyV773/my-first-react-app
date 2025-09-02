@@ -366,7 +366,7 @@ const TransformationTools = ({ theme, onToggleTheme }) => {
 			</section>
 
 			<section>
-				<h3>Uint 8 Array (8 bits)</h3>
+				<h3>Uint8 Array (8 bits)</h3>
 				<p>Each element can store values from 0 - 256 (0xFF).</p>
 				<textarea id="uint8_input" placeholder="Enter text to compress"></textarea>
 				<div className="flex g1">
@@ -377,7 +377,7 @@ const TransformationTools = ({ theme, onToggleTheme }) => {
 			</section>
 
 			<section>
-				<h3>Uint 16 Array (16 bits)</h3>
+				<h3>Uint16 Array (16 bits)</h3>
 				<p>Each element can store values from 0 - 65,535 (0xFFFF).</p>
 				<textarea id="uint16_input" placeholder="Enter text to compress"></textarea>
 				<div className="flex g1">

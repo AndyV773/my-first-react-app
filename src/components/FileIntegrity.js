@@ -4,6 +4,7 @@ import CryptoJS from "crypto-js";
 import { formatBytes } from "../utils/fileUtils";
 import { ThemeToggle, PreCopyOutputBlock } from "../utils/uiHelpers";
 
+
 const FileIntegrity = ({ showMsg, theme, onToggleTheme }) => {
 	const [fileInfo, setFileInfo] = useState(null);
 	const [hashes, setHashes] = useState(null);

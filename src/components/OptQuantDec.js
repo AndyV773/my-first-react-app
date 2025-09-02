@@ -56,7 +56,7 @@ const OptQuantDec = ({ showMsg, theme, onToggleTheme, showLoader }) => {
         });
 
         if (result?.error) {
-            showMsg(`${type} upload failed: ${result.error}`, true);
+            showMsg(`Error: ${type} upload failed. ${result.error}`, true);
             setInfo(null);
             setData("");
             return;
@@ -87,7 +87,7 @@ const OptQuantDec = ({ showMsg, theme, onToggleTheme, showLoader }) => {
                 showMsg('Decryption Complete!', false);
                 setTimeout(() => showLoader({ show: false }), 2000);
             } else if (type === 'error') {
-                showMsg('Decryption failed: ' + error, true);
+                showMsg('Error: Decryption failed. ' + error, true);
                 showLoader({ show: false });
             }
         };
@@ -104,15 +104,12 @@ const OptQuantDec = ({ showMsg, theme, onToggleTheme, showLoader }) => {
     const handleDecryption = useCallback(() => {
         if (!workerRef.current) return;
         if (!dataInput || !keyInput) {
-            showMsg("No data.", true);
+            showMsg("Error: No data.", true);
             return;
         }
-        console.log('data', dataInput)
-
-        console.log('key', keyInput)
 
         if (!pwDataRef.current.value || !pwKeyRef.current.value) {
-            showMsg("Enter decryption Keys.", true);
+            showMsg("Error: Enter decryption Keys.", true);
             return;
         }
         
@@ -137,66 +134,66 @@ const OptQuantDec = ({ showMsg, theme, onToggleTheme, showLoader }) => {
         saveFileAsExt(outputData, detectedExt);
     }
 
-  return (
-    <main className="container">
-        <nav>
-            <div className="flex g1">
-                <Link to="/">Home</Link>
-                <Link to="/opt-quant-enc">Encode</Link>
+    return (
+        <main className="container">
+            <nav>
+                <div className="flex g1">
+                    <Link to="/">Home</Link>
+                    <Link to="/opt-quant-enc">Encode</Link>
+                </div>
+                <ThemeToggle theme={theme} onToggle={onToggleTheme} />
+            </nav>
+
+            <div className="learn-more">
+                <h2>Optimised Quantum Shuffle</h2>
+                <Link to="/about#about-opt-quant">Learn more</Link>
             </div>
-            <ThemeToggle theme={theme} onToggle={onToggleTheme} />
-        </nav>
 
-        <div className="learn-more">
-            <h2>Optimised Quantum Shuffle</h2>
-            <Link to="/about#about-opt-quant">Learn more</Link>
-        </div>
+            <section>
+                <h2>Decode</h2>
+                <p>Upload QR Images or .ec file</p>
 
-        <section>
-            <h2>Decode</h2>
-            <p>Upload QR Images or .ec file</p>
+                <label htmlFor="data-upload">Upload data:</label>
+                <input type="file" id="data-upload" onChange={(e) => handleUpload("data", e)} />
+                {fileInfoData && (
+                    <p className="file-info">
+                        File: {fileInfoData.name}, Type: {fileInfoData.type}, Size: {fileInfoData.size}
+                    </p>
+                )}
 
-            <label htmlFor="data-upload">Upload data:</label>
-            <input type="file" id="data-upload" onChange={(e) => handleUpload("data", e)} />
-            {fileInfoData && (
-                <p className="file-info">
-                    File: {fileInfoData.name}, Type: {fileInfoData.type}, Size: {fileInfoData.size}
+                <label htmlFor="key-upload">Upload Key:</label>
+                <input type="file" id="key-upload" onChange={(e) => handleUpload("key", e)} />
+                {fileInfoKey && (
+                    <p className="file-info">
+                        File: {fileInfoKey.name}, Type: {fileInfoKey.type}, Size: {fileInfoKey.size}
+                    </p>
+                )}
+                
+                <input ref={pwDataRef} placeholder="Password for Data" />
+                <input ref={pwKeyRef} placeholder="Password for Key" />
+                <button className="decode" onClick={() => handleDecryption()}>
+                    Decrypt
+                </button>
+            </section>
+
+            <section className={`${outputBytes === 0 ? 'hidden' : ''}`}>
+                <textarea
+                    rows="5"
+                    value={outputVal}
+                    placeholder="Data output"
+                    readOnly
+                />
+                <p>
+                    Data Byte size: <span>{outputBytes}</span> bytes
                 </p>
-            )}
-
-            <label htmlFor="key-upload">Upload Key:</label>
-            <input type="file" id="key-upload" onChange={(e) => handleUpload("key", e)} />
-            {fileInfoKey && (
-                <p className="file-info">
-                    File: {fileInfoKey.name}, Type: {fileInfoKey.type}, Size: {fileInfoKey.size}
+                <p>
+                    Detected file type: {detectedExt ? `${detectedExt}` : "(none)"}
                 </p>
-            )}
             
-            <input ref={pwDataRef} placeholder="Password for Data" />
-            <input ref={pwKeyRef} placeholder="Password for Key" />
-            <button className="decode" onClick={() => handleDecryption()}>
-                Decrypt
-            </button>
-        </section>
-
-        <section className={`${outputBytes === 0 ? 'hidden' : ''}`}>
-            <textarea
-                rows="5"
-                value={outputVal}
-                placeholder="Data output"
-                readOnly
-            />
-            <p>
-                Data Byte size: <span>{outputBytes}</span> bytes
-            </p>
-            <p>
-                Detected file type: {detectedExt ? `${detectedExt}` : "(none)"}
-            </p>
-        
-            <button onClick={() => handleSaveFile()}>Download .{detectedExt}</button>
-      </section>
-    </main>
-  );
+                <button onClick={() => handleSaveFile()}>Download .{detectedExt}</button>
+            </section>
+        </main>
+    );
 };
 
 export default OptQuantDec;

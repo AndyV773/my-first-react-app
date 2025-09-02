@@ -13,11 +13,11 @@ const QrEnc = ({ showMsg, theme, onToggleTheme }) => {
 
 	const handleGenerate = async () => {
 		if (!text.trim()) {
-		showMsg("Please enter text to encrypt and generate QR.", true);
+			showMsg("Error: Please enter text.", true);
 		return;
 		}
 
-		if (!pwRef.current.value) return showMsg("Please enter a password.", true)
+		if (!pwRef.current.value) return showMsg("Error: Please enter a password.", true)
 
 		try {
 		// Encrypt text with AES-GCM
@@ -35,16 +35,16 @@ const QrEnc = ({ showMsg, theme, onToggleTheme }) => {
 			container: qrContainerRef.current,
 		});
 		} catch (err) {
-		showMsg("Encryption or QR generation failed: " + (err?.message || "unknown error"), true);
+		showMsg("Error: Encryption or QR generation failed. " + (err?.message || "unknown error"), true);
 		}
 	};
 
 	const handleDownload = () => {
 		const canvas = qrContainerRef.current?.querySelector('canvas');
 		if (canvas) {
-		downloadQrCode(canvas, 'qr');
+			downloadQrCode(canvas, 'qr');
 		} else {
-		showMsg("QR code not found.", true);
+			showMsg("Error: QR code not found.", true);
 		}
 	};
 

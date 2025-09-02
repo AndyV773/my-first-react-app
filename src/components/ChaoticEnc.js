@@ -180,7 +180,7 @@ const ChaoticEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
                 showMsg('Encryption Complete!', false);
                 setTimeout(() => showLoader({ show: false }), 2000);
             } else if (type === 'error') {
-                showMsg('Encryption failed: ' + error, true);
+                showMsg('Error: Encryption failed. ' + error, true);
                 showLoader({ show: false });
             }
         };
@@ -207,7 +207,7 @@ const ChaoticEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
 
 
     const handleSaveFile = () => {
-        if (!dataOutput) return showMsg("Nothing to save.", true);
+        if (!dataOutput) return showMsg("Error: Nothing to save.", true);
         if (storeBase64) {
             saveFileAsEc(base64);
         } else {

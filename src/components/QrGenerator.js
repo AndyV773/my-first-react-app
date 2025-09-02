@@ -28,7 +28,7 @@ const QrGenerator = ({ showMsg, theme, onToggleTheme }) => {
 		} else if (byteLength <= 2900) {
 			level = "L";
 		} else {
-			return showMsg("Exceeds maximum capacity for QR code.", true);
+			return showMsg("Error: Exceeds maximum capacity for QR code.", true);
 		}
 		
 		try {
@@ -40,7 +40,7 @@ const QrGenerator = ({ showMsg, theme, onToggleTheme }) => {
 				container: qrContainerRef.current,
 			});
 		} catch (err) {
-			showMsg("QR generation failed: " + (err?.message || "unknown error"), true);
+			showMsg("Error: QR generation failed. " + (err?.message || "unknown error"), true);
 		}
 	}, [showMsg]);
 
@@ -62,7 +62,7 @@ const QrGenerator = ({ showMsg, theme, onToggleTheme }) => {
 			if (canvas) {
 				downloadQrCode(canvas, 'QR');
 			} else {
-				showMsg("QR code not found.", true)
+				showMsg("Error: QR code not found.", true)
 			}
 		};
 

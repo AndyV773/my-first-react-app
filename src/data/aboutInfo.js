@@ -83,7 +83,7 @@ export const aboutInfo = [
 		steps: [
 			"You can upload a file or type text directly, and the content is displayed in both Base64 and UTF-8 formats so you can view the transformation.",
 			"Enter a key and click 'Shuffle'. For text input, the data is encoded into a Uint8Array, while file uploads use the raw binary data as-is.",
-			"A random salt (16-bytes) is added to the key to make it unique, and another random salt (16-bytes) is added to the input data for additional obscurity.",
+			"A random salt (16 bytes) is added to the key to make it unique, and another random salt (16 bytes) is added to the input data for additional obscurity.",
 			"The data and key are passed through a seeded shuffle, where the key is processed using the mulberry32 pseudo-random number generator (PRNG) to create a reversible shuffle pattern based on the key.",
 			"The process can be repeated to increase complexity and security, with transformations viewable at each stage.",
 			"AES-CBC encryption can optionally be applied after shuffling for stronger security.",
@@ -118,9 +118,9 @@ export const aboutInfo = [
 			"Upload a file or enter text.",
 			"The input box allows you to specify how many iterations you would like to apply with different hash keys.",
 			"Once you click 'Generate Hash and Encrypt,' the process will generate a 64-byte salt (the length of a SHA-256 hash key) and append it to the input. This helps obfuscate small inputs and ensures randomness.",
-			"A hash key will then be generated from the total input value. This is hex-encoded into numbers and used to perform XOR encoding on the data.",
+			"A hash key will then be generated from the total input value. This is hex encoded into numbers and used to perform XOR encoding on the data.",
 			"Depending on the number of iterations entered, this process will be repeated, but with a smaller salt (16 bytes) to reduce size, and a different hash generated each time.",
-			"You can then download all hash keys to a .txt file and download the data, which is base64-encoded into a .ec file.",
+			"You can then download all hash keys to a .txt file and download the data, which is base64 encoded into a .ec file.",
 			"To decode, upload the file or enter the base64 text. Then either upload the hash key file or input each key individually. As long as they are in the correct order, you will recover the original input."
 		],
 		originalPage: "/xor-based-enc",
@@ -130,11 +130,11 @@ export const aboutInfo = [
 		id: "about-uint8-enc",
 		title: "ROT/XOR Uint8",
 		description:
-			"This tool applies byte-wise rotation with wrap-around (byte-wise mod 256), or XOR, modifying the values of a Uint8 array across all 256 possible byte values.",
+			"This tool applies byte-wise rotation with wrap-around (mod 256), or XOR, modifying the values of a Uint8 array across all 256 possible byte values.",
 		steps: [
 			"Upload a file or input text. By default, ROT (rotation) is used, but you can use a checkbox to switch to XOR.",
 			"You can randomly generate a key first, then use the slider to select the range of values from 256-1024. Any value over 256 will wrap around from 0-256 for rotation, while XOR will operate directly on the bits.",
-			"Next, enter the ammount of key numbers you would like, and click 'Generate key'. The best approach is to have a key the same length as the input for maximum randomness. If the key is shorter than the data, it will repeat to match the length of the data.",
+			"Next, enter the amount of key numbers you would like, and click 'Generate key'. The best approach is to have a key the same length as the input for maximum randomness. If the key is shorter than the data, it will repeat to match the length of the data.",
 			"Alternatively, you can enter values manually, separated by commas. Once done, you can download the key as a .txt file.",
 			"Click 'Encode' to see the UTF-8 output. You can then download it as a .ec file.",
 			"To decode, upload the data and input the key or upload the key file. Click 'Decode' and the original output will be restored."
@@ -154,7 +154,7 @@ export const aboutInfo = [
 			"Click 'Encode' to reveal the ROT or XOR shuffled message. This will show you the returned UTF-8 preview. You can then click 'Download' to save as a .ec32 file.",
 			"To decode, upload the data and either upload or enter the key, then click 'Decode' to reveal the original data.",
 		],
-		additional: "This method works best if each key, separated by commas, is 10 digits long (32-bits) or negative numbers. For example, if the word is 'hello' (Uint8: 104,101,108,108,111), the original length is appended to the Uint32 array and will become [5, 1751477356, 1862270976]. If a small key is used, only the first few bytes of the Uint32 array will change, leaving some original characters intact. This is still experimental, and improvements are being explored.",
+		additional: "This method works best if each key, separated by commas, is 10 digits long (32 bits) or negative numbers. For example, if the word is 'hello' (Uint8: 104,101,108,108,111), the original length is appended to the Uint32 array and will become [5, 1751477356, 1862270976]. If a small key is used, only the first few bytes of the Uint32 array will change, leaving some original characters intact. This is still experimental, and improvements are being explored.",
 		originalPage: "/uint32-enc",
 		linkText: "Go to ROT/XOR Uint32"
 	},
@@ -172,7 +172,7 @@ export const aboutInfo = [
 			"You can then choose to generate and save a QR code. If the data or key is below 2,900 bytes, it will display the error correction level of the QR code based on its size. Alternatively, you can save it as an encrypted file.",
 			"Decrypt and reverse the shuffle process to recover the data."
 		],
-		additional: "This technique is not original, it has been known for many years and uses rotation with Unicode code points. I named it Quantum Shuffle, as I believe it is not possible to decode without the correct key. The key or data alone are meaningless, the key can be extremely long, based on the size of the input. Even if the user inputs 'Hello World' (11-bytes), each character is shuffled randomly so that, even with the data, attempting to brute-force the original input without the key could yield any 11-byte string, e.g., 'big red fox' or any other 11-byte word or phrase. I will be adding a technique later to disguise the character length, making it even more difficult. If you believe I am wrong and know of a way to break the encryption, I am always open for discussion - please get in touch.",
+		additional: "This technique is not original, it has been known for many years and uses rotation with Unicode code points. I named it Quantum Shuffle, as I believe it is not possible to decode without the correct key. The key or data alone are meaningless, the key can be extremely long, based on the size of the input. Even if the user inputs 'Hello World' (11 bytes), each character is shuffled randomly so that, even with the data, attempting to brute-force the original input without the key could yield any 11-byte string, e.g. 'big red fox' or any other 11-byte word or phrase. I will be adding a technique later to disguise the character length, making it even more difficult. If you believe I am wrong and know of a way to break the encryption, I am always open for discussion - please get in touch.",
 		originalPage: "/quant-shuffle-enc",
 		linkText: "Go to Quantum Shuffle"
 	},
@@ -180,7 +180,7 @@ export const aboutInfo = [
 		id: "about-opt-quant",
 		title: "Optimised Quantum Shuffle",
 		description:
-			"An all in one optimised variant of the Quantum Shuffle, combining efficient randomization with AES-GCM encryption for enhanced performance and security.",
+			"An all in one optimised variant of the Quantum Shuffle, combining efficient randomisation with AES-GCM encryption for enhanced performance and security.",
 		steps: [
 			"Upload a file or enter text.",
 			"Choose all characters (1,114,112 possibilities) or keep the default 10,000, and enter the AES key for both data and key.",
@@ -195,7 +195,7 @@ export const aboutInfo = [
 		id: "about-quant-shuffle-32",
 		title: "Quantum Shuffle Uint32",
 		description:
-			"High-load Uint32 array randomised shuffle method with variable length, a variation of the Quantum Shuffle that originally used Unicode characters.",
+			"High load Uint32 array randomised shuffle method with variable length, a variation of the Quantum Shuffle that originally used Unicode characters.",
 		steps: [
 			"Upload a file or enter text, then choose to include all characters (over 4 billion possibilities) or stick with the default (~1 million).",
 			"Once you click 'Shuffle', the data is first handled as a Uint8 array. Two random numbers (0-99) are generated, and that amount of random Uint8 values is appended to the front and back of the data.",
@@ -219,11 +219,11 @@ export const aboutInfo = [
 			"Enter the number of iterations for key stretching. This determines how many times the key is processed to increase its size. Higher values can exceed call stack limit; I have tested ~2000.",
 			"Lastly, you can choose the chunk size, which determines how many numbers are used per byte. Larger chunks reduce duplicate numbers. You can also choose to reverse the key to increase variability, and optionally use XOR instead of the default rotation.",
 			"Once you click 'Stretch Key', the key is converted into bytes. These bytes are then transformed into two hash keys based on the iterations. The hash keys are converted to hex, expanded using exponentiation, densified to remove trailing zeros, normalised to floats to pass through a logistic map, and then shuffled using the Fisher-Yates Algorithm. This process repeats for the specified iteration range. Finally, the result is split into desired chunks for use in the Chaotic Encoder.",
-			"Once the key is generated, it is displayed in Base62. Base62 is used to decode the data due to its reduced size and simplicity.",
+			"Once the key is generated, it is displayed in Base62, and the last three parameters are combined into one to save space. Base62 is used to decode the data due to its reduced size and simplicity.",
 			"You can view the original bytes, the hash keys used, and the output data. Both the key and the key output can be copied, or downloaded for easy storage.",
 			"At the bottom, there are some useful tools for checking each key's output variability and patterns. The first grid provides a breakdown of each number and the amount of duplicates. The second grid displays the numbers in order and uses colours to help spot patterns or repetition.",
 		],
-		additional: "The more random the input, the better (TJ#8-s8&@,236842,138244,624,377325,6,0,0). Higher numbers increase computation time; keys can take anywhere from 30 seconds to over 10 minutes. Anything over 3 minutes is likely excessive. If a key takes too long, just restart and try lower values. The time taken is displayed afterward to keep a record.",
+		additional: "The more random the input, the better (TJ#8-s8&@,2382,1344,64,37325,6,0,0). Higher numbers increase computation time; keys can take anywhere from 30 seconds to over 10 minutes. Anything over 3 minutes is likely excessive. If a key takes too long, just restart and try lower values. The time taken is displayed afterward to keep a record.",
 		originalPage: "/key-stretcher",
 		linkText: "Go to Chaotic Key Stretcher"
 	},
@@ -233,12 +233,12 @@ export const aboutInfo = [
 		description:
 			"Chaotic Encoder utilises the same technique as the Chaotic Key Stretcher to derive a key. This key is then used to encrypt data, creating a short, human readable key and enabling secure data storage.",
 		steps: [
-			"Upload a file or enter text, then enter a key separated by commas. This key must consist of 9 parts: [the key, hash1, hash2, depth, phase, size, chunks, reverse, xor].",
+			"Upload a file or enter text, then enter a key separated by commas. This key must consist of 9 parts: [key, hash1, hash2, depth, phase, size, chunks, reverse, xor].",
 			"The key can be any unique value chosen by you.",
 			"Hash1 and Hash2 iterations are numbers from 1 to infinity. Values under 1,000,000 are recommended, as higher numbers can take an extremely long time to process.",
 			"Depth and phase control the logistic map. For depth, values under 2000 work well, and for phase, values in the hundreds of thousands are recommended.",
 			"Next, choose the size. A larger size increases the number of blocks, which is better for larger datasets since each byte has its own key. However, setting the size too high can exceed the call stack limit. While values over 2000 are possible, it is best to keep this under 1000.",
-			"Then select the chunk size, which ranges from 3 to 12 digit number blocks. Larger blocks provide more unique numbers. You can also choose whether to load in reverse (0 = false, 1 = true). The same applies to the final input, where 0 = ROT (default) and 1 = XOR.",
+			"Then select the chunk size, which ranges from 3 to 12-digit number blocks. Larger blocks provide more unique numbers. You can also choose whether to load in reverse (0 = false, 1 = true). The same applies to the final input, where 0 = ROT (default) and 1 = XOR. These three parameters are combined into one during Base62 encdoing to save space.",
 			"Click 'Encrypt' to generate a Base62 key, which reduces the key size for easier management. The data is then encrypted, and the output is displayed, allowing you to download it as a .ec file. Alternatively, you can convert it to Base64 and copy it to the clipboard.",
 			"To decode, upload the .ec file or input the Base64 text, enter the Base62 key, and voilà."
 		],
@@ -289,7 +289,7 @@ export const aboutInfo = [
 			"Generate the hash and copy it for verification, storage, or comparison."
 		],
 		additional:
-			"Argon2 is an award-winning memory-hard hashing algorithm primarily used for password hashing. Each password is hashed with a unique random salt, making the output different each time. Its computationally intensive design prevents attackers from easily deriving the original password from the hash, unlike classic SHA hashes which produce deterministic outputs.",
+			"Argon2 is an award winning memory hard hashing algorithm primarily used for password hashing. Each password is hashed with a unique random salt, making the output different each time. Its computationally intensive design prevents attackers from easily deriving the original password from the hash, unlike classic SHA hashes which produce deterministic outputs.",
 		originalPage: "/hashing",
 		linkText: "Go to SHA & Argon2 Hashing"
 	},
@@ -312,7 +312,7 @@ export const aboutInfo = [
 		id: "about-ip-addy",
 		title: "IP Information",
 		description:
-			"Check your IP address and location with ease. Quickly view your current IP, ISP, and country details, with one-click copy to clipboard.",
+			"Check your IP address and location with ease. Quickly view your current IP, ISP, and country details, with one click copy to clipboard.",
 		steps: [
 			"Click 'Get My IP Info'.",
 			"Instantly view your up to date IP address.",

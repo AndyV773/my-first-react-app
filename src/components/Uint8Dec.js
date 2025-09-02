@@ -35,7 +35,7 @@ const Uint8Dec = ({ showMsg, theme, onToggleTheme }) => {
         });
 
         if (result?.error) {
-            showMsg(`Upload failed: ${result.error}`, true);
+            showMsg(`Error: Upload failed. ${result.error}`, true);
             setFileInfo(null);
             setDataInput("");
             setUtf8("");
@@ -68,12 +68,12 @@ const Uint8Dec = ({ showMsg, theme, onToggleTheme }) => {
 
     const handleDecode = async () => {
             if (!dataInput) {
-                showMsg("Please input text or upload a file.", true);
+                showMsg("Error: Please input text or upload a file.", true);
             return;
             }
             const keyArray = parseKey(keyInput);
             if (keyArray.length === 0) {
-                showMsg("Please enter a valid rotation key (comma separated numbers).", true);
+                showMsg("Error: Please enter a valid rotation key (comma separated numbers).", true);
             return;
             }
             try {
@@ -91,12 +91,12 @@ const Uint8Dec = ({ showMsg, theme, onToggleTheme }) => {
                 setOutputVal(textDecoder(unrotated));
                 setOutput(unrotated);
             } catch (err) {
-                showMsg("Error during decoding: " + err.message, true);
+                showMsg("Error: Decryption failed. " + err.message, true);
             }
         };
 
         const handleSaveFile = () => {
-            if (!output) return showMsg("Nothing to save.", true);
+            if (!output) return showMsg("Error: Nothing to save.", true);
             
             saveFileAsExt(output, detectedExt);
         };

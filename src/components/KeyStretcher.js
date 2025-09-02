@@ -40,11 +40,11 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
         setKeyOutput("");
         if (!workerRef.current) return;
         if (!keyInput) {
-            showMsg("Input key.", true);
+            showMsg("Error: Input key.", true);
             return;
         }
         if (!hash1Iterations || !hash2Iterations || !depth || !phase || !sizeIterations) {
-            showMsg("Please enter valid inputs.", true);
+            showMsg("Error: Please enter valid inputs.", true);
             return;
         }
 
@@ -102,8 +102,7 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
                 showMsg('Stretch Complete!', false);
                 setTimeout(() => showLoader({ show: false }), 2000);
             } else if (type === 'error') {
-                showMsg('Stretch failed: ' + error, true);
-                console.log('err:',error)
+                showMsg('Error: Stretch failed. ' + error, true);
                 showLoader({ show: false });
             }
         };
@@ -117,12 +116,12 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
     }, [showMsg, showLoader]);
 
     const handleDownloadOutput = () => {
-        if (!keyOutput) return showMsg("Nothing to save.", true);
+        if (!keyOutput) return showMsg("Error: Nothing to save.", true);
         saveFileAsExt(keyOutput, "txt", "key-output");
     }
     
     const handleProcess = () => {
-        if (!keyOutput) return showMsg("Nothing to check.", true);
+        if (!keyOutput) return showMsg("Error: Nothing to check.", true);
 
         const tempCounts = {};
 
@@ -155,7 +154,7 @@ const KeyStretcher = ({ showMsg, theme, onToggleTheme, showLoader }) => {
     const totalNumbers = Object.values(counts).reduce((sum, c) => sum + c, 0);
 
     const handleGenerateGrid = () => {
-        if (!keyOutput) return showMsg("Nothing to check.", true);
+        if (!keyOutput) return showMsg("Error: Nothing to check.", true);
 
         const nums = keyOutput;
         setNumbers(nums);

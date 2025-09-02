@@ -128,7 +128,7 @@ const QuantShuffleEnc32 = ({ showMsg, theme, onToggleTheme, showLoader }) => {
                 showMsg('Shuffle Complete!', false);
                 setTimeout(() => showLoader({ show: false }), 2000);
             } else if (type === 'error') {
-                showMsg('Shuffle failed: ' + error, true);
+                showMsg('Error: Shuffle failed. ' + error, true);
                 showLoader({ show: false });
             }
         };
@@ -144,10 +144,10 @@ const QuantShuffleEnc32 = ({ showMsg, theme, onToggleTheme, showLoader }) => {
 
     const handleSaveFile = (type) => {
         if (type === "data") {
-            if (!dataOutput) return showMsg("Nothing to save.", true);
+            if (!dataOutput) return showMsg("Error: Nothing to save.", true);
             saveFileAsEc32(dataOutput, type);
         } else if (type === "key") {
-            if (!keyOutput) return showMsg("Nothing to save.", true);
+            if (!keyOutput) return showMsg("Error: Nothing to save.", true);
             saveFileAsEc32(keyOutput, type);
         }
     }

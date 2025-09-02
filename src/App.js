@@ -67,6 +67,8 @@ function App() {
 			<div className="text-centre">
 				<h1>404 - Page Not Found</h1>
 				<p>Sorry, the page you are looking for does not exist.</p>
+				<br />
+				<br />
 				<a href="/">Go back home</a>
 			</div>
 		);
@@ -150,7 +152,8 @@ function App() {
 			</Routes>
 			<footer className="footer">
 				<h3>Donations</h3>
-				<p><strong>BTC: sAC61kUMrrsWum4jDM7yEYu54ui</strong></p>
+				<p><strong>BTC: bc1qhyu5sjn4jjqncdwfcr3yzrwk2qn3s5wwzajpvy</strong></p>
+				<p><strong>SOL: DQdd4KzDuL99aqqXdkaFqTMMH3Gx4MgXfHxktcf11g7k</strong></p>
 				<p>
 					© {new Date().getFullYear()}{" "}
 					<a

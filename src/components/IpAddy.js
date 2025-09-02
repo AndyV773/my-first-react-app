@@ -13,7 +13,7 @@ const IpAddy = ({ showMsg, theme, onToggleTheme }) => {
             const data = await response.json();
             setIpData(data);
         } catch (err) {
-            showMsg("Failed to fetch IP info:", err);
+            showMsg("Error: Failed to fetch IP info.", err);
             setIpData({ error: "Failed to fetch IP" });
         } finally {
             setLoading(false);

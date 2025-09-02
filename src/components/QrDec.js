@@ -48,7 +48,7 @@ const QrDec = ({ showMsg, theme, onToggleTheme }) => {
         });
     
         if (result?.error) {
-            showMsg(`Upload failed: ${result.error}`, true);
+            showMsg(`Error: Upload failed. ${result.error}`, true);
             setFileInfo(null);
             setInput("");
             return;
@@ -57,12 +57,12 @@ const QrDec = ({ showMsg, theme, onToggleTheme }) => {
 
     const handleDecrypt = async () => {
         if (!input) {
-            showMsg("Please paste a QR code's encrypted base64 data.", true);
+            showMsg("Error: Please enter QR code, or base64 data.", true);
             return;
         }
 
         if (!pwRef.current.value) {
-            showMsg("Please enter the decryption password.", true);
+            showMsg("Error: Please enter the decryption password.", true);
             return;
         }
 
@@ -74,7 +74,7 @@ const QrDec = ({ showMsg, theme, onToggleTheme }) => {
 
             setDecryptedText(decoded);
         } catch (err) {
-            showMsg("Decryption failed: " + (err?.message || "unknown error"), true);
+            showMsg("Error: Decryption failed. " + (err?.message || "unknown error"), true);
         }
     };
 

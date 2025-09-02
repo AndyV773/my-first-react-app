@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
-import { isCorrectDateInput, getTodayDate } from '../utils/uiHelpers'; 
+import { isCorrectDateInput } from '../utils/uiHelpers'; 
 
 
 function LockScreen({ onUnlock, showMsg }) {
     const [input, setInput] = useState('');
     const [error, setError] = useState('');
-
-    const date = getTodayDate();
 
     async function handleSubmit(e) {
         e.preventDefault();
@@ -16,7 +14,7 @@ function LockScreen({ onUnlock, showMsg }) {
             setError('');
             onUnlock();
         } else {
-            showMsg("Unlock failed!", true);
+            showMsg("Error: Unlock failed!", true);
             setError("Incorrect date. Please enter today's date as DD/MM/YYYY");
         }
     }
@@ -29,7 +27,7 @@ function LockScreen({ onUnlock, showMsg }) {
             <form onSubmit={handleSubmit}>
                 <input
                     value={input}
-                    onChange={(e) => setInput(date)}  // e.target.value
+                    onChange={(e) => setInput(e.target.value)}
                     placeholder="DD/MM/YYYY"
                     required
                     autoFocus

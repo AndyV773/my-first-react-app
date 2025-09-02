@@ -170,7 +170,7 @@ const ChaoticDec = ({ showMsg, theme, onToggleTheme, showLoader }) => {
                 try {
                     input = base64ToUint8(utf8Preview);
                 } catch (err) {
-                    showMsg("Error Base64 input invalid: " + err, true);
+                    showMsg("Error: Base64 input invalid: " + err, true);
                     return;
                 }
             }
@@ -178,7 +178,7 @@ const ChaoticDec = ({ showMsg, theme, onToggleTheme, showLoader }) => {
             try {
                 input = base64ToUint8(textInput);
             } catch (err) {
-                showMsg("Error Base64 input invalid: " + err, true);
+                showMsg("Error: Base64 input invalid: " + err, true);
                 return;
             }
         }
@@ -220,7 +220,7 @@ const ChaoticDec = ({ showMsg, theme, onToggleTheme, showLoader }) => {
                 showMsg('Decryption Complete!', false);
                 setTimeout(() => showLoader({ show: false }), 2000);
             } else if (type === 'error') {
-                showMsg('Error decryption failed: ' + error, true);
+                showMsg('Error: Decryption failed: ' + error, true);
                 showLoader({ show: false });
             }
         };

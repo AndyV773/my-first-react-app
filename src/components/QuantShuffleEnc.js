@@ -170,7 +170,7 @@ const QuantShuffleEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
 				showMsg('Shuffle Complete!', false);
 				setTimeout(() => showLoader({ show: false }), 2000);
 			} else if (type === 'error') {
-				showMsg('Shuffle failed: ' + error, true);
+				showMsg('Error: Shuffle failed. ' + error, true);
 				showLoader({ show: false });
 			}
 		};
@@ -187,7 +187,7 @@ const QuantShuffleEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
 	const handleShuffle = useCallback(() => {
 		if (!workerRef.current) return;
 		if (!dataInput) {
-			showMsg("No data.", true);
+			showMsg("Error: No data.", true);
 			return;
 		}
 
@@ -207,7 +207,7 @@ const QuantShuffleEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
 	// Encryption handler
 	const handleEncryption = useCallback( async (label) => {
 		if (skipAES) {
-			showMsg('Skip AES is checked; encryption bypassed.', true);
+			showMsg('Error: Skip AES is checked; encryption bypassed.', true);
 			return;
 		}
 
@@ -224,11 +224,11 @@ const QuantShuffleEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
 		}
 
 		if (!input) {
-			showMsg(`No ${label} input to encrypt.`, true);
+			showMsg(`Error: No ${label} input to encrypt.`, true);
 			return;
 		}
 		if (!password) {
-			showMsg(`Password required to encrypt ${label}.`, true);
+			showMsg(`Error: Password required to encrypt ${label}.`, true);
 			return;
 		}
 
@@ -246,7 +246,7 @@ const QuantShuffleEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
 			}
 			showMsg(`${label} Encryption Complete!`, false);
 		} catch (err) {
-			showMsg(`${label} encryption failed: ${err.message}`, true);
+			showMsg(`Error: ${label} encryption failed. ${err.message}`, true);
 		}
 	},[skipAES, shuffleVal, keyVal, showMsg]);
 
@@ -271,7 +271,7 @@ const QuantShuffleEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
 			if (type === "data") setShowDownloadData(true);
 			if (type === "key") setShowDownloadKey(true);
 		} catch (err) {
-			showMsg("QR generation failed: " + (err?.message || "unknown error"), true);
+			showMsg("Error: QR generation failed. " + (err?.message || "unknown error"), true);
 		}
     }, [dataLevel, keyLevel, showMsg]);
 
@@ -287,17 +287,17 @@ const QuantShuffleEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
         if (canvas) {
             downloadQrCode(canvas, type);
         } else {
-            showMsg("QR code not found.", true);
+            showMsg("Error: QR code not found.", true);
         }
     };
 
 
     const handleSaveFile = (type) => {
         if (type === "data") {
-            if (!dataOutput) return showMsg("Nothing to save.", true);
+            if (!dataOutput) return showMsg("Error: Nothing to save.", true);
             saveFileAsEc(dataOutput, type);
         } else if (type === "key") {
-            if (!keyOutput) return showMsg("Nothing to save.", true);
+            if (!keyOutput) return showMsg("Error: Nothing to save.", true);
             saveFileAsEc(keyOutput, type);
         }
     }

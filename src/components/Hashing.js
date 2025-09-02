@@ -62,7 +62,7 @@ const Hashing = ({ showMsg, theme, onToggleTheme }) => {
 
     
     const handleHash = async () => {
-		if (!input) return showMsg("Nothing to hash.", true);
+		if (!input) return showMsg("Error: Nothing to hash.", true);
 
 		try {
 			let hashResult = "";
@@ -97,7 +97,7 @@ const Hashing = ({ showMsg, theme, onToggleTheme }) => {
 			setHashKey(hashResult);
 
 		} catch (err) {
-			showMsg("Hashing failed." + err.message, true);
+			showMsg("Error: Hashing failed." + err.message, true);
 		}
 	};
 

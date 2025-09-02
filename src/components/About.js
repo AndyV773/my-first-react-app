@@ -17,7 +17,7 @@ export const About = ({ showMsg }) => {
 
     const scrollToTop = (e) => {
         e.preventDefault(); 
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 0, behavior: 'auto' });
     };
 
     const [contactForm, setContactForm] = useState({
@@ -101,7 +101,7 @@ export const About = ({ showMsg }) => {
                         {para.split(/\[link\]|\[\/link\]/).map((part, i, arr) => (
                             <React.Fragment key={i}>
                                 {part}
-                                {i < arr.length - 1 && <Link to="/obfuscation-tools">Transformation Tools</Link>}
+                                {i < arr.length - 1 && <Link to="/transformation-tools">Transformation Tools</Link>}
                             </React.Fragment>
                         ))}
                         {pIndex < appDescription.additional.split('\n\n').length - 1 && <><br /><br /></>}

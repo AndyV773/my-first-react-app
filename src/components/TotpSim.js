@@ -93,7 +93,7 @@ const TotpSim = ({ showMsg, theme, onToggleTheme }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (inputCode === "") return showMsg("Error: Input invalid", true);
-        if (isNaN(inputCode)) return showMsg("Error: Input must be a number", true);
+        if (isNaN(inputCode)) return showMsg("Error: Input must be a number.", true);
         const inputHash = await sha256(textEncoder(inputCode));
 
         if (inputHash === hash) {
@@ -101,7 +101,7 @@ const TotpSim = ({ showMsg, theme, onToggleTheme }) => {
             showMsg("Success: Correct input!", false);
         } else {
             setStatus("Try again.");
-            showMsg("Failed: Incorrect input!", true);
+            showMsg("Error: Incorrect input!", true);
             setCode(generateRandomTotp());
             setInputCode('');
         }
@@ -110,15 +110,15 @@ const TotpSim = ({ showMsg, theme, onToggleTheme }) => {
     const handleCaptcha = () => {
         if (honeypot !== '') {
             setResult("Try again.");
-            showMsg("Bot detected (honeypot filled)", true);
+            showMsg("Error: Bot detected (honeypot filled).", true);
             setChallenge(generateChallenge());
             setAnswer('');
             setHoneypot('');
             return;
         }
 
-        if (answer === "") return showMsg("Error: Input invalid", true);
-        if (isNaN(answer)) return showMsg("Error: Input must be a number", true);
+        if (answer === "") return showMsg("Error: Input invalid.", true);
+        if (isNaN(answer)) return showMsg("Error: Input must be a number.", true);
 
         const timeTaken = (Date.now() - startTime.current) / 1000;
 
@@ -128,7 +128,7 @@ const TotpSim = ({ showMsg, theme, onToggleTheme }) => {
         if (userAnswer === correctAnswer) {
             if (timeTaken < 2) {
                 setResult("Try again.");
-                showMsg("Too fast. Bots usually submit instantly.", true);
+                showMsg("Error: Too fast. Bots usually submit instantly.", true);
                 setChallenge(generateChallenge());
                 setAnswer('');
                 setHoneypot('');
@@ -139,7 +139,7 @@ const TotpSim = ({ showMsg, theme, onToggleTheme }) => {
             showMsg("Success! You are human.", false);
         } else {
             setResult("Try again.");
-            showMsg("Incorrect answer.", true);
+            showMsg("Error: Incorrect answer.", true);
             setChallenge(generateChallenge());
             setAnswer('');
             setHoneypot('');
