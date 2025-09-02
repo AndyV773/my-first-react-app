@@ -176,7 +176,6 @@ function App() {
 					</strong>
 				</p>
 				<br />
-				<br />
 				<p>
 					© {new Date().getFullYear()}{" "}
 					<a
