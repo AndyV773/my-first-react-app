@@ -4,7 +4,8 @@
 
 This is a static JavaScript app designed for educational and demonstration purposes. It showcases a variety of shuffle and cryptographic techniques and performs all encryption entirely in the browser - no backend is required.
 
-This project is hosted on github pages and can be found here: [https://andyv773.github.io/my-first-react-app/](https://andyv773.github.io/my-first-react-app/)
+This project is hosted on github pages and can be found here: [https://andyv773.github.io/my-first-react-app/](https://andyv773.github.io/my-first-react-app/).
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Features
