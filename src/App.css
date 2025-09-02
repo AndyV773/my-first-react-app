@@ -166,6 +166,10 @@ button.decode {
     text-align: center;
 }
 
+.word-br {
+    word-break: break-all;
+}
+
 /* -------------------------------------- day night theme and toggler */
 body.theme-day {
     background: var(--day-bg);

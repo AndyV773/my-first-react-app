@@ -48,6 +48,15 @@ function App() {
 	const [msg, setMsg] = useState({ text: '', error: false });
 	const [loaderState, setLoaderState] = useState({ show: false, mode: "encode", type: "loader", emoji: "", bytes: 0});
 
+	const handleCopy = async (text) => {
+		try {
+			await navigator.clipboard.writeText(text);
+			showMsg("Copied!", false);
+		} catch (err) {
+			showMsg("Error: Failed to copy. ", err, true);
+		}
+	};
+
 	const toggleTheme = () => {
 		setTheme(prev => (prev === 'day' ? 'night' : 'day'));
 	};
@@ -152,8 +161,20 @@ function App() {
 			</Routes>
 			<footer className="footer">
 				<h3>Donations</h3>
-				<p><strong>BTC: bc1qhyu5sjn4jjqncdwfcr3yzrwk2qn3s5wwzajpvy</strong></p>
-				<p><strong>SOL: DQdd4KzDuL99aqqXdkaFqTMMH3Gx4MgXfHxktcf11g7k</strong></p>
+				<p className="word-br">
+					<strong>BTC: <span 
+						onClick={() =>
+              				handleCopy("bc1qhyu5sjn4jjqncdwfcr3yzrwk2qn3s5wwzajpvy")
+            			}>bc1qhyu5sjn4jjqncdwfcr3yzrwk2qn3s5wwzajpvy</span>
+					</strong>
+				</p>
+				<p className="word-br">
+					<strong>SOL: <span 
+						onClick={() =>
+              				handleCopy("DQdd4KzDuL99aqqXdkaFqTMMH3Gx4MgXfHxktcf11g7k")
+            			}>DQdd4KzDuL99aqqXdkaFqTMMH3Gx4MgXfHxktcf11g7k</span>
+					</strong>
+				</p>
 				<p>
 					© {new Date().getFullYear()}{" "}
 					<a
