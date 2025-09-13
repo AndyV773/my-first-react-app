@@ -57,7 +57,7 @@ const QrDec = ({ showMsg, theme, onToggleTheme }) => {
 
     const handleDecrypt = async () => {
         if (!input) {
-            showMsg("Error: Please enter QR code, or base64 data.", true);
+            showMsg("Error: Please upload QR code.", true);
             return;
         }
 
@@ -69,7 +69,7 @@ const QrDec = ({ showMsg, theme, onToggleTheme }) => {
         try {
             const uint8 = base64ToUint8(input);
 
-            const decrypted = await aesGcmDecrypt(uint8, pwRef);
+            const decrypted = await aesGcmDecrypt(uint8, pwRef.current.value);
             const decoded = textDecoder(decrypted);
 
             setDecryptedText(decoded);

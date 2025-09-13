@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { generateQrCode, ThemeToggle, getQrCorrectionInfo } from '../utils/uiHelpers';
 import { downloadQrCode } from '../utils/fileUtils';
-import { aesGcmEncrypt, uint8ToBase64, textEncoder } from "../utils/cryptoUtils";
+import { aesGcmEncrypt, uint8ToBase64 } from "../utils/cryptoUtils";
 
 const QrEnc = ({ showMsg, theme, onToggleTheme }) => {
 	const [text, setText] = useState('');
@@ -20,22 +20,21 @@ const QrEnc = ({ showMsg, theme, onToggleTheme }) => {
 		if (!pwRef.current.value) return showMsg("Error: Please enter a password.", true)
 
 		try {
-		// Encrypt text with AES-GCM
-		const encoded = textEncoder(text.trim());
-		const encryptedData = await aesGcmEncrypt(encoded, pwRef);
+			// Encrypt text with AES-GCM
+			const encryptedData = await aesGcmEncrypt(text.trim(), pwRef.current.value);
 
-		const base64load = uint8ToBase64(encryptedData);
-		setEncryptedText(base64load);
+			const base64load = uint8ToBase64(encryptedData);
+			setEncryptedText(base64load);
 
-		const { level: dataLevel } = getQrCorrectionInfo(base64load);
+			const { level: dataLevel } = getQrCorrectionInfo(base64load);
 
-		await generateQrCode({
-			input: base64load,
-			errorCorrectionLevel: dataLevel,
-			container: qrContainerRef.current,
-		});
+			await generateQrCode({
+				input: base64load,
+				errorCorrectionLevel: dataLevel,
+				container: qrContainerRef.current,
+			});
 		} catch (err) {
-		showMsg("Error: Encryption or QR generation failed. " + (err?.message || "unknown error"), true);
+			showMsg("Error: Encryption or QR generation failed. " + (err?.message || "unknown error"), true);
 		}
 	};
 

@@ -38,6 +38,11 @@ const ChaoticEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
         let input = keyRef.current.value.trim();
         const str = input.split(",");
 
+        if (!str[0] || str[0].trim() === "") {
+            showMsg("Error: Key input is required", true);
+            return;
+        }
+
         // Check length
         if (str.length < 9) {
             showMsg(`Error: Key length ${str.length}, is too short`, true);
@@ -51,7 +56,7 @@ const ChaoticEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
         for (let i = 1; i <= 5; i++) {
             const num = Number(str[i]);
             if (isNaN(num) || num <= 0) {
-                showMsg(`Error: Value ${i} must be a number > 0`, true);
+                showMsg(`Error: Value ${i + 1} must be a number > 0`, true);
                 return;
             }
         }
@@ -59,7 +64,7 @@ const ChaoticEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
          // Validate chunks (must be 3–12)
         const chunks = Number(str[6]);
         if (isNaN(chunks) || chunks < 3 || chunks > 12) {
-            showMsg("Error: Last value must be between 3 and 12", true);
+            showMsg("Error: The 7th value must be between 3 and 12", true);
             return;
         }
 
@@ -67,7 +72,7 @@ const ChaoticEnc = ({ showMsg, theme, onToggleTheme, showLoader }) => {
         for (let i = 7; i <= 8; i++) {
             const num = Number(str[i]);
             if (num !== 0 && num !== 1) {
-                showMsg(`Error: Value ${i} must be 0 or 1`, true);
+                showMsg(`Error: The ${i + 1}th value must be 0 or 1`, true);
                 return;
             }
         }
