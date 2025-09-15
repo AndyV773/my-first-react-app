@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { isCorrectDateInput } from '../utils/uiHelpers'; 
+import { isCorrectDateInput } from 'utils/uiHelpers'; 
 
 
 function LockScreen({ onUnlock, showMsg }) {

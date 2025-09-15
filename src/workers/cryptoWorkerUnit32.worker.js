@@ -1,5 +1,5 @@
-import { randomizer, expandUint8, uint8ToUint32, uint32ToUint8, reduceUint8 } from '../utils/cryptoUtils';
-import { detectFileExtension } from '../utils/fileUtils';
+import { randomizer, expandUint8, uint8ToUint32, uint32ToUint8, reduceUint8 } from 'utils/cryptoUtils';
+import { detectFileExtension } from 'utils/fileUtils';
 /* eslint-env worker */
 /* eslint-disable no-restricted-globals */
 

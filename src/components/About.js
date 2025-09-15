@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from 'react-router-dom';
-import { aboutInfo } from "../data/aboutInfo.js"; // import your tools array
+import { aboutInfo } from "data/aboutInfo.js"; // import your tools array
 import emailjs from "emailjs-com";
 emailjs.init("OV7TuaOdwTQ7yrWjx");
 

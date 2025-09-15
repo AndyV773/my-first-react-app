@@ -1,5 +1,5 @@
-import { randomizer, base64ToUint8, compress, decompress, aesGcmEncrypt, aesGcmDecrypt, textDecoder } from '../utils/cryptoUtils';
-import { detectFileExtension } from '../utils/fileUtils';
+import { randomizer, base64ToUint8, compress, decompress, aesGcmEncrypt, aesGcmDecrypt, textDecoder } from 'utils/cryptoUtils';
+import { detectFileExtension } from 'utils/fileUtils';
 /* eslint-env worker */
 /* eslint-disable no-restricted-globals */
 

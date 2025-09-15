@@ -1,0 +1,139 @@
+import React, { useState, useRef } from 'react';
+import { Link } from 'react-router-dom';
+import { ThemeToggle, QrScanner } from 'utils/uiHelpers';
+import { aesGcmDecrypt, base64ToUint8, textDecoder } from "utils/cryptoUtils";
+import { uploadEncFile } from "utils/fileUtils";
+
+
+
+const QrDec = ({ showMsg, theme, onToggleTheme }) => {
+    const [showScanner, setShowScanner] = useState(false);
+    const [decryptedText, setDecryptedText] = useState('');
+    const [fileInfo, setFileInfo] = useState(null);
+    const [input, setInput] = useState('');
+    const pwRef = useRef(null);
+
+    const handleScan = (decodedText) => {
+        setInput(decodedText);
+        setShowScanner(false);
+    };
+
+    const handleScannerOpen = async () => {
+        setShowScanner(true);
+    };
+
+    const handleScannerClose = () => {
+        setShowScanner(false);
+    };
+
+    const handleError = (errorObj) => {
+        if (errorObj?.error) {
+            showMsg(errorObj.error, true);
+        }
+        setShowScanner(false);
+    };
+
+    const handleUpload = async (e) => {
+        const file = e.target.files?.[0];
+        // Reset all states on every new upload attempt or failure
+        setFileInfo(null);
+        setInput("");
+        e.target.value = "";  // Clear file input to allow re-upload of same file if needed
+    
+        if (!file) return;
+    
+        const result = await uploadEncFile(file, {
+            onText: setInput,
+            onFileInfo: setFileInfo,
+        });
+    
+        if (result?.error) {
+            showMsg(`Error: Upload failed. ${result.error}`, true);
+            setFileInfo(null);
+            setInput("");
+            return;
+        }
+    };
+
+    const handleDecrypt = async () => {
+        if (!input) {
+            showMsg("Error: Please upload QR code.", true);
+            return;
+        }
+
+        if (!pwRef.current.value) {
+            showMsg("Error: Please enter the decryption password.", true);
+            return;
+        }
+
+        try {
+            const uint8 = base64ToUint8(input);
+
+            const decrypted = await aesGcmDecrypt(uint8, pwRef.current.value);
+            const decoded = textDecoder(decrypted);
+
+            setDecryptedText(decoded);
+        } catch (err) {
+            showMsg("Error: Decryption failed. " + (err?.message || "unknown error"), true);
+        }
+    };
+
+    return (
+        <main className="container">
+            <nav>
+                <div className="flex g1">
+                    <Link to="/">Home</Link>
+                    <Link to="/qr-enc">Encode</Link>
+                </div>
+                <ThemeToggle theme={theme} onToggle={onToggleTheme} />
+            </nav>
+
+            <div className="learn-more">
+                <h2>Encrypted QR Code</h2>
+                <Link to="/about#about-qr-enc">Learn more</Link>
+            </div>
+
+            <section>
+                <div className='flex space-between'>
+                    <h2>Decode</h2>
+                    <button className='qr-scan-btn' onClick={handleScannerOpen}>Scan QR</button>
+                </div>
+
+                {showScanner && (
+                    <QrScanner
+                        onScan={handleScan}
+                        onClose={handleScannerClose}
+                        onError={handleError}
+                    />
+                )}
+
+                <p>Upload QR code image</p>
+                <input type="file" onChange={handleUpload} />
+                {fileInfo && (
+                    <p className="file-info">
+                        File: {fileInfo.name}, Type: {fileInfo.type}, Size: {fileInfo.size}
+                    </p>
+                )}
+                <textarea
+                    value={input}
+                    rows="5"
+                    placeholder="Input"
+                    readOnly
+                />
+
+                <input ref={pwRef} placeholder="Password" type="password" />
+
+                <button onClick={handleDecrypt} className='decode'>Decrypt</button>
+            </section>
+
+            {decryptedText && (
+                <section>
+                    <h3>Decrypted Output</h3>
+                    <textarea value={decryptedText} readOnly rows="5" />
+                </section>                    
+            )}
+        </main>
+    );
+};
+
+export default QrDec;
